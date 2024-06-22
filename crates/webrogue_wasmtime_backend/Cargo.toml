@@ -1,0 +1,10 @@
+[package]
+name = "webrogue_wasmtime_backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wasmtime = { path = "../../external/wasmtime/crates/wasmtime" }
+wasmtime-c-api-impl = { path = "../../external/wasmtime/crates/c-api"}
+webrogue_runtime = { path = "../webrogue_runtime"}
+anyhow = { version = "1" }

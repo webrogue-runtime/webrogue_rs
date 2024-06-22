@@ -1,0 +1,9 @@
+[package]
+name = "webrogue_wasm3_backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+webrogue_runtime = { path = "../webrogue_runtime"}
+anyhow = { version = "1" }
+wasm3 = {path = "external/wasm3-rs", features = ["build-bindgen"]}
