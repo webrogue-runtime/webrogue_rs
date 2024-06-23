@@ -1,5 +1,6 @@
 pub enum ValueType {
     U32,
+    U64,
 }
 
 pub struct Import {
@@ -13,7 +14,8 @@ pub struct Import {
 pub fn get_imports() -> Vec<Import> {
     let mut result = vec![];
 
-    let file_content = std::fs::read_to_string("crates/webrogue_runtime/src/funcs.in").unwrap();
+    let file_content =
+        std::fs::read_to_string("crates/webrogue_runtime/src/imported_functions.in").unwrap();
 
     for line in file_content.split("\n") {
         if line.is_empty() {
@@ -24,11 +26,9 @@ pub fn get_imports() -> Vec<Import> {
         let dot_pos = line.find(".").unwrap();
         let module = line[..dot_pos].to_string();
         line = line[dot_pos + 1..].to_string();
-        let colon_pos = line.find(":").unwrap();
-        let func_name = line[..colon_pos].to_string();
-        line = line[colon_pos + 2..].to_string();
+        // let colon_pos = line.find(":").unwrap();
         let bracket_pos = line.find("(").unwrap();
-        let implementation_func_name = line[..bracket_pos].to_string();
+        let func_name = line[..bracket_pos].to_string();
         line = line[bracket_pos + 1..].to_string();
         let bracket_pos = line.find(")").unwrap();
         let args_str = line[..bracket_pos].to_string();
@@ -39,11 +39,10 @@ pub fn get_imports() -> Vec<Import> {
         let mut args: Vec<String> = vec![];
 
         for arg_str in args_str.split(", ") {
-            let colon_pos = arg_str.find(":").unwrap();
-            // let arg_name = arg_str[..colon_pos].to_string();
-            let arg_type = arg_str[colon_pos + 2..].to_string();
-            args.push(arg_type);
+            args.push(arg_str.to_string());
         }
+        let implementation_func_name = format!("{}::{}", module.clone(), func_name.clone());
+
         result.push(Import {
             module: module,
             func_name: func_name,
@@ -51,11 +50,13 @@ pub fn get_imports() -> Vec<Import> {
                 .iter()
                 .map(|arg| match arg.as_str() {
                     "u32" => ValueType::U32,
+                    "u64" => ValueType::U64,
                     _ => panic!("Unknown type: {}", arg),
                 })
                 .collect(),
             ret_str: match ret_str.as_str() {
                 "u32" => Some(ValueType::U32),
+                "u64" => Some(ValueType::U64),
                 "" => None,
                 _ => panic!("Unknown type: {}", ret_str),
             },

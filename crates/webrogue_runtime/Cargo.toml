@@ -7,6 +7,10 @@ edition = "2021"
 anyhow = { version = "1" }
 
 # TODO no submodule
-wasi-common = { path = "../../external/wasmtime/crates/wasi-common", default-features = false, features = ["trace_log", "sync" ] }
-wiggle = { path = "../../external/wasmtime/crates/wiggle" }
+wasi-common = { path = "../../external/wasmtime/crates/wasi-common", default-features = false, features = ["trace_log"] }
+wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false }
 futures = "0.3"
+cap-rand = "3.1.0"
+cap-std = "3.1.0"
+cap-time-ext = "3.1.0"
+rustix = "0.38.34"

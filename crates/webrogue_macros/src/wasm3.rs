@@ -16,6 +16,7 @@ pub fn link_functions(
             .iter()
             .map(|arg| match arg {
                 crate::shared::ValueType::U32 => "u32",
+                crate::shared::ValueType::U64 => "u64",
             })
             .collect::<Vec<_>>()
             .join(", ");
@@ -43,6 +44,7 @@ pub fn link_functions(
             },
             match import.ret_str {
                 Some(crate::shared::ValueType::U32) => "u32",
+                Some(crate::shared::ValueType::U64) => "u64",
                 None => "",
             },
             import.implementation_func_name,

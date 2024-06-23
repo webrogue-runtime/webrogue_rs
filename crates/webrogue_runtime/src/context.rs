@@ -6,14 +6,21 @@ pub struct Context {
 
 impl Context {
     pub fn new(memory_factory: Box<dyn MemoryFactory>) -> Self {
+        let wasi = wasi_common::WasiCtx::new(
+            crate::random::random_ctx(),
+            crate::clocks::clocks_ctx(),
+            crate::sched::sched_ctx(),
+            wasi_common::Table::new(),
+        );
+        wasi.set_stdout(Box::new(wasi_common::pipe::WritePipe::new(
+            std::io::stdout(),
+        )));
+        wasi.set_stderr(Box::new(wasi_common::pipe::WritePipe::new(
+            std::io::stderr(),
+        )));
         Self {
             memory_factory,
-            wasi: wasi_common::WasiCtx::new(
-                wasi_common::sync::random_ctx(),
-                wasi_common::sync::clocks_ctx(),
-                wasi_common::sync::sched_ctx(),
-                wasi_common::Table::new(),
-            ),
+            wasi,
         }
     }
 }

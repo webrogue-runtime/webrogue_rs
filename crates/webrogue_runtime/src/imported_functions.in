@@ -1,0 +1,10 @@
+webrogue_func_wrap!{webrogue.imported_func_1(u32) -> ()}
+webrogue_func_wrap!{webrogue.imported_func_2(u32) -> (u32)}
+webrogue_func_wrap!{webrogue.imported_func_3(u32, u32) -> ()}
+webrogue_func_wrap!{wasi_snapshot_preview1.args_get(u32, u32) -> (u32)}
+webrogue_func_wrap!{wasi_snapshot_preview1.args_sizes_get(u32, u32) -> (u32)}
+webrogue_func_wrap!{wasi_snapshot_preview1.proc_exit(u32) -> ()}
+webrogue_func_wrap!{wasi_snapshot_preview1.fd_close(u32) -> (u32)}
+webrogue_func_wrap!{wasi_snapshot_preview1.fd_fdstat_get(u32, u32) -> (u32)}
+webrogue_func_wrap!{wasi_snapshot_preview1.fd_seek(u32, u64, u32, u32) -> (u32)}
+webrogue_func_wrap!{wasi_snapshot_preview1.fd_write(u32, u32, u32, u32) -> (u32)}

@@ -43,12 +43,14 @@ funcs.push((
                 .map(|arg| {
                     match arg {
                         crate::shared::ValueType::U32 => "wasmtime::ValType::I32",
+                        crate::shared::ValueType::U64 => "wasmtime::ValType::I64",
                     }
                 })
                 .collect::<Vec<_>>()
                 .join(", "),
             match import.ret_str {
                 Some(crate::shared::ValueType::U32) => "wasmtime::ValType::I32",
+                Some(crate::shared::ValueType::U64) => "wasmtime::ValType::I64",
                 None => "",
             },
             import.implementation_func_name,
@@ -64,6 +66,9 @@ funcs.push((
                             crate::shared::ValueType::U32 => {
                                 "unwrap_i32() as u32"
                             }
+                            crate::shared::ValueType::U64 => {
+                                "unwrap_i64() as u64"
+                            }
                         }
                     )
                 })
@@ -72,6 +77,8 @@ funcs.push((
             match import.ret_str {
                 Some(crate::shared::ValueType::U32) =>
                     "results[0] = wasmtime::Val::I32(result as i32);",
+                Some(crate::shared::ValueType::U64) =>
+                    "results[0] = wasmtime::Val::I64(result as i64);",
                 None => "",
             },
         );

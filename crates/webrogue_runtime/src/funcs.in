@@ -1,6 +1,0 @@
-webrogue_func_wrap!{webrogue.imported_func_1: wr_imported_func_1(a: u32) -> ()}
-webrogue_func_wrap!{webrogue.imported_func_2: wr_imported_func_2(a: u32) -> (u32)}
-webrogue_func_wrap!{webrogue.imported_func_3: wr_imported_func_3(a: u32, b: u32) -> ()}
-webrogue_func_wrap!{wasi_snapshot_preview1.args_get: wasi_snapshot_preview1_args_get(a: u32, b: u32) -> (u32)}
-webrogue_func_wrap!{wasi_snapshot_preview1.args_sizes_get: wasi_snapshot_preview1_args_sizes_get(a: u32, b: u32) -> (u32)}
-webrogue_func_wrap!{wasi_snapshot_preview1.proc_exit: wasi_snapshot_preview1_proc_exit(a: u32) -> ()}

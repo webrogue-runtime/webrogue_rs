@@ -44,7 +44,7 @@ impl webrogue_runtime::Runtime for Runtime {
             .find_function::<(), ()>("_start")
             .map_err(|_| anyhow::Error::msg("m3_FindFunction returned an error"))?;
         func.call()
-            .map_err(|_| anyhow::Error::msg("m3_CallV returned an error"))?;
+            .map_err(|e| anyhow::Error::msg("m3_CallV returned an error"))?;
         drop(runtime_box);
         Ok(())
     }

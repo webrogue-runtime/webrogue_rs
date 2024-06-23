@@ -1,5 +1,6 @@
 #include "stdlib.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 __attribute__((import_name("imported_func_1")))
@@ -36,7 +37,9 @@ __attribute__((export_name("exported_func_1"))) void exported_func_1() {
 }
 
 int main(int argc, char **argv) {
-  // imported_func_1(argc);
-  // imported_func_3((size_t)argv[0], strlen(argv[0]));
+  printf("test: %d\n", 14);
+
+  imported_func_1(argc);
+  imported_func_3((size_t)argv[0], strlen(argv[0]));
   exported_func_1();
 }
