@@ -13,25 +13,13 @@ impl Runtime {
     }
 }
 
-fn get_file_as_byte_vec(filename: &str) -> Vec<u8> {
-    let mut f = std::fs::File::open(filename).expect("no file found");
-    let metadata = std::fs::metadata(&filename).expect("unable to read metadata");
-    let mut buffer = vec![0; metadata.len() as usize];
-    std::io::Read::read(&mut f, &mut buffer).expect("buffer overflow");
-
-    buffer
-}
-
 impl webrogue_runtime::Runtime for Runtime {
-    fn run(&self) -> anyhow::Result<()> {
+    fn run(&self, bytecode: Vec<u8>) -> anyhow::Result<()> {
         let mut config = wasmtime::Config::new();
         config.debug_info(true);
         config.cranelift_opt_level(wasmtime::OptLevel::None);
         let engine = wasmtime::Engine::new(&config)?;
-        let module = wasmtime::Module::new(
-            &engine,
-            get_file_as_byte_vec("./example_mods/simple/main.wasm"),
-        )?;
+        let module = wasmtime::Module::new(&engine, bytecode)?;
 
         let mut store_box = Box::new(wasmtime::Store::new(
             &engine,

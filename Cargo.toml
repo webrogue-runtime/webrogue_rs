@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasm3"]
+default = ["wasmtime"]
 wasmtime = ["dep:webrogue_backend_wasmtime"]
 wasm3 = ["dep:webrogue_backend_wasm3"]
 

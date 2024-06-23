@@ -1,3 +1,5 @@
+use std::{path::PathBuf, str::FromStr};
+
 pub struct Context {
     // pub memory: *mut wasi_common::wiggle::GuestMemory<'a>,
     pub wasi: wasi_common::WasiCtx,
@@ -18,6 +20,13 @@ impl Context {
         wasi.set_stderr(Box::new(wasi_common::pipe::WritePipe::new(
             std::io::stderr(),
         )));
+        wasi.push_dir(
+            Box::new(crate::dir::Dir::from_cap_std(
+                cap_std::fs::Dir::from_std_file(std::fs::File::open(".").unwrap()),
+            )),
+            PathBuf::from_str("/").unwrap(),
+        )
+        .unwrap();
         Self {
             memory_factory,
             wasi,

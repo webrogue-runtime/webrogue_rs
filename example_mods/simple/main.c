@@ -37,7 +37,13 @@ __attribute__((export_name("exported_func_1"))) void exported_func_1() {
 }
 
 int main(int argc, char **argv) {
-  printf("test: %d\n", 14);
+  FILE *file = fopen("/example_mods/simple/test_file.txt", "r");
+  char readed[12];
+  readed[11] = '\0';
+  fread(readed, 1, 11, file);
+  fclose(file);
+
+  printf("test: %s\n", readed);
 
   imported_func_1(argc);
   imported_func_3((size_t)argv[0], strlen(argv[0]));

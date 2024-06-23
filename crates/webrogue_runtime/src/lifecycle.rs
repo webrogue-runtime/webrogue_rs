@@ -1,5 +1,5 @@
 use crate::backend::Backend;
-pub use anyhow::{Error, Result};
+pub use anyhow::Result;
 
 pub struct Lifecycle {}
 
@@ -8,9 +8,9 @@ impl Lifecycle {
         Self {}
     }
 
-    pub fn run(&self, backend: impl Backend) -> Result<()> {
+    pub fn run(&self, backend: impl Backend, bytecode: Vec<u8>) -> Result<()> {
         let runtime = backend.make_runtime();
-        runtime.run()?;
+        runtime.run(bytecode)?;
         Ok(())
     }
 }

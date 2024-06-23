@@ -6,6 +6,8 @@ mod raw_value;
 mod runtime;
 
 mod clocks;
+mod dir;
+mod file;
 pub mod imported_functions;
 mod random;
 mod sched;
