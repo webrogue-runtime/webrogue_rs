@@ -1,9 +1,14 @@
-pub mod backend;
-pub mod imported_function_defenition;
-pub mod imported_functions_impl;
-pub mod lifecycle;
-pub mod memory;
-pub mod raw_value;
-pub mod runtime;
-pub mod value_type;
-mod wasm_memory_types;
+mod backend;
+mod context;
+mod lifecycle;
+mod memory;
+mod raw_value;
+mod runtime;
+
+pub mod imported_functions;
+
+pub use backend::Backend;
+pub use context::{Context, MemoryFactory};
+pub use lifecycle::Lifecycle;
+pub use runtime::Runtime;
+pub use wiggle::{DynamicGuestMemory, GuestMemory};

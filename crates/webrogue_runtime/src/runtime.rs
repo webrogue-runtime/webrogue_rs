@@ -1,5 +1,5 @@
 use anyhow::Result;
 
-pub trait IRuntime {
+pub trait Runtime {
     fn run(&self) -> Result<()>;
 }

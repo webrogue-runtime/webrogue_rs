@@ -3,11 +3,15 @@ name = "webrogue_rs"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = ["wasm3"]
+wasmtime = ["dep:webrogue_backend_wasmtime"]
+wasm3 = ["dep:webrogue_backend_wasm3"]
+
 [dependencies]
 webrogue_runtime = { path = "crates/webrogue_runtime" }
-# webrogue_wasmtime_backend = { path = "crates/webrogue_wasmtime_backend" }
-webrogue_wasm3_backend = { path = "crates/webrogue_wasm3_backend" }
-# TODO features: "trace_log", "sync" 
-# TODO no submodule
-wasi-common = { path = "external/wasmtime/crates/wasi-common", default-features = false, features = [] }
 anyhow = { version = "1" }
+
+# backends
+webrogue_backend_wasmtime = { path = "crates/webrogue_backend_wasmtime", optional = true }
+webrogue_backend_wasm3 = { path = "crates/webrogue_backend_wasm3", optional = true }

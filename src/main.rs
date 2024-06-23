@@ -1,9 +1,19 @@
 use anyhow::Result;
-use webrogue_runtime::lifecycle::Lifecycle;
+
+#[cfg(feature = "wasmtime")]
+fn make_backend() -> impl webrogue_runtime::Backend {
+    webrogue_backend_wasmtime::Backend::new()
+}
+
+#[cfg(feature = "wasm3")]
+fn make_backend() -> impl webrogue_runtime::Backend {
+    webrogue_backend_wasm3::Backend::new()
+}
 
 fn main() -> Result<()> {
-    let lifecycle = Lifecycle::new();
-    let backend = webrogue_wasm3_backend::backend::Backend::new();
+    let lifecycle = webrogue_runtime::Lifecycle::new();
+    let backend = make_backend();
+
     lifecycle.run(backend)?;
     Ok(())
 }

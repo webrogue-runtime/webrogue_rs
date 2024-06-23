@@ -1,5 +1,5 @@
-use crate::runtime::IRuntime;
+use crate::runtime::Runtime;
 
-pub trait IBackend {
-    fn make_runtime(&self) -> Box<dyn IRuntime>;
+pub trait Backend {
+    fn make_runtime(&self) -> Box<dyn Runtime>;
 }

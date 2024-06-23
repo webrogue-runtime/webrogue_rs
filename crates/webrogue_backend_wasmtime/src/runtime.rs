@@ -1,8 +1,8 @@
-use webrogue_runtime::{imported_function_defenition::ImportedFunctionContext, runtime::IRuntime};
+use wasmtime::AsContextMut;
 
 use crate::{
     imports::implement_imports,
-    memory::{Memory, StubMemory},
+    memory::{MemoryFactory, StubMemoryFactory},
 };
 
 pub struct Runtime {}
@@ -11,10 +11,6 @@ impl Runtime {
     pub fn new() -> Self {
         Self {}
     }
-}
-
-fn wr_log(data: String) {
-    println!("{}", data);
 }
 
 fn get_file_as_byte_vec(filename: &str) -> Vec<u8> {
@@ -26,7 +22,7 @@ fn get_file_as_byte_vec(filename: &str) -> Vec<u8> {
     buffer
 }
 
-impl IRuntime for Runtime {
+impl webrogue_runtime::Runtime for Runtime {
     fn run(&self) -> anyhow::Result<()> {
         let mut config = wasmtime::Config::new();
         config.debug_info(true);
@@ -39,7 +35,7 @@ impl IRuntime for Runtime {
 
         let mut store_box = Box::new(wasmtime::Store::new(
             &engine,
-            ImportedFunctionContext::new(Box::new(StubMemory::new())),
+            webrogue_runtime::Context::new(Box::new(StubMemoryFactory::new())),
         ));
         let store_ptr = &mut *store_box;
 
@@ -53,9 +49,9 @@ impl IRuntime for Runtime {
             Some(memory) => memory,
         };
 
-        (*store_ptr).data_mut().memory = Box::new(Memory::new(memory, store_ptr));
+        (*store_ptr).data_mut().memory_factory = Box::new(MemoryFactory::new(memory, store_ptr));
 
-        let run = instance.get_typed_func::<(), ()>(store_ptr, "_start")?;
+        let run = instance.get_typed_func::<(), ()>(store_ptr.as_context_mut(), "_start")?;
 
         run.call(&mut *store_ptr, ())?;
         Ok(())
