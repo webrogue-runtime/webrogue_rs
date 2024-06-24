@@ -9,7 +9,7 @@ impl Runtime {
 }
 
 impl webrogue_runtime::Runtime for Runtime {
-    fn run(&self, bytecode: Vec<u8>) -> anyhow::Result<()> {
+    fn run(&self, wasi: webrogue_runtime::WasiCtx, bytecode: Vec<u8>) -> anyhow::Result<()> {
         let env = wasm3::Environment::new().expect("Unable to create environment");
         let runtime = env
             .create_runtime(1024 * 60)
@@ -24,9 +24,10 @@ impl webrogue_runtime::Runtime for Runtime {
         let mut module = runtime_box
             .load_module(module)
             .map_err(|_| anyhow::Error::msg("m3_LoadModule returned an error"))?;
-        let mut context = webrogue_runtime::Context::new(Box::new(
-            crate::memory::MemoryFactory::new(runtime_ptr),
-        ));
+        let mut context = webrogue_runtime::Context::new(
+            Box::new(crate::memory::MemoryFactory::new(runtime_ptr)),
+            wasi,
+        );
         crate::link_functions::link_functions(&mut module, &mut context);
 
         let func = module

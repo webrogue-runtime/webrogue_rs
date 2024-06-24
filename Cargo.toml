@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["wasmtime"]
+default = ["wasmtime", "sync"]
 wasmtime = ["dep:webrogue_backend_wasmtime"]
 wasm3 = ["dep:webrogue_backend_wasm3"]
+sync = ["dep:webrogue_wasi_sync"]
 
 [dependencies]
 webrogue_runtime = { path = "crates/webrogue_runtime" }
@@ -15,3 +16,6 @@ anyhow = { version = "1" }
 # backends
 webrogue_backend_wasmtime = { path = "crates/webrogue_backend_wasmtime", optional = true }
 webrogue_backend_wasm3 = { path = "crates/webrogue_backend_wasm3", optional = true }
+
+# wasi
+webrogue_wasi_sync = { path = "crates/webrogue_wasi_sync", optional = true }

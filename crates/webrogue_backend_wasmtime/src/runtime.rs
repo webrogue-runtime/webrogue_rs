@@ -14,7 +14,7 @@ impl Runtime {
 }
 
 impl webrogue_runtime::Runtime for Runtime {
-    fn run(&self, bytecode: Vec<u8>) -> anyhow::Result<()> {
+    fn run(&self, wasi: webrogue_runtime::WasiCtx, bytecode: Vec<u8>) -> anyhow::Result<()> {
         let mut config = wasmtime::Config::new();
         config.debug_info(true);
         config.cranelift_opt_level(wasmtime::OptLevel::None);
@@ -23,7 +23,7 @@ impl webrogue_runtime::Runtime for Runtime {
 
         let mut store_box = Box::new(wasmtime::Store::new(
             &engine,
-            webrogue_runtime::Context::new(Box::new(StubMemoryFactory::new())),
+            webrogue_runtime::Context::new(Box::new(StubMemoryFactory::new()), wasi),
         ));
         let store_ptr = &mut *store_box;
 

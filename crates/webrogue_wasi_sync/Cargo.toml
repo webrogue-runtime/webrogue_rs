@@ -1,0 +1,9 @@
+[package]
+name = "webrogue_wasi_sync"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+webrogue_runtime = { path = "../webrogue_runtime" }
+wasi-common = { path = "../../external/wasmtime/crates/wasi-common", default-features = false, features = ["trace_log", "sync"] }
+cap-std = "3.1"
