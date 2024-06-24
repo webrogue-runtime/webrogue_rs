@@ -2,7 +2,7 @@ use crate::context::Context;
 use wasi_common::snapshots::preview_1::wasi_snapshot_preview1::WasiSnapshotPreview1;
 use wiggle::GuestPtr;
 
-pub fn args_get(_context: &mut Context, a: u32, b: u32) -> u32 {
+pub fn args_get(_context: &mut Context, _a: u32, _b: u32) -> u32 {
     0
 }
 
@@ -63,7 +63,7 @@ pub fn fd_fdstat_get(context: &mut Context, fd: u32, out: u32) -> u32 {
         }
     };
 }
-pub fn fd_seek(_context: &mut Context, a: u32, b: u64, c: u32, d: u32) -> u32 {
+pub fn fd_seek(_context: &mut Context, _a: u32, _b: u64, _c: u32, _d: u32) -> u32 {
     todo!()
 }
 pub fn fd_write(
@@ -95,8 +95,8 @@ pub fn fd_write(
     };
 }
 
-pub fn fd_fdstat_set_flags(context: &mut Context, a: u32, b: u32) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
+pub fn fd_fdstat_set_flags(context: &mut Context, _a: u32, _b: u32) -> u32 {
+    let _memory = context.memory_factory.make_memory();
     todo!()
 }
 pub fn fd_prestat_get(context: &mut Context, fd: u32, buf: u32) -> u32 {
@@ -115,7 +115,7 @@ pub fn fd_prestat_get(context: &mut Context, fd: u32, buf: u32) -> u32 {
             };
             return 0;
         }
-        Err(e) => {
+        Err(_) => {
             return 8;
         }
     };

@@ -14,6 +14,6 @@ pub fn imported_func_3(context: &mut Context, a: u32, b: u32) {
     println!("imported_func_3({}, {})", a, b);
     let mut memory = context.memory_factory.make_memory();
     let a = wiggle::GuestPtr::<u16>::new(a);
-    let dat = memory.read(a);
-    memory.write(a, 48);
+    let _dat = memory.read(a);
+    let _ = memory.write(a, 48);
 }
