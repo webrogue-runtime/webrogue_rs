@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 wasmtime = { path = "../../external/wasmtime/crates/wasmtime" }
-wasmtime-c-api-impl = { path = "../../external/wasmtime/crates/c-api"}
 webrogue_runtime = { path = "../webrogue_runtime"}
 anyhow = { version = "1" }
 webrogue_macros = {path = "../webrogue_macros"}

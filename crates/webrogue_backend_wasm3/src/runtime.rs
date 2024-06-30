@@ -9,7 +9,11 @@ impl Runtime {
 }
 
 impl webrogue_runtime::Runtime for Runtime {
-    fn run(&self, wasi: webrogue_runtime::WasiCtx, bytecode: Vec<u8>) -> anyhow::Result<()> {
+    fn run(
+        &self,
+        wasi: webrogue_runtime::wasi_common::WasiCtx,
+        bytecode: Vec<u8>,
+    ) -> anyhow::Result<()> {
         let env = wasm3::Environment::new().expect("Unable to create environment");
         let runtime = env
             .create_runtime(1024 * 60)
@@ -34,7 +38,7 @@ impl webrogue_runtime::Runtime for Runtime {
             .find_function::<(), ()>("_start")
             .map_err(|_| anyhow::Error::msg("m3_FindFunction returned an error"))?;
         func.call()
-            .map_err(|e| anyhow::Error::msg("m3_CallV returned an error"))?;
+            .map_err(|_| anyhow::Error::msg("m3_CallV returned an error"))?;
         drop(runtime_box);
         Ok(())
     }

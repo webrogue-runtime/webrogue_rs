@@ -14,7 +14,11 @@ impl Runtime {
 }
 
 impl webrogue_runtime::Runtime for Runtime {
-    fn run(&self, wasi: webrogue_runtime::WasiCtx, bytecode: Vec<u8>) -> anyhow::Result<()> {
+    fn run(
+        &self,
+        wasi: webrogue_runtime::wasi_common::WasiCtx,
+        bytecode: Vec<u8>,
+    ) -> anyhow::Result<()> {
         let mut config = wasmtime::Config::new();
         config.debug_info(true);
         config.cranelift_opt_level(wasmtime::OptLevel::None);

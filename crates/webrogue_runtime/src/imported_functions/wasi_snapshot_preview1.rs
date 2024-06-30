@@ -47,10 +47,7 @@ pub fn fd_fdstat_get(context: &mut Context, fd: u32, out: u32) -> u32 {
 
     match futures::executor::block_on(context.wasi.fd_fdstat_get(&mut memory, fd.into())) {
         Ok(fdstat) => {
-            match memory.write(
-                wiggle::GuestPtr::<wasi_common::snapshots::preview_1::types::Fdstat>::new(out),
-                fdstat,
-            ) {
+            match memory.write(wiggle::GuestPtr::<_>::new(out), fdstat) {
                 Err(_) => {
                     return 1;
                 }
@@ -179,6 +176,35 @@ pub fn path_open(
         Err(_) => 1,
         Ok(result) => {
             memory.write(GuestPtr::<_>::new(fd), result).unwrap();
+            0
+        }
+    }
+}
+
+pub fn poll_oneoff(
+    context: &mut Context,
+    subscription_in_ptr: u32,
+    out_ptr: u32,
+    nsubscriptions: u32,
+    nevents_ptr: u32,
+) -> u32 {
+    let mut memory = context.memory_factory.make_memory();
+
+    let future = context.wasi.poll_oneoff(
+        &mut memory,
+        GuestPtr::<wasi_common::snapshots::preview_1::types::Subscription>::new(
+            subscription_in_ptr,
+        ),
+        GuestPtr::<wasi_common::snapshots::preview_1::types::Event>::new(out_ptr),
+        nsubscriptions,
+    );
+
+    match futures::executor::block_on(future) {
+        Err(_) => 1,
+        Ok(result) => {
+            memory
+                .write(GuestPtr::<_>::new(nevents_ptr), result)
+                .unwrap();
             0
         }
     }

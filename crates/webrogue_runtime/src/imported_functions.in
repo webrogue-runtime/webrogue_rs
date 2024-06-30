@@ -13,3 +13,4 @@ webrogue_func_wrap!{wasi_snapshot_preview1.fd_prestat_get(u32, u32) -> (u32)}
 webrogue_func_wrap!{wasi_snapshot_preview1.fd_prestat_dir_name(u32, u32, u32) -> (u32)}
 webrogue_func_wrap!{wasi_snapshot_preview1.fd_read(u32, u32, u32, u32) -> (u32)}
 webrogue_func_wrap!{wasi_snapshot_preview1.path_open(u32, u32, u32, u32, u32, u64, u64, u32, u32) -> (u32)}
+webrogue_func_wrap!{wasi_snapshot_preview1.poll_oneoff(u32, u32, u32, u32) -> (u32)}

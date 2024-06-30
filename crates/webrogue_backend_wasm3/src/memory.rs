@@ -45,7 +45,6 @@ impl webrogue_runtime::DynamicGuestMemory for DynamicMemory {
     fn read(&self, offset: u32, data: &mut [u8]) {
         let runtime = unsafe { self.runtime.as_mut().unwrap() };
         let memory = runtime.memory_mut();
-        let a: u32 = 0;
         unsafe {
             (*memory)
                 .as_mut_ptr()
