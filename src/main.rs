@@ -42,7 +42,7 @@ fn main() -> Result<()> {
     let wasi_factory = make_wasi_factory();
     let mut wasi = wasi_factory.make();
 
-    wasi_factory.add_actual_dir(&mut wasi, ".", "/");
+    wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
 
     #[cfg(all(feature = "std_stream_sdl", feature = "std_stream_os"))]
     compile_error!("webrogue_rs currently can't use more than one std_stream implementation");
