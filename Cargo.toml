@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["backend_wasmer_singlepass", "wasi_sync", "std_stream_os"]
+default = ["backend_wasmer_singlepass", "wasi_sync", "std_stream_sdl"]
 
 backend_wasmtime = ["dep:webrogue_backend_wasmtime"]
 backend_wasmer_singlepass = ["_backend_wasmer", "webrogue_backend_wasmer/singlepass"]

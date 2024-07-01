@@ -10,6 +10,8 @@ fs-set-times = "0.20.1"
 system-interface = { version = "0.27.1", features = ["cap_std_impls"] }
 io-lifetimes = { version = "2.0.3", default-features = false }
 wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false  }
+utf8parse = { version = "0.2" }
+
 
 [target.'cfg(unix)'.dependencies]
 rustix = { version = "0.38.31", features = ["fs", "event"] }
