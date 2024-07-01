@@ -1,5 +1,4 @@
 use std::{path::PathBuf, str::FromStr};
-
 pub struct WasiFactory {}
 
 impl webrogue_runtime::WasiFactory for WasiFactory {
@@ -13,10 +12,11 @@ impl webrogue_runtime::WasiFactory for WasiFactory {
     }
 
     fn add_actual_dir(&self, wasi: &mut wasi_common::WasiCtx, actual_path: &str, guest_path: &str) {
+        #[cfg(not(windows))]
+        let cap_std_dir =
+            cap_std::fs::Dir::from_std_file(std::fs::File::open(actual_path).unwrap());
         wasi.push_dir(
-            Box::new(wasi_common::sync::dir::Dir::from_cap_std(
-                cap_std::fs::Dir::from_std_file(std::fs::File::open(actual_path).unwrap()),
-            )),
+            Box::new(wasi_common::sync::dir::Dir::from_cap_std(cap_std_dir)),
             PathBuf::from_str(guest_path).unwrap(),
         )
         .unwrap();
