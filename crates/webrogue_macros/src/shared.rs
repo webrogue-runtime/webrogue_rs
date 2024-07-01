@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub enum ValueType {
     U32,
     U64,

@@ -2,12 +2,14 @@ use anyhow::Result;
 use clap::Parser;
 use webrogue_runtime::WasiFactory;
 
-#[cfg(all(feature = "backend_wasm3", feature = "backend_wasmtime"))]
-compile_error!("webrogue_rs currently can't use more than one backend implementation");
-
 #[cfg(feature = "backend_wasmtime")]
 fn make_backend() -> impl webrogue_runtime::Backend {
     webrogue_backend_wasmtime::Backend::new()
+}
+
+#[cfg(feature = "_backend_wasmer")]
+fn make_backend() -> impl webrogue_runtime::Backend {
+    webrogue_backend_wasmer::Backend::new()
 }
 
 #[cfg(feature = "backend_wasm3")]

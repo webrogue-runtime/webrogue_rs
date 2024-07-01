@@ -1,0 +1,15 @@
+[package]
+name = "webrogue_backend_wasmer"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+singlepass = ["wasmer/jit", "wasmer/singlepass"]
+cranelift = ["wasmer/jit", "wasmer/cranelift"]
+llvm = ["wasmer/jit", "wasmer/llvm"]
+
+[dependencies]
+webrogue_runtime = { path = "../webrogue_runtime"}
+anyhow = { version = "1" }
+wasmer = { version = "4.3.1", default-features = false }
+webrogue_macros = {path = "../webrogue_macros"}

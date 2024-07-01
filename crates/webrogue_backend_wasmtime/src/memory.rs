@@ -8,7 +8,7 @@ impl StubMemoryFactory {
 
 impl webrogue_runtime::MemoryFactory for StubMemoryFactory {
     fn make_memory(&self) -> webrogue_runtime::GuestMemory {
-        todo!()
+        unimplemented!()
     }
 }
 
