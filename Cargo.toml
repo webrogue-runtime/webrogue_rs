@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["backend_wasm3", "wasi_sync", "std_stream_sdl"]
+default = ["backend_wasm3", "wasi_sync", "std_stream_os"]
 
 backend_wasmtime = ["dep:webrogue_backend_wasmtime"]
 backend_wasm3 = ["dep:webrogue_backend_wasm3"]
