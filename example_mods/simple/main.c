@@ -45,10 +45,12 @@ int main(int argc, char **argv) {
   // fclose(file);
 
   sleep(2);
+  for (int s = 1; s < 30; s++) {
+    printf("test: %s", readed);
+  }
   printf("test: %s\n", readed);
-  printf("test: %s\n", readed);
-  for (int s = 1; s < 3; s++) {
-    sleep(1);
+  for (int s = 1; s < 40; s++) {
+    usleep(200 * 1000);
     printf("s: %d\n", s);
   }
   // imported_func_1(argc);
