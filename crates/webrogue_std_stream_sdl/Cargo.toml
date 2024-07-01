@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 webrogue_runtime = { path = "../webrogue_runtime" }
-sdl2 = { version = "0.37", features = ["bundled", "ttf"] }
+sdl2 = { path = "../../external/rust-sdl2", features = ["bundled", "ttf", "bundled-ttf", "static-link"] }
 fs-set-times = "0.20.1"
 system-interface = { version = "0.27.1", features = ["cap_std_impls"] }
 io-lifetimes = { version = "2.0.3", default-features = false }
