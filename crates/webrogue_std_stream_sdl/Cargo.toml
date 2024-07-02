@@ -3,13 +3,18 @@ name = "webrogue_std_stream_sdl"
 version = "0.1.0"
 edition = "2021"
 
+
+[features]
+default = ["bundled"]
+bundled = ["sdl2/bundled", "sdl2/bundled-ttf", "sdl2/static-link"]
+
 [dependencies]
 webrogue_runtime = { path = "../webrogue_runtime" }
-sdl2 = { path = "../../external/rust-sdl2", features = ["bundled", "ttf", "bundled-ttf", "static-link"] }
+sdl2 = { path = "../../external/rust-sdl2", features = ["ttf"] }
 fs-set-times = "0.20.1"
 system-interface = { version = "0.27.1", features = ["cap_std_impls"] }
 io-lifetimes = { version = "2.0.3", default-features = false }
-wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false  }
+wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false }
 utf8parse = { version = "0.2" }
 
 

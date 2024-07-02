@@ -15,8 +15,8 @@ pub struct Import {
 pub fn get_imports() -> Vec<Import> {
     let mut result = vec![];
 
-    let file_content =
-        std::fs::read_to_string("crates/webrogue_runtime/src/imported_functions.in").unwrap();
+    let file_content = include_bytes!("../../webrogue_runtime/src/imported_functions.in");
+    let file_content = String::from_utf8_lossy(file_content);
 
     for line in file_content.split("\n") {
         if line.is_empty() {

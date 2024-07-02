@@ -4,3 +4,9 @@
 [submodule "external/rust-sdl2"]
 	path = external/rust-sdl2
 	url = https://github.com/Rust-SDL2/rust-sdl2.git
+[submodule "platforms/android/app/src/main/cpp/external/SDL"]
+	path = platforms/android/app/src/main/cpp/external/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "platforms/android/app/src/main/cpp/external/SDL_ttf"]
+	path = platforms/android/app/src/main/cpp/external/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
