@@ -11,13 +11,17 @@ impl webrogue_runtime::WasiFactory for WasiFactory {
         )
     }
 
-    fn add_actual_dir(&self, wasi: &mut wasi_common::WasiCtx, actual_path: std::path::PathBuf, guest_path: &str) {
-        #[cfg(not(windows))]
-        let cap_std_dir =
-            cap_std::fs::Dir::from_std_file(std::fs::File::open(actual_path).unwrap());
-
+    fn add_actual_dir(
+        &self,
+        wasi: &mut wasi_common::WasiCtx,
+        actual_path: std::path::PathBuf,
+        guest_path: &str,
+    ) {
         wasi.push_dir(
-            Box::new(wasi_common::sync::dir::Dir::from_cap_std(cap_std_dir)),
+            Box::new(wasi_common::sync::dir::Dir::from_cap_std(
+                cap_std::fs::Dir::open_ambient_dir(actual_path, cap_std::ambient_authority())
+                    .unwrap(),
+            )),
             PathBuf::from_str(guest_path).unwrap(),
         )
         .unwrap();
