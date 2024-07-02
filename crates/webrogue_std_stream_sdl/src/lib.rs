@@ -195,8 +195,8 @@ pub fn run_in_terminal<T>(
                             &ch_texture,
                             None,
                             Some(sdl2::rect::Rect::new(
-                                (ch_i as u32 * font_width) as i32,
-                                line_i * font_height as i32,
+                                (window_width * ch_i as u32 / cells_x_count as u32) as i32,
+                                (window_height * line_i as u32 / cells_y_count as u32) as i32,
                                 font_width,
                                 font_height,
                             )),
