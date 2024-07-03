@@ -11,7 +11,7 @@ fn main() -> anyhow::Result<()> {
     webrogue_std_stream_sdl::run_in_terminal(
         wasi,
         std::sync::Arc::new(move |wasi| {
-            let backend = webrogue_backend_wasmer::Backend::new();
+            let backend = webrogue_backend_wasm3::Backend::new();
             lifecycle.run(
                 backend,
                 wasi,

@@ -21,8 +21,6 @@ project("webrogue")
 #     CRATES webrogue_android
 # )
 
-add_subdirectory(rust_cmake)
-
 set(SDL_SHARED ON)
 set(SDL_STATIC OFF)
 exec_program(git ${CMAKE_CURRENT_SOURCE_DIR}/external/SDL ARGS submodule update --init)
@@ -37,12 +35,25 @@ add_library(
     webrogue SHARED
     webrogue_runtime.cpp
 )
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)")
+    set(CARGO_TARGET "aarch64-linux-android")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "armv7-a")
+    set(CARGO_TARGET "armv7-linux-androideabi")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
+    set(CARGO_TARGET "i686-linux-android")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set(CARGO_TARGET "x86_64-linux-android")
+else()
+    message(FATAL_ERROR "Unknown CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
 target_link_libraries(
     webrogue
 
     android
     log
-    webrogue_android
+    ${CMAKE_CURRENT_LIST_DIR}/target/${CARGO_TARGET}/${CARGO_PROFILE}/libwebrogue_android.a
     SDL2
     SDL2_ttf
 )

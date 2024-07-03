@@ -11,6 +11,6 @@ crate-type = ["staticlib"]
 [dependencies]
 anyhow = { version = "1" }
 webrogue_runtime = { path = "../../../../../../crates/webrogue_runtime" }
-webrogue_backend_wasmer = { path = "../../../../../../crates/webrogue_backend_wasmer", default-features = false, features = ["singlepass"] }
+webrogue_backend_wasm3 = { path = "../../../../../../crates/webrogue_backend_wasm3" }
 webrogue_wasi_sync = { path = "../../../../../../crates/webrogue_wasi_sync" }
 webrogue_std_stream_sdl = { path = "../../../../../../crates/webrogue_std_stream_sdl", default-features = false }
