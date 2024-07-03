@@ -53,7 +53,7 @@ target_link_libraries(
 
     android
     log
-    ${CMAKE_CURRENT_LIST_DIR}/target/${CARGO_TARGET}/${CARGO_PROFILE}/libwebrogue_android.a
+    ${CMAKE_CURRENT_LIST_DIR}/../rust/target/${CARGO_TARGET}/${CARGO_PROFILE}/libwebrogue_android.a
     SDL2
     SDL2_ttf
 )

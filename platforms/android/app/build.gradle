@@ -74,7 +74,7 @@ android {
     cargo {
         pythonCommand = "python3"
         profile = cargoProfile
-        module  = "src/main/cpp"
+        module  = "src/main/rust"
         libname = "webrogue_android"
         targets = ["arm", "x86", "arm64", "x86_64"]
     }
