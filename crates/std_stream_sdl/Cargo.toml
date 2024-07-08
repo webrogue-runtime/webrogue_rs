@@ -9,7 +9,7 @@ default = ["bundled"]
 bundled = ["sdl2/bundled", "sdl2/bundled-ttf", "sdl2/static-link"]
 
 [dependencies]
-webrogue_runtime = { path = "../webrogue_runtime" }
+webrogue_runtime = { path = "../runtime" }
 sdl2 = { path = "../../external/rust-sdl2", features = ["ttf"] }
 fs-set-times = "0.20.1"
 system-interface = { version = "0.27.1", features = ["cap_std_impls"] }

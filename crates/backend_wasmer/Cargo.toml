@@ -9,7 +9,7 @@ cranelift = ["wasmer/jit", "wasmer/cranelift"]
 llvm = ["wasmer/jit", "wasmer/llvm"]
 
 [dependencies]
-webrogue_runtime = { path = "../webrogue_runtime"}
+webrogue_runtime = { path = "../runtime"}
 anyhow = { version = "1" }
 wasmer = { version = "4.3.1", default-features = false }
-webrogue_macros = {path = "../webrogue_macros"}
+webrogue_macros = { path = "../macros" }

@@ -10,3 +10,6 @@
 [submodule "platforms/android/app/src/main/cpp/external/SDL_ttf"]
 	path = platforms/android/app/src/main/cpp/external/SDL_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "external/rusty_v8"]
+	path = external/rusty_v8
+	url = https://github.com/denoland/rusty_v8.git

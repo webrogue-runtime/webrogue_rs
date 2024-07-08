@@ -17,6 +17,11 @@ fn make_backend() -> impl webrogue_runtime::Backend {
     webrogue_backend_wasm3::Backend::new()
 }
 
+#[cfg(feature = "backend_v8")]
+fn make_backend() -> impl webrogue_runtime::Backend {
+    webrogue_backend_v8::Backend::new()
+}
+
 #[cfg(feature = "wasi_sync")]
 fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
     webrogue_wasi_sync::WasiFactory {}

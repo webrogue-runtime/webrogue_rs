@@ -76,12 +76,27 @@ android {
         profile = cargoProfile
         module  = "src/main/rust"
         libname = "webrogue_android"
-        targets = ["arm", "x86", "arm64", "x86_64"]
+        // targets = ["arm", "x86", "arm64", "x86_64"]
+        targets = ["arm64", "x86_64"]
+        exec { spec, toolchain ->
+//            if (toolchain.target == "armv7-linux-androideabi"
+//                            || toolchain.target == "i686-linux-android") {
+                spec.environment("V8_FROM_SOURCE", "1")
+//            }
+        }
     }
     externalNativeBuild {
         cmake {
             path file('src/main/cpp/CMakeLists.txt')
             version '3.22.1'
+        }
+    }
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                abiFilters 'arm64-v8a', 'x86_64'
+                // abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+            }
         }
     }
     applicationVariants.configureEach { variant ->

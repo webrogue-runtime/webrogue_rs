@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-webrogue_runtime = { path = "../webrogue_runtime"}
+webrogue_runtime = { path = "../runtime"}
 anyhow = { version = "1" }
 wasm3 = { git = "https://github.com/wasm3/wasm3-rs.git", default-features = false, features = ["build-bindgen", "std", "use-32bit-slots"] }
-webrogue_macros = {path = "../webrogue_macros"}
+webrogue_macros = { path = "../macros" }

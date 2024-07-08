@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-webrogue_runtime = { path = "../webrogue_runtime" }
+webrogue_runtime = { path = "../runtime" }
 wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false  }
 
 [target.'cfg(unix)'.dependencies]
