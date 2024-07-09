@@ -100,13 +100,12 @@ try {
                 let memory_object = result.to_object(scope).unwrap();
                 let wasm_memory_object: v8::Local<v8::WasmMemoryObject> =
                     memory_object.try_into().unwrap();
-
-                let a = memory::MemoryFactory {
+                let memory_factory = memory::MemoryFactory {
                     wasm_memory_object: wasm_memory_object,
                 };
 
                 webrogue_context.memory_factory = Box::new(memory::ProxiedMemoryFactory {
-                    raw_ptr: (&a as *const memory::MemoryFactory) as usize,
+                    raw_ptr: (&memory_factory as *const memory::MemoryFactory) as usize,
                 });
 
                 let c_source = r#"
@@ -121,6 +120,7 @@ try {
                 let result = script.run(scope).unwrap();
                 result.to_uint32(scope).unwrap();
                 drop(webrogue_context);
+                drop(memory_factory);
             }
 
             unsafe {
