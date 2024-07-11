@@ -7,6 +7,7 @@ edition = "2021"
 singlepass = ["wasmer/jit", "wasmer/singlepass"]
 cranelift = ["wasmer/jit", "wasmer/cranelift"]
 llvm = ["wasmer/jit", "wasmer/llvm"]
+jsc = ["wasmer/jsc", "wasmer/std"]
 
 [dependencies]
 webrogue_runtime = { path = "../runtime"}
