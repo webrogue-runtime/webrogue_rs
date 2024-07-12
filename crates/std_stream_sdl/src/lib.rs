@@ -1,4 +1,4 @@
-use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
+use sdl2::{event::Event, pixels::Color};
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;

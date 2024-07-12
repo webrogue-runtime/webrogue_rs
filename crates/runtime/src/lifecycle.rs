@@ -12,9 +12,10 @@ impl Lifecycle {
         &self,
         backend: impl Backend,
         wasi: wasi_common::WasiCtx,
-        bytecode: Vec<u8>,
+        archive_path: std::path::PathBuf,
     ) -> Result<()> {
         let runtime = backend.make_runtime();
+        let bytecode = wrapp::read_wasm(archive_path)?;
         runtime.run(wasi, bytecode)?;
         Ok(())
     }

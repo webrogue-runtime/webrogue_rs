@@ -27,15 +27,6 @@ fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
     webrogue_wasi_sync::WasiFactory {}
 }
 
-fn get_file_as_byte_vec(filename: std::path::PathBuf) -> Vec<u8> {
-    let mut f = std::fs::File::open(filename.clone()).expect("no file found");
-    let metadata = std::fs::metadata(filename).expect("unable to read metadata");
-    let mut buffer = vec![0; metadata.len() as usize];
-    std::io::Read::read(&mut f, &mut buffer).expect("buffer overflow");
-
-    buffer
-}
-
 #[derive(Parser)]
 struct Cli {
     path: std::path::PathBuf,
@@ -58,7 +49,7 @@ fn main() -> Result<()> {
         std::sync::Arc::new(move |wasi| {
             let backend = make_backend();
             let args = Cli::parse();
-            lifecycle.run(backend, wasi, get_file_as_byte_vec(args.path))
+            lifecycle.run(backend, wasi, args.path).unwrap();
         }),
     );
 

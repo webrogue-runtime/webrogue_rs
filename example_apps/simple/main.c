@@ -36,7 +36,6 @@ __attribute__((export_name("exported_func_1"))) void exported_func_1() {
   // imported_func_1(*str);
   // imported_func_1(imported_func_2(20));
 }
-
 int main(int argc, char **argv) {
   // FILE *file = fopen("/example_mods/simple/test_file.txt", "r");
   char readed[12] = "unin\0\0\0\0\0\0\0\0";
