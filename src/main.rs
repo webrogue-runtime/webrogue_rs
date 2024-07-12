@@ -40,6 +40,9 @@ fn main() -> Result<()> {
 
     wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
 
+    let args = Cli::parse();
+    let reader = webrogue_runtime::wrapp::Reader::from_file_path(args.path)?;
+
     #[cfg(all(feature = "std_stream_sdl", feature = "std_stream_os"))]
     compile_error!("webrogue_rs currently can't use more than one std_stream implementation");
 
@@ -48,8 +51,7 @@ fn main() -> Result<()> {
         wasi,
         std::sync::Arc::new(move |wasi| {
             let backend = make_backend();
-            let args = Cli::parse();
-            lifecycle.run(backend, wasi, args.path).unwrap();
+            lifecycle.run(backend, wasi, reader.clone()).unwrap();
         }),
     );
 
@@ -59,8 +61,7 @@ fn main() -> Result<()> {
         webrogue_std_stream_os::bind_streams(&mut wasi);
 
         let backend = make_backend();
-        let args = Cli::parse();
-        lifecycle.run(backend, wasi, get_file_as_byte_vec(args.path))?
+        lifecycle.run(backend, wasi, reader)?
     }
 
     Ok(())

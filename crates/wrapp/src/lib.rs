@@ -1,4 +1,7 @@
-use std::io::{Read, Write};
+use std::{
+    io::{Cursor, Read, Write},
+    sync::{Arc, Mutex},
+};
 
 pub fn archive(
     dir_path: std::path::PathBuf,
@@ -56,14 +59,70 @@ pub fn archive(
     return anyhow::Ok(());
 }
 
-pub fn read_wasm(path: std::path::PathBuf) -> anyhow::Result<Vec<u8>> {
-    let mut decomp = Vec::new();
-    let mut s = zstd_seekable::Seekable::init_file(path.to_str().unwrap())?;
-    for frame in 0..s.get_num_frames() {
-        let size = s.get_frame_decompressed_size(frame);
-        let n = decomp.len();
-        decomp.extend(std::iter::repeat(0).take(size));
-        s.decompress_frame(&mut decomp[n..], frame);
+trait SeekableProvider<'a> {
+    fn get_num_frames(&self) -> usize;
+    fn get_frame_decompressed_size(&self, frame_index: usize) -> usize;
+    fn decompress_frame(&mut self, dest: &mut [u8], index: usize) -> usize;
+}
+
+struct ZSTDSeekableProvider<'a, R> {
+    seekable: zstd_seekable::Seekable<'a, R>,
+}
+
+impl<'a, R> ZSTDSeekableProvider<'a, R> {
+    fn new(seekable: zstd_seekable::Seekable<'a, R>) -> Self {
+        Self { seekable }
     }
-    return anyhow::Ok(decomp);
+}
+
+impl<R> SeekableProvider<'_> for ZSTDSeekableProvider<'_, R> {
+    fn get_num_frames(&self) -> usize {
+        self.seekable.get_num_frames()
+    }
+
+    fn get_frame_decompressed_size(&self, frame_index: usize) -> usize {
+        self.seekable.get_frame_decompressed_size(frame_index)
+    }
+
+    fn decompress_frame(&mut self, dest: &mut [u8], index: usize) -> usize {
+        self.seekable.decompress_frame(dest, index)
+    }
+}
+
+#[derive(Clone)]
+pub struct Reader<'a> {
+    seekable: Arc<Mutex<dyn SeekableProvider<'a>>>,
+}
+
+impl Reader<'_> {
+    pub fn from_file_path(path: std::path::PathBuf) -> anyhow::Result<Self> {
+        let seekable = zstd_seekable::Seekable::init_file(path.to_str().unwrap())?;
+        let seekable = ZSTDSeekableProvider::new(seekable);
+        anyhow::Ok(Self {
+            seekable: Arc::new(Mutex::new(seekable)),
+        })
+    }
+
+    pub fn from_vec(bytes: Vec<u8>) -> anyhow::Result<Self> {
+        let seekable = zstd_seekable::Seekable::init(Box::new(Cursor::new(bytes)))?;
+        let seekable = ZSTDSeekableProvider::new(seekable);
+        anyhow::Ok(Self {
+            seekable: Arc::new(Mutex::new(seekable)),
+        })
+    }
+}
+
+impl Reader<'_> {
+    pub fn read_wasm(&mut self) -> anyhow::Result<Vec<u8>> {
+        let mut seekable: std::sync::MutexGuard<dyn SeekableProvider> =
+            self.seekable.lock().unwrap();
+        let mut decomp = vec![];
+        for frame in 0..seekable.get_num_frames() {
+            let size = seekable.get_frame_decompressed_size(frame);
+            let n = decomp.len();
+            decomp.extend(std::iter::repeat(0).take(size));
+            seekable.decompress_frame(&mut decomp[n..], frame);
+        }
+        return anyhow::Ok(decomp);
+    }
 }

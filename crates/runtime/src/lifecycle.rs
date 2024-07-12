@@ -12,11 +12,11 @@ impl Lifecycle {
         &self,
         backend: impl Backend,
         wasi: wasi_common::WasiCtx,
-        archive_path: std::path::PathBuf,
+        archive_reader: wrapp::Reader,
     ) -> Result<()> {
+        let mut archive_reader = archive_reader;
         let runtime = backend.make_runtime();
-        let bytecode = wrapp::read_wasm(archive_path)?;
-        runtime.run(wasi, bytecode)?;
+        runtime.run(wasi, archive_reader.read_wasm()?)?;
         Ok(())
     }
 }

@@ -82,7 +82,7 @@ pub fn run_in_terminal<T>(
 
     let sdl_context = sdl2::init().unwrap();
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
-    let mut font = ttf_context
+    let font = ttf_context
         .load_font_from_rwops(
             sdl2::rwops::RWops::from_bytes(include_bytes!("../Hack-Regular.ttf")).unwrap(),
             16,
@@ -107,9 +107,6 @@ pub fn run_in_terminal<T>(
         .unwrap();
     let texture_creator = canvas.texture_creator();
 
-    canvas.set_draw_color(Color::RGB(0, 255, 255));
-    canvas.clear();
-    canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     let mut utf_parser = utf8parse::Parser::new();
