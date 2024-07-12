@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1" }
-wrapp = { path = "../wrapp" }
+webrogue_wrapp = { path = "../wrapp" }
 # TODO no submodule
 wasi-common = { path = "../../external/wasmtime/crates/wasi-common", default-features = false, features = ["trace_log"] }
 wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false }

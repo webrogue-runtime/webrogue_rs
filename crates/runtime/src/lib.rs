@@ -8,7 +8,7 @@ mod wasi_factory;
 pub mod imported_functions;
 
 pub use wasi_common;
-pub use wrapp;
+pub use webrogue_wrapp as wrapp;
 
 pub use backend::Backend;
 pub use context::{Context, MemoryFactory};

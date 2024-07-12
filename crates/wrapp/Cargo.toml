@@ -1,5 +1,5 @@
 [package]
-name = "wrapp"
+name = "webrogue_wrapp"
 version = "0.1.0"
 edition = "2021"
 

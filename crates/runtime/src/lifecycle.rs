@@ -12,7 +12,7 @@ impl Lifecycle {
         &self,
         backend: impl Backend,
         wasi: wasi_common::WasiCtx,
-        archive_reader: wrapp::Reader,
+        archive_reader: webrogue_wrapp::Reader,
     ) -> Result<()> {
         let mut archive_reader = archive_reader;
         let runtime = backend.make_runtime();
