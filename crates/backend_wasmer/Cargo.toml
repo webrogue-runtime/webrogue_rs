@@ -13,4 +13,4 @@ jsc = ["wasmer/jsc", "wasmer/std"]
 webrogue_runtime = { path = "../runtime"}
 anyhow = { version = "1" }
 wasmer = { version = "4.3.1", default-features = false }
-webrogue_macros = { path = "../macros" }
+webrogue_backend_wasmer_macro = { path = "macro" }

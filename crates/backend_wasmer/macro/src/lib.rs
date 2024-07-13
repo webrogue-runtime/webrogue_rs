@@ -1,10 +1,10 @@
-extern crate proc_macro;
 use proc_macro::TokenStream;
 
+#[proc_macro]
 pub fn make_link_functions(_item: TokenStream) -> TokenStream {
     let mut result = "".to_owned();
 
-    for import in crate::shared::get_imports() {
+    for import in webrogue_macro_common::get_imports() {
         let static_func_name = format!("imported_fn_{}_{}", import.module, import.func_name);
 
         let in_args = import
@@ -13,8 +13,8 @@ pub fn make_link_functions(_item: TokenStream) -> TokenStream {
             .enumerate()
             .map(|(i, arg)| {
                 let ty = match arg {
-                    crate::shared::ValueType::U32 => "i32",
-                    crate::shared::ValueType::U64 => "i64",
+                    webrogue_macro_common::ValueType::U32 => "i32",
+                    webrogue_macro_common::ValueType::U64 => "i64",
                 };
                 format!(", arg{}: {}", i, ty)
             })
@@ -27,8 +27,8 @@ pub fn make_link_functions(_item: TokenStream) -> TokenStream {
             .enumerate()
             .map(|(i, arg)| {
                 let conv = match arg {
-                    crate::shared::ValueType::U32 => " as u32",
-                    crate::shared::ValueType::U64 => " as u64",
+                    webrogue_macro_common::ValueType::U32 => " as u32",
+                    webrogue_macro_common::ValueType::U64 => " as u64",
                 };
                 format!("arg{}{},\n", i, conv)
             })
@@ -40,8 +40,8 @@ pub fn make_link_functions(_item: TokenStream) -> TokenStream {
                 format!(
                     " -> {}",
                     match ty {
-                        crate::shared::ValueType::U32 => "i32",
-                        crate::shared::ValueType::U64 => "i64",
+                        webrogue_macro_common::ValueType::U32 => "i32",
+                        webrogue_macro_common::ValueType::U64 => "i64",
                     }
                 )
             }
@@ -49,8 +49,8 @@ pub fn make_link_functions(_item: TokenStream) -> TokenStream {
         };
 
         let out_conv = match import.ret_str {
-            Some(crate::shared::ValueType::U32) => "as i32",
-            Some(crate::shared::ValueType::U64) => "as i64",
+            Some(webrogue_macro_common::ValueType::U32) => "as i32",
+            Some(webrogue_macro_common::ValueType::U64) => "as i64",
             _ => "",
         };
 

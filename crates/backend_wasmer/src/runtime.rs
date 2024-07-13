@@ -34,7 +34,7 @@ impl webrogue_runtime::Runtime for Runtime {
         );
 
         let mut import_object = wasmer::imports! {};
-        webrogue_macros::make_wasmer_link_functions!();
+        webrogue_backend_wasmer_macro::make_link_functions!();
 
         let instance = wasmer::Instance::new(&mut store, &module, &import_object)?;
         let memory = instance.exports.get_memory("memory")?;

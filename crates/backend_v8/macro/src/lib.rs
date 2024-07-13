@@ -1,13 +1,13 @@
-extern crate proc_macro;
 use proc_macro::TokenStream;
 
+#[proc_macro]
 pub fn make_link_functions(_item: TokenStream) -> TokenStream {
     let mut result = "
 pub fn link_functions(scope: &mut v8::HandleScope<v8::Context>, imports: v8::Local<v8::Object>) {
 "
     .to_owned();
 
-    for import in crate::shared::get_imports() {
+    for import in webrogue_macro_common::get_imports() {
         let args = import
             .args
             .iter()
@@ -17,8 +17,9 @@ pub fn link_functions(scope: &mut v8::HandleScope<v8::Context>, imports: v8::Loc
                     "                args.get({}).{}",
                     i,
                     match arg {
-                        crate::shared::ValueType::U32 => "uint32_value(scope).unwrap()",
-                        crate::shared::ValueType::U64 => "to_big_int(scope).unwrap().u64_value().0",
+                        webrogue_macro_common::ValueType::U32 => "uint32_value(scope).unwrap()",
+                        webrogue_macro_common::ValueType::U64 =>
+                            "to_big_int(scope).unwrap().u64_value().0",
                     }
                 )
             })
@@ -26,8 +27,8 @@ pub fn link_functions(scope: &mut v8::HandleScope<v8::Context>, imports: v8::Loc
             .join(",\n");
         let ret = match import.ret_str {
             Some(ret) => match ret {
-                crate::shared::ValueType::U32 => "rv.set_uint32(ret);",
-                crate::shared::ValueType::U64 => {
+                webrogue_macro_common::ValueType::U32 => "rv.set_uint32(ret);",
+                webrogue_macro_common::ValueType::U64 => {
                     "rv.set(v8::BigInt::new_from_u64(scope, ret).into());"
                 }
             },

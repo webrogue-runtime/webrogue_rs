@@ -1,6 +1,6 @@
-extern crate proc_macro;
 use proc_macro::TokenStream;
 
+#[proc_macro]
 pub fn make_link_functions(_item: TokenStream) -> TokenStream {
     let mut result = "
 pub fn link_functions(
@@ -10,13 +10,13 @@ pub fn link_functions(
 "
     .to_owned();
 
-    for import in crate::shared::get_imports() {
+    for import in webrogue_macro_common::get_imports() {
         let args = import
             .args
             .iter()
             .map(|arg| match arg {
-                crate::shared::ValueType::U32 => "u32",
-                crate::shared::ValueType::U64 => "u64",
+                webrogue_macro_common::ValueType::U32 => "u32",
+                webrogue_macro_common::ValueType::U64 => "u64",
             })
             .collect::<Vec<_>>()
             .join(", ");
@@ -43,8 +43,8 @@ pub fn link_functions(
                 args
             },
             match import.ret_str {
-                Some(crate::shared::ValueType::U32) => "u32",
-                Some(crate::shared::ValueType::U64) => "u64",
+                Some(webrogue_macro_common::ValueType::U32) => "u32",
+                Some(webrogue_macro_common::ValueType::U64) => "u64",
                 None => "",
             },
             import.implementation_func_name,

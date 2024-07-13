@@ -29,4 +29,4 @@ fn register_import(
     };
 }
 
-webrogue_macros::make_v8_link_functions!();
+webrogue_backend_v8_macro::make_link_functions!();

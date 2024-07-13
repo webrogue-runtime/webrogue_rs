@@ -7,4 +7,4 @@ edition = "2021"
 wasmtime = { path = "../../external/wasmtime/crates/wasmtime" }
 webrogue_runtime = { path = "../runtime"}
 anyhow = { version = "1" }
-webrogue_macros = { path = "../macros" }
+webrogue_backend_wasmtime_macro = { path = "macro" }

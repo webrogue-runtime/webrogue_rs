@@ -1,1 +1,1 @@
-webrogue_macros::make_wasmtime_link_functions! {}
+webrogue_backend_wasmtime_macro::make_link_functions! {}

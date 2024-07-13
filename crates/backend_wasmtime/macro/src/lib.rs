@@ -1,6 +1,6 @@
-extern crate proc_macro;
 use proc_macro::TokenStream;
 
+#[proc_macro]
 pub fn make_link_functions(_item: TokenStream) -> TokenStream {
     let mut result = "
 pub fn get_funcs(
@@ -11,7 +11,7 @@ pub fn get_funcs(
         "
     .to_owned();
 
-    for import in crate::shared::get_imports() {
+    for import in webrogue_macro_common::get_imports() {
         result += &format!(
             "
 funcs.push((
@@ -42,15 +42,15 @@ funcs.push((
                 .iter()
                 .map(|arg| {
                     match arg {
-                        crate::shared::ValueType::U32 => "wasmtime::ValType::I32",
-                        crate::shared::ValueType::U64 => "wasmtime::ValType::I64",
+                        webrogue_macro_common::ValueType::U32 => "wasmtime::ValType::I32",
+                        webrogue_macro_common::ValueType::U64 => "wasmtime::ValType::I64",
                     }
                 })
                 .collect::<Vec<_>>()
                 .join(", "),
             match import.ret_str {
-                Some(crate::shared::ValueType::U32) => "wasmtime::ValType::I32",
-                Some(crate::shared::ValueType::U64) => "wasmtime::ValType::I64",
+                Some(webrogue_macro_common::ValueType::U32) => "wasmtime::ValType::I32",
+                Some(webrogue_macro_common::ValueType::U64) => "wasmtime::ValType::I64",
                 None => "",
             },
             import.implementation_func_name,
@@ -63,10 +63,10 @@ funcs.push((
                         "params[{}].{}",
                         i,
                         match arg {
-                            crate::shared::ValueType::U32 => {
+                            webrogue_macro_common::ValueType::U32 => {
                                 "unwrap_i32() as u32"
                             }
-                            crate::shared::ValueType::U64 => {
+                            webrogue_macro_common::ValueType::U64 => {
                                 "unwrap_i64() as u64"
                             }
                         }
@@ -75,9 +75,9 @@ funcs.push((
                 .collect::<Vec<_>>()
                 .join(",\n"),
             match import.ret_str {
-                Some(crate::shared::ValueType::U32) =>
+                Some(webrogue_macro_common::ValueType::U32) =>
                     "results[0] = wasmtime::Val::I32(result as i32);",
-                Some(crate::shared::ValueType::U64) =>
+                Some(webrogue_macro_common::ValueType::U64) =>
                     "results[0] = wasmtime::Val::I64(result as i64);",
                 None => "",
             },
