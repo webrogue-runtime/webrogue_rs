@@ -14,6 +14,11 @@ pub struct Stdout {
     output: Arc<Mutex<Vec<u8>>>,
 }
 
+#[cfg(target_os = "emscripten")]
+extern "C" {
+    fn c_emscripten_sleep(milliseconds: u32);
+}
+
 #[wiggle::async_trait]
 impl WasiFile for Stdout {
     fn as_any(&self) -> &dyn std::any::Any {
@@ -230,6 +235,11 @@ pub fn run_in_terminal<T>(
             break 'running;
         }
         canvas.present();
+        #[cfg(not(target_os = "emscripten"))]
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        #[cfg(target_os = "emscripten")]
+        unsafe {
+            c_emscripten_sleep(10)
+        };
     }
 }

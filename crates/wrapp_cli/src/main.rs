@@ -8,7 +8,7 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    match wrapp::archive(args.dir_path, args.output_path.clone()) {
+    match webrogue_wrapp::archive(args.dir_path, args.output_path.clone()) {
         Err(e) => {
             let _ = std::fs::remove_file(args.output_path);
             println!("{}", e.to_string());

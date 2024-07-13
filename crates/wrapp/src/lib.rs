@@ -8,7 +8,6 @@ pub fn archive(
     output_path: std::path::PathBuf,
 ) -> anyhow::Result<()> {
     let mut cstream = zstd_seekable::SeekableCStream::new(10, 1024).unwrap();
-    let mut input_vec = vec![];
 
     let mut output = std::fs::File::create(output_path.clone())?;
     let mut out_buffer = [0; 10];
@@ -21,7 +20,6 @@ pub fn archive(
             if readed == 0 {
                 break;
             };
-            input_vec.write_all(&buffer[..readed])?;
 
             let mut writed = 0;
 
@@ -41,21 +39,6 @@ pub fn archive(
         }
         output.write_all(&out_buffer[..n]).unwrap();
     }
-
-    let input = input_vec.as_slice();
-
-    let mut decomp = Vec::new();
-    let mut s = zstd_seekable::Seekable::init_file(output_path.clone().to_str().unwrap())?;
-    for frame in 0..s.get_num_frames() {
-        let size = s.get_frame_decompressed_size(frame);
-        let n = decomp.len();
-        decomp.extend(std::iter::repeat(0).take(size));
-        s.decompress_frame(&mut decomp[n..], frame);
-    }
-    assert_eq!(&input[..], &decomp[..]);
-    decomp.resize(20, 0);
-    s.decompress(decomp.as_mut_slice(), 30).unwrap();
-    assert_eq!(&input[30..50], &decomp[..]);
     return anyhow::Ok(());
 }
 
@@ -95,6 +78,7 @@ pub struct Reader<'a> {
 }
 
 impl Reader<'_> {
+    #[cfg(not(target_family = "wasm"))]
     pub fn from_file_path(path: std::path::PathBuf) -> anyhow::Result<Self> {
         let seekable = zstd_seekable::Seekable::init_file(path.to_str().unwrap())?;
         let seekable = ZSTDSeekableProvider::new(seekable);
