@@ -7,4 +7,4 @@ edition = "2021"
 webrogue_runtime = { path = "../runtime"}
 anyhow = { version = "1" }
 webrogue_backend_v8_macro = { path = "macro" }
-v8 = { version = "0.95" }
+v8 = { git = "https://github.com/denoland/rusty_v8.git" }
