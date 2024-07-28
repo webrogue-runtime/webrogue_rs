@@ -43,11 +43,11 @@ int main(int argc, char **argv) {
   // fread(readed, 1, 11, file);
   // fclose(file);
 
-  sleep(2);
   for (int s = 1; s < 30; s++) {
     printf("test: %s", readed);
   }
   printf("test: %s\n", readed);
+  sleep(2);
   for (int s = 1; s < 40; s++) {
     usleep(200 * 1000);
     printf("s: %d\n", s);
