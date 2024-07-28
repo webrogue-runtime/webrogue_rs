@@ -9,6 +9,7 @@ pub mod imported_functions;
 
 pub use wasi_common;
 pub use webrogue_wrapp as wrapp;
+pub use wiggle;
 
 pub use backend::Backend;
 pub use context::{Context, MemoryFactory};

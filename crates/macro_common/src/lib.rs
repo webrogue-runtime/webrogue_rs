@@ -4,6 +4,7 @@ pub enum ValueType {
     U64,
 }
 
+#[derive(Clone)]
 pub struct Import {
     pub module: String,
     pub func_name: String,

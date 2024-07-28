@@ -42,15 +42,18 @@ pub fn archive(
     return anyhow::Ok(());
 }
 
-trait SeekableProvider<'a> {
+trait SeekableProvider<'a>: Send {
     fn get_num_frames(&self) -> usize;
     fn get_frame_decompressed_size(&self, frame_index: usize) -> usize;
     fn decompress_frame(&mut self, dest: &mut [u8], index: usize) -> usize;
 }
 
+// #[derive(Send)]
 struct ZSTDSeekableProvider<'a, R> {
     seekable: zstd_seekable::Seekable<'a, R>,
 }
+
+unsafe impl<R> Send for ZSTDSeekableProvider<'_, R> {}
 
 impl<'a, R> ZSTDSeekableProvider<'a, R> {
     fn new(seekable: zstd_seekable::Seekable<'a, R>) -> Self {

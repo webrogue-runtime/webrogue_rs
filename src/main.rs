@@ -24,7 +24,7 @@ fn make_backend() -> impl webrogue_runtime::Backend {
 
 #[cfg(feature = "wasi_sync")]
 fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
-    webrogue_wasi_sync::WasiFactory {}
+    webrogue_wasi_sync::WasiFactory::new()
 }
 
 #[derive(Parser)]
