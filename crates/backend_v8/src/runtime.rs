@@ -1,10 +1,5 @@
 use std::ffi::c_void;
 
-#[cfg(feature = "v8_crates_io")]
-pub(crate) use webrogue_backend_v8_src_crates_io::v8;
-#[cfg(feature = "v8_submodule")]
-pub(crate) use webrogue_backend_v8_src_submodule::v8;
-
 use anyhow::Ok;
 
 use crate::memory;

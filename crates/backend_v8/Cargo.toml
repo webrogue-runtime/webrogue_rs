@@ -3,14 +3,8 @@ name = "webrogue_backend_v8"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-default = ["v8_crates_io"]
-v8_crates_io = ["dep:webrogue_backend_v8_src_crates_io"]
-v8_submodule = ["dep:webrogue_backend_v8_src_submodule"]
-
 [dependencies]
 webrogue_runtime = { path = "../runtime"}
 anyhow = { version = "1" }
 webrogue_backend_v8_macro = { path = "macro" }
-webrogue_backend_v8_src_crates_io = { path = "v8_src/crates_io", optional = true }
-webrogue_backend_v8_src_submodule = { path = "v8_src/submodule", optional = true }
+v8 = { version = "0.95" }

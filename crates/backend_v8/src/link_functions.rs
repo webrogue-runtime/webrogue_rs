@@ -1,8 +1,3 @@
-#[cfg(feature = "v8_crates_io")]
-pub(crate) use webrogue_backend_v8_src_crates_io::v8;
-#[cfg(feature = "v8_submodule")]
-pub(crate) use webrogue_backend_v8_src_submodule::v8;
-
 fn register_import(
     scope: &mut v8::HandleScope<v8::Context>,
     imports: v8::Local<v8::Object>,

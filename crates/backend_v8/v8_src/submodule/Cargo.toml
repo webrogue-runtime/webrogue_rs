@@ -1,7 +1,0 @@
-[package]
-name = "webrogue_backend_v8_src_submodule"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-v8 = { path = "../../../../external/rusty_v8" }

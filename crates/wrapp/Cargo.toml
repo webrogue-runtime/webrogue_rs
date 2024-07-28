@@ -5,4 +5,4 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1" }
-zstd-seekable = { version = "0.1.22" }
+zstd-seekable = { version = "0.1.23" }

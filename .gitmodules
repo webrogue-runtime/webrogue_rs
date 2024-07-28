@@ -4,6 +4,3 @@
 [submodule "external/rust-sdl2"]
 	path = external/rust-sdl2
 	url = https://github.com/Rust-SDL2/rust-sdl2.git
-[submodule "external/rusty_v8"]
-	path = external/rusty_v8
-	url = https://github.com/denoland/rusty_v8.git
