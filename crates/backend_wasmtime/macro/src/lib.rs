@@ -45,7 +45,7 @@ funcs.push((
     ),
 ));
             ",
-                import.module,
+                imported_module.module_name,
                 import.func_name,
                 import
                     .args
@@ -56,15 +56,15 @@ funcs.push((
                     })
                     .collect::<Vec<_>>()
                     .join(", "),
-                match import.ret_str {
+                match import.ret {
                     Some(v) =>
                         "webrogue_backend_wasmtime::wasmtime::ValType::".to_owned()
                             + &val_to_wasmtime(&v),
                     None => "".to_owned(),
                 },
-                import.rust_module,
+                imported_module.rust_module,
                 import.func_name,
-                import.rust_module,
+                imported_module.rust_module,
                 i,
                 import
                     .args
@@ -85,7 +85,7 @@ funcs.push((
                     .collect::<Vec<_>>()
                     .join(",\n"),
                 import
-                    .ret_str
+                    .ret
                     .and_then(|ret| {
                         format!(
                             "results[0] = webrogue_backend_wasmtime::wasmtime::Val::{}(result{});",

@@ -69,28 +69,17 @@ impl ValueType {
 
 #[derive(Clone)]
 pub struct Import {
-    pub module: String,
     pub func_name: String,
     pub args: Vec<ValueType>,
-    pub ret_str: Option<ValueType>,
-    pub implementation_func_name: String,
-    pub rust_module: String,
+    pub ret: Option<ValueType>,
 }
 
-pub fn fun_name(
-    file_content: std::borrow::Cow<str>,
-    rust_module: String,
-    result: &mut Vec<Import>,
-) {
+pub fn parse_file(file_content: std::borrow::Cow<str>, result: &mut Vec<Import>) {
     for line in file_content.split("\n") {
         if line.is_empty() {
             continue;
         }
         let mut line = line.to_owned();
-        line = line[20..].to_string();
-        let dot_pos = line.find(".").unwrap();
-        let module = line[..dot_pos].to_string();
-        line = line[dot_pos + 1..].to_string();
         // let colon_pos = line.find(":").unwrap();
         let bracket_pos = line.find("(").unwrap();
         let func_name = line[..bracket_pos].to_string();
@@ -108,21 +97,17 @@ pub fn fun_name(
                 args.push(arg_str.to_string());
             }
         }
-        let implementation_func_name = format!("{}::{}", module.clone(), func_name.clone());
 
         result.push(Import {
-            module: module,
             func_name: func_name,
             args: args
                 .iter()
                 .map(|arg| ValueType::from_rust_type_str(&arg).expect("Unknown type"))
                 .collect(),
-            ret_str: match ret_str.as_str() {
+            ret: match ret_str.as_str() {
                 "" => None,
                 _ => Some(ValueType::from_rust_type_str(&ret_str).expect("Unknown type")),
             },
-            implementation_func_name: implementation_func_name,
-            rust_module: rust_module.clone(),
         })
     }
 }
@@ -170,7 +155,7 @@ impl syn::parse::Parse for Imports {
                         _ => panic!("unknown module"),
                     };
                     let mut imports: Vec<Import> = vec![];
-                    fun_name(file_content, rust_module.clone(), &mut imports);
+                    parse_file(file_content, &mut imports);
                     ImportedModule {
                         module_name: wasm_module,
                         rust_module: rust_module,

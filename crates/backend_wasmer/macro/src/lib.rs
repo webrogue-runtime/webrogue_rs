@@ -57,7 +57,7 @@ fn make_imports() -> webrogue_backend_wasmer::Imports {
                 .collect::<Vec<_>>()
                 .join("");
 
-            let out_ty = match import.ret_str.clone() {
+            let out_ty = match import.ret.clone() {
                 Some(ty) => {
                     format!(
                         " -> {}",
@@ -74,7 +74,7 @@ fn make_imports() -> webrogue_backend_wasmer::Imports {
                 None => "".to_string(),
             };
 
-            let out_conv = match import.ret_str {
+            let out_conv = match import.ret {
                 Some(webrogue_macro_common::ValueType::U32) => "as i32",
                 Some(webrogue_macro_common::ValueType::U64) => "as i64",
                 Some(webrogue_macro_common::ValueType::I32) => "i32",
@@ -117,7 +117,7 @@ import_object.define(
                 import.func_name,
                 out_args,
                 out_conv,
-                import.module,
+                imported_module.module_name,
                 import.func_name,
                 static_func_name,
             );

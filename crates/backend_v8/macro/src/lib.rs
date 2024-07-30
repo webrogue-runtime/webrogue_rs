@@ -39,7 +39,7 @@ pub fn make_imports(
                 })
                 .collect::<Vec<_>>()
                 .join(",\n");
-            let ret = match import.ret_str {
+            let ret = match import.ret {
                 Some(ret) => match ret {
                     webrogue_macro_common::ValueType::U32 => "rv.set_uint32(ret);",
                     webrogue_macro_common::ValueType::U64 => {
@@ -87,7 +87,7 @@ pub fn make_imports(
                 import.func_name,
                 args,
                 ret,
-                import.module,
+                imported_module.module_name,
                 import.func_name,
             );
         }
