@@ -113,13 +113,13 @@ pub fn parse_file(file_content: std::borrow::Cow<str>, result: &mut Vec<Import>)
 }
 
 mod kw {
-    syn::custom_keyword!(mutable);
     syn::custom_keyword!(module);
     syn::custom_keyword!(defs);
+    syn::custom_keyword!(public);
 }
 
 struct Config {
-    // pub mutable: bool,
+    pub is_public: bool,
     pub modules: Vec<(String, ModuleConfig)>,
 }
 
@@ -130,6 +130,7 @@ pub struct ImportedModule {
 }
 
 pub struct Imports {
+    pub is_public: bool,
     pub modules: Vec<ImportedModule>,
 }
 
@@ -140,29 +141,57 @@ impl syn::parse::Parse for Imports {
         let fields: syn::punctuated::Punctuated<ConfigField, syn::Token![,]> =
             contents.parse_terminated(ConfigField::parse, syn::Token![,])?;
         let config = Config::build(fields.into_iter(), input.span())?;
-        Ok(Imports {
-            modules: config
-                .modules
-                .iter()
-                .map(|module_config| {
-                    let rust_module = module_config.1.module.clone();
-                    let wasm_module = module_config.0.clone();
-                    let file_content = match wasm_module.as_str() {
-                        "wr_gl" => String::from_utf8_lossy(include_bytes!("../../gl/defs.in")),
+        let modules: syn::Result<Vec<ImportedModule>> = config
+            .modules
+            .iter()
+            .map(|module_config| {
+                let rust_module = module_config.1.module.clone();
+                let wasm_module = module_config.0.clone();
+                let file_content = match module_config.1.defs.clone() {
+                    None => match wasm_module.as_str() {
                         "wasi_snapshot_preview1" => {
                             String::from_utf8_lossy(include_bytes!("../../wasi/defs.in"))
                         }
-                        _ => panic!("unknown module"),
-                    };
-                    let mut imports: Vec<Import> = vec![];
-                    parse_file(file_content, &mut imports);
-                    ImportedModule {
-                        module_name: wasm_module,
-                        rust_module: rust_module,
-                        funcs: imports,
+                        "wr_gl" => String::from_utf8_lossy(include_bytes!("../../gl/defs.in")),
+                        _ => {
+                            return Err(syn::Error::new(
+                                _lbrace.span.span(),
+                                format!(
+                                    "`defs` for \"{}\" is not specified, and no default one found",
+                                    module_config.0
+                                ),
+                            ))
+                        }
+                    },
+                    Some(def) => {
+                        let path = std::path::Path::new(&def);
+                        let path = path.canonicalize().map_err(|err| {
+                            syn::Error::new(
+                                _lbrace.span.span(),
+                                format!("{}: {}", err.to_string(), path.display()),
+                            )
+                        })?;
+                        let content = std::fs::read_to_string(path.clone()).map_err(|err| {
+                            syn::Error::new(
+                                _lbrace.span.span(),
+                                format!("{}: {}", err.to_string(), path.display()),
+                            )
+                        })?;
+                        std::borrow::Cow::from(content)
                     }
+                };
+                let mut imports: Vec<Import> = vec![];
+                parse_file(file_content, &mut imports);
+                Ok(ImportedModule {
+                    module_name: wasm_module,
+                    rust_module: rust_module,
+                    funcs: imports,
                 })
-                .collect(),
+            })
+            .collect();
+        Ok(Imports {
+            is_public: config.is_public,
+            modules: modules?,
         })
     }
 }
@@ -172,38 +201,38 @@ impl Config {
         fields: impl Iterator<Item = ConfigField>,
         err_loc: proc_macro2::Span,
     ) -> syn::Result<Self> {
-        let mut mutable = None;
+        let mut is_public = None;
         let mut modules = vec![];
         for f in fields {
             match f {
-                ConfigField::Mutable(c) => {
-                    if mutable.is_some() {
-                        return Err(syn::Error::new(err_loc, "duplicate `mutable` field"));
+                ConfigField::Public(c) => {
+                    if is_public.is_some() {
+                        return Err(syn::Error::new(err_loc, "duplicate `public` field"));
                     }
-                    mutable = Some(c);
+                    is_public = Some(c);
                 }
                 ConfigField::Module(name, module_config) => modules.push((name, module_config)),
             }
         }
         Ok(Config {
-            // mutable: mutable.unwrap_or(true),
+            is_public: is_public.unwrap_or(false),
             modules,
         })
     }
 }
 
 enum ConfigField {
-    Mutable(bool),
+    Public(bool),
     Module(String, ModuleConfig),
 }
 
 impl syn::parse::Parse for ConfigField {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let lookahead = input.lookahead1();
-        if lookahead.peek(kw::mutable) {
-            input.parse::<kw::mutable>()?;
+        if lookahead.peek(kw::public) {
+            input.parse::<kw::public>()?;
             input.parse::<syn::Token![:]>()?;
-            Ok(ConfigField::Mutable(input.parse::<syn::LitBool>()?.value))
+            Ok(ConfigField::Public(input.parse::<syn::LitBool>()?.value))
         } else if lookahead.peek(syn::LitStr) {
             let s = input.parse::<syn::LitStr>()?;
             input.parse::<syn::Token![:]>()?;
@@ -215,7 +244,7 @@ impl syn::parse::Parse for ConfigField {
 }
 
 struct ModuleConfig {
-    // pub defs: Option<String>,
+    pub defs: Option<String>,
     pub module: String,
 }
 
@@ -283,18 +312,19 @@ impl ModuleConfig {
             }
         }
         Ok(ModuleConfig {
-            // defs,
+            defs,
             module: module.ok_or_else(|| syn::Error::new(err_loc, "`module` field required"))?,
         })
     }
 }
 
 pub use syn::parse_macro_input;
+use syn::spanned::Spanned;
 
 pub fn make_context_fn(imports: &Imports) -> String {
     format!(
         "
-fn make_context_vec(
+{}fn make_context_vec(
     {}
 ) -> webrogue_runtime::ContextVec {{
     let mut result = webrogue_runtime::ContextVec::new();
@@ -302,6 +332,7 @@ fn make_context_vec(
     result
 }}
     ",
+        if imports.is_public { "pub " } else { "" },
         imports
             .modules
             .iter()

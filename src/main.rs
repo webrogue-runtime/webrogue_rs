@@ -29,12 +29,12 @@ fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
 }
 
 make_funcs!({
-    // mutable: true,
     "wasi_snapshot_preview1": {
+        // defs: "crates/wasi/defs.in",
         module: webrogue_wasi::wasi_snapshot_preview1
     },
     "wr_gl": {
-        // defs: "aboba",
+        // defs: "crates/gl/defs.in",
         module: webrogue_gl::wr_gl
     }
 });

@@ -2,18 +2,20 @@ use proc_macro::TokenStream;
 
 #[proc_macro]
 pub fn make_funcs(item: TokenStream) -> TokenStream {
-    let mut result = "
-pub fn make_imports(
-) -> webrogue_backend_v8::Imports {
-    webrogue_backend_v8::Imports {
+    let imports = webrogue_macro_common::parse_macro_input!(item as webrogue_macro_common::Imports);
+    let mut result = format!(
+        "
+{}fn make_imports(
+) -> webrogue_backend_v8::Imports {{
+    webrogue_backend_v8::Imports {{
         f: Box::new(|
             scope: &mut webrogue_backend_v8::v8::HandleScope<webrogue_backend_v8::v8::Context>, 
             imports: webrogue_backend_v8::v8::Local<webrogue_backend_v8::v8::Object>
-        | {
-"
-    .to_owned();
+        | {{
+",
+        if imports.is_public { "pub " } else { "" }
+    );
 
-    let imports = webrogue_macro_common::parse_macro_input!(item as webrogue_macro_common::Imports);
     for (i, imported_module) in imports.modules.iter().enumerate() {
         for import in imported_module.funcs.clone() {
             let args = import

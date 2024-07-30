@@ -6,19 +6,17 @@ fn val_to_wasmtime(val: &webrogue_macro_common::ValueType) -> String {
 
 #[proc_macro]
 pub fn make_funcs(item: TokenStream) -> TokenStream {
-    // let i = get_imports(syn::parse_macro_input!(item as Config));
-    let mut result = "
-fn make_imports() -> webrogue_backend_wasmtime::Imports {
-    webrogue_backend_wasmtime::Imports {
+    let imports = webrogue_macro_common::parse_macro_input!(item as webrogue_macro_common::Imports);
+    let mut result = format!("
+{}fn make_imports() -> webrogue_backend_wasmtime::Imports {{
+    webrogue_backend_wasmtime::Imports {{
         f: Box::new(| 
             store: *mut webrogue_backend_wasmtime::wasmtime::Store<webrogue_backend_wasmtime::Context>,
             engine: &webrogue_backend_wasmtime::wasmtime::Engine
-        | {
+        | {{
             let mut funcs: Vec<(&str, webrogue_backend_wasmtime::wasmtime::Func)> = vec![];
-        "
-    .to_owned();
+        ", if imports.is_public { "pub " } else {""});
 
-    let imports = webrogue_macro_common::parse_macro_input!(item as webrogue_macro_common::Imports);
     for (i, imported_module) in imports.modules.iter().enumerate() {
         for import in imported_module.funcs.clone() {
             result += &format!(

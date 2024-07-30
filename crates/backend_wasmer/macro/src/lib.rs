@@ -4,16 +4,18 @@ use proc_macro::TokenStream;
 pub fn make_funcs(item: TokenStream) -> TokenStream {
     let imports = webrogue_macro_common::parse_macro_input!(item as webrogue_macro_common::Imports);
 
-    let mut result = "
-fn make_imports() -> webrogue_backend_wasmer::Imports {
-    webrogue_backend_wasmer::Imports {
+    let mut result = format!(
+        "
+{}fn make_imports() -> webrogue_backend_wasmer::Imports {{
+    webrogue_backend_wasmer::Imports {{
         f: Box::new(|
             import_object: &mut webrogue_backend_wasmer::wasmer::Imports, 
             store: &mut webrogue_backend_wasmer::wasmer::Store, 
             env: webrogue_backend_wasmer::wasmer::FunctionEnv<webrogue_backend_wasmer::Env>
-        | {
-    "
-    .to_owned();
+        | {{
+    ",
+        if imports.is_public { "pub " } else { "" }
+    );
 
     let mut fn_counter = 0;
 
