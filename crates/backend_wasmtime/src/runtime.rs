@@ -13,10 +13,11 @@ impl Runtime {
     }
 }
 
-impl webrogue_runtime::Runtime for Runtime {
+impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
     fn run(
         &self,
-        wasi: webrogue_runtime::wasi_common::WasiCtx,
+        imports: crate::Imports,
+        context_vec: webrogue_runtime::ContextVec,
         bytecode: Vec<u8>,
     ) -> anyhow::Result<()> {
         let mut config = wasmtime::Config::new();
@@ -25,13 +26,15 @@ impl webrogue_runtime::Runtime for Runtime {
         let engine = wasmtime::Engine::new(&config)?;
         let module = wasmtime::Module::new(&engine, bytecode)?;
 
-        let mut store_box = Box::new(wasmtime::Store::new(
-            &engine,
-            webrogue_runtime::Context::new(Box::new(StubMemoryFactory::new()), wasi),
-        ));
+        let context = crate::context::Context {
+            memory_factory: Box::new(StubMemoryFactory::new()),
+            context_vec,
+        };
+
+        let mut store_box = Box::new(wasmtime::Store::new(&engine, context));
         let store_ptr = &mut *store_box;
 
-        let imports = implement_imports(&module, store_ptr, &engine)?;
+        let imports = implement_imports(imports, &module, store_ptr, &engine)?;
 
         let instance = wasmtime::Instance::new(&mut *store_ptr, &module, &imports)?;
 

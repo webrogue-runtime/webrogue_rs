@@ -1,9 +1,19 @@
+pub struct Imports {
+    pub f: Box<
+        dyn Fn(
+            *mut wasmtime::Store<crate::context::Context>,
+            &wasmtime::Engine,
+        ) -> Vec<(&str, wasmtime::Func)>,
+    >,
+}
+
 pub fn implement_imports(
+    i: Imports,
     module: &wasmtime::Module,
-    store: *mut wasmtime::Store<webrogue_runtime::Context>,
+    store: *mut wasmtime::Store<crate::context::Context>,
     engine: &wasmtime::Engine,
 ) -> anyhow::Result<Vec<wasmtime::Extern>> {
-    let funcs = crate::wrapped_funcs::get_funcs(store, engine);
+    let funcs = (i.f)(store, engine);
 
     let mut imports: Vec<wasmtime::Extern> = vec![];
 

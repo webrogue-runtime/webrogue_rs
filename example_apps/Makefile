@@ -1,4 +1,4 @@
-all: bin simple
+all: bin simple opengl
 
 # utility
 bin:
@@ -16,3 +16,11 @@ build_simple: wasi-sdk-22
 
 bin/simple.wrapp: simple/BUILD.d
 	cargo run --manifest-path ../crates/wrapp_cli/Cargo.toml simple bin/simple.wrapp
+
+opengl: build_opengl bin/opengl.wrapp
+
+build_opengl: wasi-sdk-22
+	cd opengl && $(MAKE)
+
+bin/opengl.wrapp: opengl/BUILD.d
+	cargo run --manifest-path ../crates/wrapp_cli/Cargo.toml opengl bin/opengl.wrapp

@@ -1,14 +1,24 @@
-use crate::context::Context;
 use wasi_common::snapshots::preview_1::wasi_snapshot_preview1::WasiSnapshotPreview1;
+pub use wasi_common::WasiCtx as Context;
 use wiggle::GuestPtr;
 
-pub fn args_get(_context: &mut Context, _a: u32, _b: u32) -> u32 {
+pub fn args_get(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    _a: u32,
+    _b: u32,
+) -> u32 {
     0
 }
 
-pub fn args_sizes_get(context: &mut Context, a: u32, b: u32) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
-    let args = context.wasi.args_sizes_get(&mut memory);
+pub fn args_sizes_get(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    a: u32,
+    b: u32,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
+    let args = context.args_sizes_get(&mut memory);
     match futures::executor::block_on(args) {
         Ok(args) => {
             match memory.write(wiggle::GuestPtr::new(a), args.0) {
@@ -30,22 +40,35 @@ pub fn args_sizes_get(context: &mut Context, a: u32, b: u32) -> u32 {
         }
     };
 }
-pub fn proc_exit(_context: &mut Context, _code: u32) -> () {
+pub fn proc_exit(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    _code: u32,
+) -> () {
     todo!()
 }
 
-pub fn fd_close(context: &mut Context, fd: u32) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
-    match futures::executor::block_on(context.wasi.fd_close(&mut memory, fd.into())) {
+pub fn fd_close(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    fd: u32,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
+    match futures::executor::block_on(context.fd_close(&mut memory, fd.into())) {
         Ok(_) => 0,
         Err(_) => 1,
     }
 }
 
-pub fn fd_fdstat_get(context: &mut Context, fd: u32, out: u32) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
+pub fn fd_fdstat_get(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    fd: u32,
+    out: u32,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
 
-    match futures::executor::block_on(context.wasi.fd_fdstat_get(&mut memory, fd.into())) {
+    match futures::executor::block_on(context.fd_fdstat_get(&mut memory, fd.into())) {
         Ok(fdstat) => {
             match memory.write(wiggle::GuestPtr::<_>::new(out), fdstat) {
                 Err(_) => {
@@ -60,19 +83,27 @@ pub fn fd_fdstat_get(context: &mut Context, fd: u32, out: u32) -> u32 {
         }
     };
 }
-pub fn fd_seek(_context: &mut Context, _a: u32, _b: u64, _c: u32, _d: u32) -> u32 {
+pub fn fd_seek(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    _a: u32,
+    _b: u64,
+    _c: u32,
+    _d: u32,
+) -> u32 {
     todo!()
 }
 pub fn fd_write(
-    context: &mut Context,
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
     fd: u32,
     wasi_iovs: u32,
     iovs_len: u32,
     nwritten_ptr: u32,
 ) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
+    let mut memory = memory_factory.make_memory();
 
-    match futures::executor::block_on(context.wasi.fd_write(
+    match futures::executor::block_on(context.fd_write(
         &mut memory,
         fd.into(),
         wasi_common::snapshots::preview_1::types::CiovecArray::new((wasi_iovs, iovs_len)),
@@ -92,14 +123,24 @@ pub fn fd_write(
     };
 }
 
-pub fn fd_fdstat_set_flags(context: &mut Context, _a: u32, _b: u32) -> u32 {
-    let _memory = context.memory_factory.make_memory();
+pub fn fd_fdstat_set_flags(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    _a: u32,
+    _b: u32,
+) -> u32 {
+    let _memory = memory_factory.make_memory();
     todo!()
 }
-pub fn fd_prestat_get(context: &mut Context, fd: u32, buf: u32) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
+pub fn fd_prestat_get(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    fd: u32,
+    buf: u32,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
 
-    match futures::executor::block_on(context.wasi.fd_prestat_get(
+    match futures::executor::block_on(context.fd_prestat_get(
         &mut memory,
         wasi_common::snapshots::preview_1::types::Fd::from(fd),
     )) {
@@ -117,24 +158,33 @@ pub fn fd_prestat_get(context: &mut Context, fd: u32, buf: u32) -> u32 {
         }
     };
 }
-pub fn fd_prestat_dir_name(context: &mut Context, fd: u32, path: u32, path_len: u32) -> u32 {
-    let mut memory: wiggle::GuestMemory = context.memory_factory.make_memory();
+pub fn fd_prestat_dir_name(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    fd: u32,
+    path: u32,
+    path_len: u32,
+) -> u32 {
+    let mut memory: wiggle::GuestMemory = memory_factory.make_memory();
 
-    let future = context.wasi.fd_prestat_dir_name(
-        &mut memory,
-        fd.into(),
-        GuestPtr::<u8>::new(path),
-        path_len,
-    );
+    let future =
+        context.fd_prestat_dir_name(&mut memory, fd.into(), GuestPtr::<u8>::new(path), path_len);
 
     match futures::executor::block_on(future) {
         Err(_) => 1,
         Ok(()) => 0,
     }
 }
-pub fn fd_read(context: &mut Context, fd: u32, wasi_iovs: u32, iovs_len: u32, nread: u32) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
-    let future = context.wasi.fd_read(
+pub fn fd_read(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    fd: u32,
+    wasi_iovs: u32,
+    iovs_len: u32,
+    nread: u32,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
+    let future = context.fd_read(
         &mut memory,
         fd.into(),
         wasi_common::snapshots::preview_1::types::IovecArray::new((wasi_iovs, iovs_len)),
@@ -148,7 +198,8 @@ pub fn fd_read(context: &mut Context, fd: u32, wasi_iovs: u32, iovs_len: u32, nr
     }
 }
 pub fn path_open(
-    context: &mut Context,
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
     dirfd: u32,
     dirflags: u32,
     path: u32,
@@ -159,9 +210,9 @@ pub fn path_open(
     fs_flags: u32,
     fd: u32,
 ) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
+    let mut memory = memory_factory.make_memory();
 
-    let future = context.wasi.path_open(
+    let future = context.path_open(
         &mut memory,
         dirfd.into(),
         wasi_common::snapshots::preview_1::types::Lookupflags::from_bits(dirflags).unwrap(),
@@ -182,15 +233,16 @@ pub fn path_open(
 }
 
 pub fn poll_oneoff(
-    context: &mut Context,
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
     subscription_in_ptr: u32,
     out_ptr: u32,
     nsubscriptions: u32,
     nevents_ptr: u32,
 ) -> u32 {
-    let mut memory = context.memory_factory.make_memory();
+    let mut memory = memory_factory.make_memory();
 
-    let future = context.wasi.poll_oneoff(
+    let future = context.poll_oneoff(
         &mut memory,
         GuestPtr::<wasi_common::snapshots::preview_1::types::Subscription>::new(
             subscription_in_ptr,

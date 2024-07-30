@@ -1,5 +1,10 @@
 use anyhow::Result;
 
-pub trait Runtime {
-    fn run(&self, wasi: wasi_common::WasiCtx, bytecode: Vec<u8>) -> Result<()>;
+pub trait Runtime<Imports> {
+    fn run(
+        &self,
+        imports: Imports,
+        context_vec: crate::context::ContextVec,
+        bytecode: Vec<u8>,
+    ) -> Result<()>;
 }

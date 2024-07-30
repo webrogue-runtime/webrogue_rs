@@ -1,0 +1,4 @@
+webrogue_func_wrap!{wr_gl.glViewport(i32, i32, i32, i32) -> ()}
+webrogue_func_wrap!{wr_gl.glClearColor(f32, f32, f32, f32) -> ()}
+webrogue_func_wrap!{wr_gl.glClear(u32) -> ()}
+webrogue_func_wrap!{wr_gl.present() -> ()}

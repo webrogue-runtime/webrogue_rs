@@ -1,25 +1,23 @@
-pub struct Context {
-    pub wasi: wasi_common::WasiCtx,
-    pub memory_factory: Box<dyn MemoryFactory>,
+use std::{ffi::c_void, ptr::null_mut};
+
+pub struct ContextVec {
+    contexts: Vec<*mut c_void>,
 }
 
-impl Context {
-    pub fn new(memory_factory: Box<dyn MemoryFactory>, wasi: wasi_common::WasiCtx) -> Self {
-        wasi.set_stdin(Box::new(wasi_common::pipe::ReadPipe::new(std::io::stdin())));
-        // wasi.set_stdout(Box::new(wasi_common::pipe::WritePipe::new(
-        //     std::io::stdout(),
-        // )));
-        // wasi.set_stderr(Box::new(wasi_common::pipe::WritePipe::new(
-        //     std::io::stderr(),
-        // )));
-
-        Self {
-            memory_factory,
-            wasi,
-        }
+impl ContextVec {
+    pub fn new() -> Self {
+        Self { contexts: vec![] }
     }
-}
 
-pub trait MemoryFactory {
-    fn make_memory(&self) -> crate::GuestMemory;
+    pub unsafe fn get<Context>(&self, i: usize) -> &mut Context {
+        let ptr = self.contexts[i] as *mut Context;
+        return unsafe { &mut *ptr };
+    }
+
+    pub fn set<Context>(&mut self, i: usize, ptr: *mut Context) {
+        while self.contexts.len() < i + 1 {
+            self.contexts.push(null_mut());
+        }
+        self.contexts[i] = ptr as *mut c_void;
+    }
 }

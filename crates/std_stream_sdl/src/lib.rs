@@ -68,7 +68,11 @@ impl WasiFile for Stdout {
 
 pub fn run_in_terminal<T>(
     wasi: webrogue_runtime::wasi_common::WasiCtx,
-    func: Arc<dyn Fn(webrogue_runtime::wasi_common::WasiCtx) -> T + Sync + Send>,
+    func: Arc<
+        dyn Fn(webrogue_runtime::wasi_common::WasiCtx, webrogue_runtime::webrogue_gl::Context) -> T
+            + Sync
+            + Send,
+    >,
 ) where
     T: Sync + Send + 'static,
 {
@@ -81,9 +85,6 @@ pub fn run_in_terminal<T>(
         output: output_data.clone(),
     }));
     let func_copy = func.clone();
-    let handle = std::thread::spawn(move || {
-        func_copy.as_ref()(wasi);
-    });
 
     let sdl_context = sdl2::init().unwrap();
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
@@ -96,145 +97,156 @@ pub fn run_in_terminal<T>(
     let (font_width, font_height) = font.size_of_char('a').unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
-    let mut window_width = 800;
-    let mut window_height = 600;
+    let mut window_width = 600;
+    let mut window_height = 300;
 
     let window = video_subsystem
         .window("webrogue", window_width, window_height)
         .position_centered()
+        .opengl()
         .resizable()
         .build()
         .unwrap();
-    let mut canvas = window
-        .into_canvas()
-        .build()
-        .map_err(|e| e.to_string())
-        .unwrap();
-    let texture_creator = canvas.texture_creator();
+    let gl_context = window.gl_create_context().unwrap();
+    let g = webrogue_runtime::webrogue_gl::Context { window: window };
+    let handle = std::thread::spawn(move || {
+        func_copy.as_ref()(wasi, g);
+    });
+    // let mut canvas = window
+    //     .clone()
+    //     .into_canvas()
+    //     .build()
+    //     .map_err(|e| e.to_string())
+    //     .unwrap();
+    // let texture_creator = canvas.texture_creator();
 
-    let mut event_pump = sdl_context.event_pump().unwrap();
+    // let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut utf_parser = utf8parse::Parser::new();
-    let mut lines = std::collections::VecDeque::<Vec<char>>::new();
-    lines.push_back(Vec::new());
+    // let mut utf_parser = utf8parse::Parser::new();
+    // let mut lines = std::collections::VecDeque::<Vec<char>>::new();
+    // lines.push_back(Vec::new());
 
-    let mut char_map = BTreeMap::<char, sdl2::render::Texture>::new();
+    // let mut char_map = BTreeMap::<char, sdl2::render::Texture>::new();
+
+    // canvas.set_draw_color(Color::RGB(255, 0, 0));
+    // canvas.clear();
 
     'running: loop {
-        let mut last_data: Vec<u8> = Vec::new();
-        {
-            let mut guard = output_data.lock().unwrap();
-            let _ = last_data.write(&guard);
-            guard.clear();
-        };
+        // let mut last_data: Vec<u8> = Vec::new();
+        // {
+        //     let mut guard = output_data.lock().unwrap();
+        //     let _ = last_data.write(&guard);
+        //     guard.clear();
+        // };
 
-        struct Utf8Receiver<'a>(&'a mut std::collections::VecDeque<Vec<char>>);
+        // struct Utf8Receiver<'a>(&'a mut std::collections::VecDeque<Vec<char>>);
 
-        impl<'a> utf8parse::Receiver for Utf8Receiver<'a> {
-            fn codepoint(&mut self, c: char) {
-                match c {
-                    '\n' => {
-                        (*self).0.push_back(Vec::new());
-                    }
-                    c => {
-                        (*self).0.back_mut().unwrap().push(c);
-                    }
-                }
-            }
-            fn invalid_sequence(&mut self) {}
-        }
+        // impl<'a> utf8parse::Receiver for Utf8Receiver<'a> {
+        //     fn codepoint(&mut self, c: char) {
+        //         match c {
+        //             '\n' => {
+        //                 (*self).0.push_back(Vec::new());
+        //             }
+        //             c => {
+        //                 (*self).0.back_mut().unwrap().push(c);
+        //             }
+        //         }
+        //     }
+        //     fn invalid_sequence(&mut self) {}
+        // }
 
-        let mut reciver = Utf8Receiver { 0: &mut lines };
+        // let mut reciver = Utf8Receiver { 0: &mut lines };
 
-        for byte in last_data {
-            utf_parser.advance(&mut reciver, byte)
-        }
+        // for byte in last_data {
+        //     utf_parser.advance(&mut reciver, byte)
+        // }
 
-        while lines.len() > 1000 {
-            lines.pop_front();
-        }
+        // while lines.len() > 1000 {
+        //     lines.pop_front();
+        // }
 
-        let cells_x_count = window_width / font_width;
-        let cells_y_count = window_height / font_height;
+        // let cells_x_count = window_width / font_width;
+        // let cells_y_count = window_height / font_height;
 
-        let visible_lines = lines.iter().rev().take(cells_y_count as usize).rev();
+        // let visible_lines = lines.iter().rev().take(cells_y_count as usize).rev();
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
+        // canvas.set_draw_color(Color::RGB(0, 0, 0));
+        // canvas.clear();
 
-        let mut line_i: i32 = 0;
+        // let mut line_i: i32 = 0;
 
-        for line in visible_lines.clone() {
-            line_i += line.len() as i32 / cells_x_count as i32;
-            line_i += 1;
-        }
+        // for line in visible_lines.clone() {
+        //     line_i += line.len() as i32 / cells_x_count as i32;
+        //     line_i += 1;
+        // }
 
-        line_i = std::cmp::min(0, cells_y_count as i32 - line_i);
+        // line_i = std::cmp::min(0, cells_y_count as i32 - line_i);
 
-        for line in visible_lines {
-            let mut ch_i: u32 = 0;
-            for ch in line {
-                if line_i >= 0 {
-                    let ch_texture = char_map.get(&ch);
-                    let ch_texture = match ch_texture {
-                        Some(ch_texture) => ch_texture,
-                        None => {
-                            let surface = font
-                                .render_char(*ch)
-                                .blended(Color::RGBA(255, 255, 255, 255))
-                                .map_err(|e| e.to_string())
-                                .unwrap();
-                            let texture = texture_creator
-                                .create_texture_from_surface(&surface)
-                                .map_err(|e| e.to_string())
-                                .unwrap();
-                            char_map.insert(*ch, texture);
-                            &char_map[&ch]
-                        }
-                    };
-                    canvas
-                        .copy(
-                            &ch_texture,
-                            None,
-                            Some(sdl2::rect::Rect::new(
-                                (window_width * ch_i as u32 / cells_x_count as u32) as i32,
-                                (window_height * line_i as u32 / cells_y_count as u32) as i32,
-                                font_width,
-                                font_height,
-                            )),
-                        )
-                        .unwrap();
-                }
-                ch_i += 1;
-                if ch_i >= cells_x_count {
-                    line_i += 1;
-                    ch_i = 0;
-                }
-            }
+        // for line in visible_lines {
+        //     let mut ch_i: u32 = 0;
+        //     for ch in line {
+        //         if line_i >= 0 {
+        //             let ch_texture = char_map.get(&ch);
+        //             let ch_texture = match ch_texture {
+        //                 Some(ch_texture) => ch_texture,
+        //                 None => {
+        //                     let surface = font
+        //                         .render_char(*ch)
+        //                         .blended(Color::RGBA(255, 255, 255, 255))
+        //                         .map_err(|e| e.to_string())
+        //                         .unwrap();
+        //                     let texture = texture_creator
+        //                         .create_texture_from_surface(&surface)
+        //                         .map_err(|e| e.to_string())
+        //                         .unwrap();
+        //                     char_map.insert(*ch, texture);
+        //                     &char_map[&ch]
+        //                 }
+        //             };
+        //             canvas
+        //                 .copy(
+        //                     &ch_texture,
+        //                     None,
+        //                     Some(sdl2::rect::Rect::new(
+        //                         (window_width * ch_i as u32 / cells_x_count as u32) as i32,
+        //                         (window_height * line_i as u32 / cells_y_count as u32) as i32,
+        //                         font_width,
+        //                         font_height,
+        //                     )),
+        //                 )
+        //                 .unwrap();
+        //         }
+        //         ch_i += 1;
+        //         if ch_i >= cells_x_count {
+        //             line_i += 1;
+        //             ch_i = 0;
+        //         }
+        //     }
 
-            line_i += 1;
-        }
+        //     line_i += 1;
+        // }
 
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Window {
-                    timestamp: _,
-                    window_id: _,
-                    win_event,
-                } => match win_event {
-                    sdl2::event::WindowEvent::Resized(new_width, new_height) => {
-                        window_width = new_width as u32;
-                        window_height = new_height as u32;
-                    }
-                    _ => {}
-                },
-                _ => {}
-            }
-        }
-        if handle.is_finished() {
-            break 'running;
-        }
-        canvas.present();
+        // for event in event_pump.poll_iter() {
+        //     match event {
+        //         Event::Window {
+        //             timestamp: _,
+        //             window_id: _,
+        //             win_event,
+        //         } => match win_event {
+        //             sdl2::event::WindowEvent::Resized(new_width, new_height) => {
+        //                 window_width = new_width as u32;
+        //                 window_height = new_height as u32;
+        //             }
+        //             _ => {}
+        //         },
+        //         _ => {}
+        //     }
+        // }
+        // if handle.is_finished() {
+        //     break 'running;
+        // }
+        // canvas.present();
+        window.gl_swap_window();
         #[cfg(not(target_os = "emscripten"))]
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         #[cfg(target_os = "emscripten")]
@@ -242,4 +254,5 @@ pub fn run_in_terminal<T>(
             c_emscripten_sleep(10)
         };
     }
+    drop(gl_context);
 }

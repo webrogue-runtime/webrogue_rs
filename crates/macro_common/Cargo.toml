@@ -2,3 +2,7 @@
 name = "webrogue_macro_common"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+syn = { version = "2", features = ["full"] }
+proc-macro2 = { version = "1" }

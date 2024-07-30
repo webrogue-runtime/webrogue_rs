@@ -3,9 +3,11 @@ use clap::Parser;
 use webrogue_runtime::WasiFactory;
 
 #[cfg(feature = "backend_wasmtime")]
-fn make_backend() -> impl webrogue_runtime::Backend {
+fn make_backend() -> webrogue_backend_wasmtime::Backend {
     webrogue_backend_wasmtime::Backend::new()
 }
+#[cfg(feature = "backend_wasmtime")]
+use webrogue_backend_wasmtime::make_funcs;
 
 #[cfg(feature = "_backend_wasmer")]
 fn make_backend() -> impl webrogue_runtime::Backend {
@@ -27,10 +29,23 @@ fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
     webrogue_wasi_sync::WasiFactory::new()
 }
 
+make_funcs!({
+    // mutable: true,
+    "wasi_snapshot_preview1": {
+        module: webrogue_wasi::wasi_snapshot_preview1
+    },
+    "wr_gl": {
+        // defs: "aboba",
+        module: webrogue_gl::wr_gl
+    },
+});
+
 #[derive(Parser)]
 struct Cli {
     path: std::path::PathBuf,
 }
+
+use webrogue_gl::sdl2;
 
 fn main() -> Result<()> {
     let lifecycle = webrogue_runtime::Lifecycle::new();
@@ -61,7 +76,26 @@ fn main() -> Result<()> {
         webrogue_std_stream_os::bind_streams(&mut wasi);
 
         let backend = make_backend();
-        lifecycle.run(backend, wasi, reader)?
+        let sdl_context = sdl2::init().unwrap();
+        let video_subsystem = sdl_context.video().unwrap();
+        let window = video_subsystem
+            .window("webrogue", 600, 300)
+            .position_centered()
+            .opengl()
+            .resizable()
+            .build()
+            .unwrap();
+        let gl_context = window.gl_create_context().unwrap();
+        let mut webrogue_gl_context = webrogue_gl::wr_gl::Context { window: window };
+        lifecycle.run(
+            backend,
+            make_imports(),
+            make_context_vec(&mut wasi, &mut webrogue_gl_context),
+            reader,
+        )?;
+        drop(webrogue_gl_context);
+        drop(gl_context);
+        drop(wasi);
     }
 
     Ok(())

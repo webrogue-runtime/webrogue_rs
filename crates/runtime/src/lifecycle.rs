@@ -8,15 +8,16 @@ impl Lifecycle {
         Self {}
     }
 
-    pub fn run(
+    pub fn run<Imports>(
         &self,
-        backend: impl Backend,
-        wasi: wasi_common::WasiCtx,
+        backend: impl Backend<Imports>,
+        imports: Imports,
+        context_vec: crate::context::ContextVec,
         archive_reader: webrogue_wrapp::Reader,
     ) -> Result<()> {
         let mut archive_reader = archive_reader;
         let runtime = backend.make_runtime();
-        runtime.run(wasi, archive_reader.read_wasm()?)?;
+        runtime.run(imports, context_vec, archive_reader.read_wasm()?)?;
         Ok(())
     }
 }

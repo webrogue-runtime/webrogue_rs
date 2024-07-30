@@ -14,13 +14,13 @@ impl webrogue_runtime::MemoryFactory for StubMemoryFactory {
 
 pub struct MemoryFactory {
     wasmtime_memory: wasmtime::Memory,
-    store: *mut wasmtime::Store<webrogue_runtime::Context>,
+    store: *mut wasmtime::Store<crate::context::Context>,
 }
 
 impl MemoryFactory {
     pub fn new(
         wasmtime_memory: wasmtime::Memory,
-        store: *mut wasmtime::Store<webrogue_runtime::Context>,
+        store: *mut wasmtime::Store<crate::context::Context>,
     ) -> Self {
         Self {
             wasmtime_memory,
@@ -30,7 +30,7 @@ impl MemoryFactory {
 }
 
 impl MemoryFactory {
-    fn store_ref(&self) -> &mut wasmtime::Store<webrogue_runtime::Context> {
+    fn store_ref(&self) -> &mut wasmtime::Store<crate::context::Context> {
         unsafe { &mut *self.store }
     }
 }
