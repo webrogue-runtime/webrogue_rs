@@ -305,3 +305,37 @@ impl ModuleConfig {
 }
 
 pub use syn::parse_macro_input;
+
+pub fn make_context_fn(imports: &Imports) -> String {
+    format!(
+        "
+fn make_context_vec(
+    {}
+) -> webrogue_runtime::ContextVec {{
+    let mut result = webrogue_runtime::ContextVec::new();
+    {}
+    result
+}}
+    ",
+        imports
+            .modules
+            .iter()
+            .map(|imported_module| {
+                format!(
+                    "{}_ctx: *mut {}::Context,\n",
+                    imported_module.module_name, imported_module.rust_module
+                )
+            })
+            .collect::<Vec<_>>()
+            .join(""),
+        imports
+            .modules
+            .iter()
+            .enumerate()
+            .map(|(i, imported_module)| {
+                format!("result.set({}, {}_ctx);\n", i, imported_module.module_name)
+            })
+            .collect::<Vec<_>>()
+            .join("")
+    )
+}

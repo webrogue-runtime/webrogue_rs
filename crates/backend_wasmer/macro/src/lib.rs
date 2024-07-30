@@ -1,65 +1,99 @@
 use proc_macro::TokenStream;
 
 #[proc_macro]
-pub fn make_link_functions(_item: TokenStream) -> TokenStream {
-    let mut result = "".to_owned();
+pub fn make_funcs(item: TokenStream) -> TokenStream {
+    let imports = webrogue_macro_common::parse_macro_input!(item as webrogue_macro_common::Imports);
 
-    for import in webrogue_macro_common::get_imports() {
-        let static_func_name = format!("imported_fn_{}_{}", import.module, import.func_name);
+    let mut result = "
+fn make_imports() -> webrogue_backend_wasmer::Imports {
+    webrogue_backend_wasmer::Imports {
+        f: Box::new(|
+            import_object: &mut webrogue_backend_wasmer::wasmer::Imports, 
+            store: &mut webrogue_backend_wasmer::wasmer::Store, 
+            env: webrogue_backend_wasmer::wasmer::FunctionEnv<webrogue_backend_wasmer::Env>
+        | {
+    "
+    .to_owned();
 
-        let in_args = import
-            .args
-            .iter()
-            .enumerate()
-            .map(|(i, arg)| {
-                let ty = match arg {
-                    webrogue_macro_common::ValueType::U32 => "i32",
-                    webrogue_macro_common::ValueType::U64 => "i64",
-                };
-                format!(", arg{}: {}", i, ty)
-            })
-            .collect::<Vec<_>>()
-            .join("");
+    let mut fn_counter = 0;
 
-        let out_args = import
-            .args
-            .iter()
-            .enumerate()
-            .map(|(i, arg)| {
-                let conv = match arg {
-                    webrogue_macro_common::ValueType::U32 => " as u32",
-                    webrogue_macro_common::ValueType::U64 => " as u64",
-                };
-                format!("arg{}{},\n", i, conv)
-            })
-            .collect::<Vec<_>>()
-            .join("");
-
-        let out_ty = match import.ret_str.clone() {
-            Some(ty) => {
-                format!(
-                    " -> {}",
-                    match ty {
+    for (i, imported_module) in imports.modules.iter().enumerate() {
+        for import in imported_module.funcs.clone() {
+            let static_func_name = format!("imported_fn_{}", fn_counter);
+            fn_counter += 1;
+            let in_args = import
+                .args
+                .iter()
+                .enumerate()
+                .map(|(i, arg)| {
+                    let ty = match arg {
                         webrogue_macro_common::ValueType::U32 => "i32",
                         webrogue_macro_common::ValueType::U64 => "i64",
-                    }
-                )
-            }
-            None => "".to_string(),
-        };
+                        webrogue_macro_common::ValueType::I32 => "i32",
+                        webrogue_macro_common::ValueType::I64 => "i64",
+                        webrogue_macro_common::ValueType::F32 => "f32",
+                        webrogue_macro_common::ValueType::F64 => "f64",
+                    };
+                    format!(", arg{}: {}", i, ty)
+                })
+                .collect::<Vec<_>>()
+                .join("");
 
-        let out_conv = match import.ret_str {
-            Some(webrogue_macro_common::ValueType::U32) => "as i32",
-            Some(webrogue_macro_common::ValueType::U64) => "as i64",
-            _ => "",
-        };
+            let out_args = import
+                .args
+                .iter()
+                .enumerate()
+                .map(|(i, arg)| {
+                    let conv = match arg {
+                        webrogue_macro_common::ValueType::U32 => " as u32",
+                        webrogue_macro_common::ValueType::U64 => " as u64",
+                        webrogue_macro_common::ValueType::I32 => "",
+                        webrogue_macro_common::ValueType::I64 => "",
+                        webrogue_macro_common::ValueType::F32 => "",
+                        webrogue_macro_common::ValueType::F64 => "",
+                    };
+                    format!("arg{}{},\n", i, conv)
+                })
+                .collect::<Vec<_>>()
+                .join("");
 
-        result += &format!(
-            "
-fn {}(mut env: wasmer::FunctionEnvMut<Env>{}){} {{
+            let out_ty = match import.ret_str.clone() {
+                Some(ty) => {
+                    format!(
+                        " -> {}",
+                        match ty {
+                            webrogue_macro_common::ValueType::U32 => "i32",
+                            webrogue_macro_common::ValueType::U64 => "i64",
+                            webrogue_macro_common::ValueType::I32 => "i32",
+                            webrogue_macro_common::ValueType::I64 => "i64",
+                            webrogue_macro_common::ValueType::F32 => "f32",
+                            webrogue_macro_common::ValueType::F64 => "f64",
+                        }
+                    )
+                }
+                None => "".to_string(),
+            };
+
+            let out_conv = match import.ret_str {
+                Some(webrogue_macro_common::ValueType::U32) => "as i32",
+                Some(webrogue_macro_common::ValueType::U64) => "as i64",
+                Some(webrogue_macro_common::ValueType::I32) => "i32",
+                Some(webrogue_macro_common::ValueType::I64) => "i64",
+                Some(webrogue_macro_common::ValueType::F32) => "f32",
+                Some(webrogue_macro_common::ValueType::F64) => "f64",
+                _ => "",
+            };
+
+            result += &format!(
+                "
+fn {}(mut env: webrogue_backend_wasmer::wasmer::FunctionEnvMut<webrogue_backend_wasmer::Env>{}){} {{
     let mut context = env.data_mut().context.lock().unwrap();
-    webrogue_runtime::imported_functions::{}::{}(
-        &mut context,
+    let ptr = context
+        .context_vec
+        .get_raw::<{}::Context>({});
+    {}::{}(
+        &mut context.memory_factory,
+        unsafe {{ &mut *ptr }},
         {}
     ) {}
 }}
@@ -67,25 +101,34 @@ fn {}(mut env: wasmer::FunctionEnvMut<Env>{}){} {{
 import_object.define(
     \"{}\",
     \"{}\",
-    wasmer::Function::new_typed_with_env(
-        &mut store,
+    webrogue_backend_wasmer::wasmer::Function::new_typed_with_env(
+        store,
         &env,
         {},
     ),
 );
     ",
-            static_func_name,
-            in_args,
-            out_ty,
-            import.module,
-            import.func_name,
-            out_args,
-            out_conv,
-            import.module,
-            import.func_name,
-            static_func_name,
-        );
+                static_func_name,
+                in_args,
+                out_ty,
+                imported_module.rust_module,
+                i,
+                imported_module.rust_module,
+                import.func_name,
+                out_args,
+                out_conv,
+                import.module,
+                import.func_name,
+                static_func_name,
+            );
+        }
     }
+
+    result += "
+        })
+    }
+}   ";
+    result += &webrogue_macro_common::make_context_fn(&imports);
 
     result.parse().unwrap()
 }

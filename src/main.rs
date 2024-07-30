@@ -10,19 +10,18 @@ fn make_backend() -> webrogue_backend_wasmtime::Backend {
 use webrogue_backend_wasmtime::make_funcs;
 
 #[cfg(feature = "_backend_wasmer")]
-fn make_backend() -> impl webrogue_runtime::Backend {
+fn make_backend() -> webrogue_backend_wasmer::Backend {
     webrogue_backend_wasmer::Backend::new()
 }
-
-#[cfg(feature = "backend_wasm3")]
-fn make_backend() -> impl webrogue_runtime::Backend {
-    webrogue_backend_wasm3::Backend::new()
-}
+#[cfg(feature = "_backend_wasmer")]
+use webrogue_backend_wasmer::make_funcs;
 
 #[cfg(feature = "backend_v8")]
-fn make_backend() -> impl webrogue_runtime::Backend {
+fn make_backend() -> webrogue_backend_v8::Backend {
     webrogue_backend_v8::Backend::new()
 }
+#[cfg(feature = "backend_v8")]
+use webrogue_backend_v8::make_funcs;
 
 #[cfg(feature = "wasi_sync")]
 fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
@@ -37,7 +36,7 @@ make_funcs!({
     "wr_gl": {
         // defs: "aboba",
         module: webrogue_gl::wr_gl
-    },
+    }
 });
 
 #[derive(Parser)]

@@ -12,10 +12,11 @@ impl Runtime {
     }
 }
 
-impl webrogue_runtime::Runtime for Runtime {
+impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
     fn run(
         &self,
-        wasi: webrogue_runtime::wasi_common::WasiCtx,
+        imports: crate::Imports,
+        context_vec: webrogue_runtime::ContextVec,
         bytecode: Vec<u8>,
     ) -> anyhow::Result<()> {
         {
@@ -24,10 +25,10 @@ impl webrogue_runtime::Runtime for Runtime {
             v8::V8::initialize();
 
             {
-                let mut webrogue_context = Box::new(webrogue_runtime::Context::new(
-                    Box::new(memory::StubMemoryFactory {}),
-                    wasi,
-                ));
+                let mut webrogue_context = Box::new(crate::context::Context {
+                    memory_factory: Box::new(memory::StubMemoryFactory {}),
+                    context_vec,
+                });
                 let isolate = &mut v8::Isolate::new(v8::CreateParams::default());
                 let handle_scope = &mut v8::HandleScope::new(isolate);
 
@@ -36,7 +37,7 @@ impl webrogue_runtime::Runtime for Runtime {
                 let scope = &mut v8::ContextScope::new(handle_scope, context);
                 scope.set_data(
                     0,
-                    (webrogue_context.as_mut() as *mut webrogue_runtime::Context) as *mut c_void,
+                    (webrogue_context.as_mut() as *mut crate::context::Context) as *mut c_void,
                 );
                 let mut global = context.global(scope);
 
@@ -70,10 +71,12 @@ impl webrogue_runtime::Runtime for Runtime {
                     global.set(scope, name.into(), func.into()).unwrap();
                 }
                 {
-                    let imports = v8::Object::new(scope);
-                    crate::link_functions::link_functions(scope, imports);
+                    let imports_object = v8::Object::new(scope);
+                    (imports.f)(scope, imports_object);
                     let name = v8::String::new(scope, "imports").unwrap();
-                    global.set(scope, name.into(), imports.into()).unwrap();
+                    global
+                        .set(scope, name.into(), imports_object.into())
+                        .unwrap();
                 }
                 scope.set_data(
                     1,

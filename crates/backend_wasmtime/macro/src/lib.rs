@@ -36,7 +36,7 @@ funcs.push((
             let context = caller.data_mut();
             let result = {}::{}(
                 &mut context.memory_factory,
-                unsafe {{ context.context_vec.get({}) }},
+                unsafe {{ context.context_vec.get::<{}::Context>({}) }},
                 {}
             );
             {}
@@ -64,6 +64,7 @@ funcs.push((
                 },
                 import.rust_module,
                 import.func_name,
+                import.rust_module,
                 i,
                 import
                     .args
@@ -107,36 +108,6 @@ funcs.push((
     }
 }
 ";
-    result += &format!(
-        "
-fn make_context_vec(
-    {}
-) -> webrogue_runtime::ContextVec {{
-    let mut result = webrogue_runtime::ContextVec::new();
-    {}
-    result
-}}
-    ",
-        imports
-            .modules
-            .iter()
-            .map(|imported_module| {
-                format!(
-                    "{}_ctx: *mut {}::Context,\n",
-                    imported_module.module_name, imported_module.rust_module
-                )
-            })
-            .collect::<Vec<_>>()
-            .join(""),
-        imports
-            .modules
-            .iter()
-            .enumerate()
-            .map(|(i, imported_module)| {
-                format!("result.set({}, {}_ctx);\n", i, imported_module.module_name)
-            })
-            .collect::<Vec<_>>()
-            .join("")
-    );
+    result += &webrogue_macro_common::make_context_fn(&imports);
     result.parse().unwrap()
 }

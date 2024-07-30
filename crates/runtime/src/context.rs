@@ -14,6 +14,10 @@ impl ContextVec {
         return unsafe { &mut *ptr };
     }
 
+    pub fn get_raw<Context>(&self, i: usize) -> *mut Context {
+        self.contexts[i] as *mut Context
+    }
+
     pub fn set<Context>(&mut self, i: usize, ptr: *mut Context) {
         while self.contexts.len() < i + 1 {
             self.contexts.push(null_mut());

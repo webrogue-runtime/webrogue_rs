@@ -8,33 +8,31 @@ impl Runtime {
     }
 }
 
-struct Env {
-    context: Arc<Mutex<webrogue_runtime::Context>>,
-}
-
-unsafe impl Sync for Env {}
-unsafe impl Send for Env {}
-
-impl webrogue_runtime::Runtime for Runtime {
+impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
     fn run(
         &self,
-        wasi: webrogue_runtime::wasi_common::WasiCtx,
+        imports: crate::Imports,
+        context_vec: webrogue_runtime::ContextVec,
         bytecode: Vec<u8>,
     ) -> anyhow::Result<()> {
         let mut store = wasmer::Store::default();
-        let context =
-            webrogue_runtime::Context::new(Box::new(crate::memory::StubMemoryFactory {}), wasi);
+        let context = crate::context::Context {
+            memory_factory: Box::new(crate::memory::StubMemoryFactory {}),
+            context_vec,
+        };
+        // webrogue_runtime::Context::new(, wasi);
         let context_arc = Arc::new(Mutex::new(context));
         let module = wasmer::Module::new(&store, &bytecode)?;
         let env = wasmer::FunctionEnv::new(
             &mut store,
-            Env {
+            crate::context::Env {
                 context: context_arc.clone(),
             },
         );
 
         let mut import_object = wasmer::imports! {};
-        webrogue_backend_wasmer_macro::make_link_functions!();
+
+        (imports.f)(&mut import_object, &mut store, env);
 
         let instance = wasmer::Instance::new(&mut store, &module, &import_object)?;
         let memory = instance.exports.get_memory("memory")?;

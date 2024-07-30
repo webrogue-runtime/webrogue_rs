@@ -6,8 +6,8 @@ impl Backend {
     }
 }
 
-impl webrogue_runtime::Backend for Backend {
-    fn make_runtime(&self) -> Box<dyn webrogue_runtime::Runtime> {
+impl webrogue_runtime::Backend<crate::Imports> for Backend {
+    fn make_runtime(&self) -> Box<dyn webrogue_runtime::Runtime<crate::Imports>> {
         Box::new(crate::runtime::Runtime::new())
     }
 }
