@@ -77,12 +77,12 @@ pub fn make_funcs(item: TokenStream) -> TokenStream {
             };
 
             let out_conv = match import.ret {
-                Some(webrogue_macro_common::ValueType::U32) => "as i32",
-                Some(webrogue_macro_common::ValueType::U64) => "as i64",
-                Some(webrogue_macro_common::ValueType::I32) => "i32",
-                Some(webrogue_macro_common::ValueType::I64) => "i64",
-                Some(webrogue_macro_common::ValueType::F32) => "f32",
-                Some(webrogue_macro_common::ValueType::F64) => "f64",
+                Some(webrogue_macro_common::ValueType::U32) => " as i32",
+                Some(webrogue_macro_common::ValueType::U64) => " as i64",
+                Some(webrogue_macro_common::ValueType::I32) => "",
+                Some(webrogue_macro_common::ValueType::I64) => "",
+                Some(webrogue_macro_common::ValueType::F32) => "",
+                Some(webrogue_macro_common::ValueType::F64) => "",
                 _ => "",
             };
 
@@ -97,7 +97,7 @@ fn {}(mut env: webrogue_backend_wasmer::wasmer::FunctionEnvMut<webrogue_backend_
         &mut context.memory_factory,
         unsafe {{ &mut *ptr }},
         {}
-    ) {}
+    ){}
 }}
 
 import_object.define(

@@ -3,8 +3,8 @@ pub use wasi_common::WasiCtx as Context;
 use wiggle::GuestPtr;
 
 pub fn args_get(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut wasi_common::WasiCtx,
     _a: u32,
     _b: u32,
 ) -> u32 {
@@ -41,8 +41,8 @@ pub fn args_sizes_get(
     };
 }
 pub fn proc_exit(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut wasi_common::WasiCtx,
     _code: u32,
 ) -> () {
     todo!()
@@ -84,8 +84,8 @@ pub fn fd_fdstat_get(
     };
 }
 pub fn fd_seek(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut wasi_common::WasiCtx,
     _a: u32,
     _b: u64,
     _c: u32,
@@ -125,7 +125,7 @@ pub fn fd_write(
 
 pub fn fd_fdstat_set_flags(
     memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
+    _context: &mut wasi_common::WasiCtx,
     _a: u32,
     _b: u32,
 ) -> u32 {
