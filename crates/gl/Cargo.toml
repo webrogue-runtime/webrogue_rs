@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 webrogue_runtime = { path = "../runtime" }
 sdl2 = { path = "../../external/rust-sdl2" }
+webrogue_gl_gen_macro = { path = "util_crates/macro" }

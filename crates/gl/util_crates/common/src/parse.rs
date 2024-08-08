@@ -128,7 +128,7 @@ fn parse_commands(
 
 fn parse_enums(
     enums_node: roxmltree::Node,
-    requirements: &FeatureRequirements,
+    _requirements: &FeatureRequirements,
     enums: &mut Vec<EnumCase>,
 ) {
     for enum_node in enums_node.children() {
@@ -162,7 +162,7 @@ fn parse_enums(
 }
 
 pub fn parse() -> ParseResults {
-    let xml_str = std::fs::read_to_string("gl.xml").unwrap();
+    let xml_str = include_str!("../gl.xml");
     let doc = roxmltree::Document::parse(&xml_str).unwrap();
     let feature_node = doc
         .descendants()

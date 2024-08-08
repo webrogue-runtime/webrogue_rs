@@ -1,0 +1,10 @@
+[package]
+name = "webrogue_gl_gen_macro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+webrogue_gl_gen_common = { path = "../common" }
+
+[lib]
+proc-macro = true

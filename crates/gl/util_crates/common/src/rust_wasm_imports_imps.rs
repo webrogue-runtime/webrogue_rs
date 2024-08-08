@@ -1,5 +1,5 @@
 use crate::types::*;
-use std::{collections::HashSet, io::Write};
+use std::collections::HashSet;
 
 fn simple_type_rust_to_wasm(ty: GLType, name: String) -> Option<String> {
     match ty {
@@ -12,13 +12,8 @@ fn simple_type_rust_to_wasm(ty: GLType, name: String) -> Option<String> {
     }
 }
 
-pub fn write_to_file(file: &mut std::fs::File, parse_results: &ParseResults) {
-    file.write(
-        "#![allow(non_snake_case)]
-        
-pub use crate::context::Context;
-pub use crate::mainual_impl_wr_gl::*;
-
+pub fn get_as_str(parse_results: &ParseResults) -> String {
+    let mut result = "
 pub fn present(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
@@ -26,9 +21,7 @@ pub fn present(
     _context.window.gl_swap_window();
 }
 "
-        .as_bytes(),
-    )
-    .unwrap();
+    .to_owned();
 
     let mut keywords = HashSet::new();
     keywords.insert("type");
@@ -159,9 +152,8 @@ pub fn present(
             Some(false) => "    let memory = _memory_factory.make_memory();\n",
             Some(true) => "    let mut memory = _memory_factory.make_memory();\n",
         };
-        file.write(
-            format!(
-                "
+        result += &format!(
+            "
 pub fn {}(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
@@ -170,27 +162,25 @@ pub fn {}(
     let result = unsafe {{ crate::ffi::{}({}) }};{}{}
 }}
 ",
-                command.name,
-                import_args.join(""),
-                match command.ret {
-                    GLType::Void => "()".to_owned(),
-                    _ => command.ret.to_wasm_param_type(),
-                },
-                memory_init,
-                converts.join("\n"),
-                command.name,
-                ffi_args.join(", "),
-                writes.join("\n"),
-                match simple_type_rust_to_wasm(command.ret.clone(), "    result\n".to_owned()) {
-                    None => {
-                        dbg!(command.ret.clone());
-                        format!("compile_error!(\"eee1: {}\")", command.name)
-                    }
-                    Some(v) => v,
+            command.name,
+            import_args.join(""),
+            match command.ret {
+                GLType::Void => "()".to_owned(),
+                _ => command.ret.to_wasm_param_type(),
+            },
+            memory_init,
+            converts.join("\n"),
+            command.name,
+            ffi_args.join(", "),
+            writes.join("\n"),
+            match simple_type_rust_to_wasm(command.ret.clone(), "    result\n".to_owned()) {
+                None => {
+                    dbg!(command.ret.clone());
+                    format!("compile_error!(\"eee1: {}\")", command.name)
                 }
-            )
-            .as_bytes(),
-        )
-        .unwrap();
+                Some(v) => v,
+            }
+        );
     }
+    result
 }
