@@ -4,3 +4,6 @@
 [submodule "external/rust-sdl2"]
 	path = external/rust-sdl2
 	url = https://github.com/Rust-SDL2/rust-sdl2.git
+[submodule "examples"]
+	path = examples
+	url = https://github.com/webrogue-runtime/webrogue-examples.git
