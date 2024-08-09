@@ -17,6 +17,7 @@ pub fn make_funcs(item: TokenStream) -> TokenStream {
     );
 
     for (i, imported_module) in imports.modules.iter().enumerate() {
+        result += &format!("{}\n{{\n", imported_module.attributes.join("\n"));
         for import in imported_module.funcs.clone() {
             let args = import
                 .args
@@ -93,6 +94,7 @@ pub fn make_funcs(item: TokenStream) -> TokenStream {
                 import.func_name,
             );
         }
+        result += "}"
     }
     result += "
         })

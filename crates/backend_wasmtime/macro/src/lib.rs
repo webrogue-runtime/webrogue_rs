@@ -18,6 +18,7 @@ pub fn make_funcs(item: TokenStream) -> TokenStream {
         ", if imports.is_public { "pub " } else {""});
 
     for (i, imported_module) in imports.modules.iter().enumerate() {
+        result += &format!("{}\n{{\n", imported_module.attributes.join("\n"));
         for import in imported_module.funcs.clone() {
             result += &format!(
                 "
@@ -99,6 +100,7 @@ funcs.push((
                     .unwrap_or("".to_owned()),
             );
         }
+        result += "}"
     }
     result += "
             funcs

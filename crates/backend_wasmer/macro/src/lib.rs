@@ -20,6 +20,7 @@ pub fn make_funcs(item: TokenStream) -> TokenStream {
     let mut fn_counter = 0;
 
     for (i, imported_module) in imports.modules.iter().enumerate() {
+        result += &format!("{}\n{{\n", imported_module.attributes.join("\n"));
         for import in imported_module.funcs.clone() {
             let static_func_name = format!("imported_fn_{}", fn_counter);
             fn_counter += 1;
@@ -124,6 +125,7 @@ import_object.define(
                 static_func_name,
             );
         }
+        result += "}"
     }
 
     result += "

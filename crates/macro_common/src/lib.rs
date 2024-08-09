@@ -116,6 +116,7 @@ mod kw {
     syn::custom_keyword!(module);
     syn::custom_keyword!(defs);
     syn::custom_keyword!(public);
+    syn::custom_keyword!(attribute);
 }
 
 struct Config {
@@ -124,6 +125,7 @@ struct Config {
 }
 
 pub struct ImportedModule {
+    pub attributes: Vec<String>,
     pub module_name: String,
     pub rust_module: String,
     pub funcs: Vec<Import>,
@@ -183,6 +185,7 @@ impl syn::parse::Parse for Imports {
                 let mut imports: Vec<Import> = vec![];
                 parse_file(file_content, &mut imports);
                 Ok(ImportedModule {
+                    attributes: module_config.1.attributes.clone(),
                     module_name: wasm_module,
                     rust_module: rust_module,
                     funcs: imports,
@@ -244,6 +247,7 @@ impl syn::parse::Parse for ConfigField {
 }
 
 struct ModuleConfig {
+    pub attributes: Vec<String>,
     pub defs: Option<String>,
     pub module: String,
 }
@@ -259,6 +263,7 @@ impl syn::parse::Parse for ModuleConfig {
 }
 
 enum ModuleConfigField {
+    Attribute(String),
     Module(String),
     Defs(String),
 }
@@ -266,7 +271,13 @@ enum ModuleConfigField {
 impl syn::parse::Parse for ModuleConfigField {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let lookahead = input.lookahead1();
-        if lookahead.peek(kw::defs) {
+        if lookahead.peek(kw::attribute) {
+            input.parse::<kw::attribute>()?;
+            input.parse::<syn::Token![:]>()?;
+            Ok(ModuleConfigField::Attribute(
+                input.parse::<syn::LitStr>()?.value(),
+            ))
+        } else if lookahead.peek(kw::defs) {
             input.parse::<kw::defs>()?;
             input.parse::<syn::Token![:]>()?;
             Ok(ModuleConfigField::Defs(
@@ -295,8 +306,10 @@ impl ModuleConfig {
     ) -> syn::Result<Self> {
         let mut defs = None;
         let mut module = None;
+        let mut attributes = vec![];
         for f in fields {
             match f {
+                ModuleConfigField::Attribute(attribute) => attributes.push(attribute),
                 ModuleConfigField::Defs(path) => {
                     if defs.is_some() {
                         return Err(syn::Error::new(err_loc, "duplicate `defs` field"));
@@ -312,6 +325,7 @@ impl ModuleConfig {
             }
         }
         Ok(ModuleConfig {
+            attributes,
             defs,
             module: module.ok_or_else(|| syn::Error::new(err_loc, "`module` field required"))?,
         })
@@ -338,8 +352,10 @@ pub fn make_context_fn(imports: &Imports) -> String {
             .iter()
             .map(|imported_module| {
                 format!(
-                    "{}_ctx: *mut {}::Context,\n",
-                    imported_module.module_name, imported_module.rust_module
+                    "{}\n{}_ctx: *mut {}::Context,\n",
+                    imported_module.attributes.join("\n"),
+                    imported_module.module_name,
+                    imported_module.rust_module
                 )
             })
             .collect::<Vec<_>>()
@@ -349,7 +365,12 @@ pub fn make_context_fn(imports: &Imports) -> String {
             .iter()
             .enumerate()
             .map(|(i, imported_module)| {
-                format!("result.set({}, {}_ctx);\n", i, imported_module.module_name)
+                format!(
+                    "{}\nresult.set({}, {}_ctx);\n",
+                    imported_module.attributes.join("\n"),
+                    i,
+                    imported_module.module_name
+                )
             })
             .collect::<Vec<_>>()
             .join("")

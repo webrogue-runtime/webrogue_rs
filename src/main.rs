@@ -34,6 +34,7 @@ make_funcs!({
         module: webrogue_wasi::wasi_snapshot_preview1
     },
     "wr_gl": {
+        attribute: "#[cfg(feature = \"gl\")]",
         // defs: "crates/gl/defs.in",
         module: webrogue_gl::wr_gl
     }
@@ -44,6 +45,7 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
+#[cfg(feature = "gl")]
 use webrogue_gl::sdl2;
 
 fn main() -> Result<()> {
@@ -75,8 +77,11 @@ fn main() -> Result<()> {
         webrogue_std_stream_os::bind_streams(&mut wasi);
 
         let backend = make_backend();
+        #[cfg(feature = "gl")]
         let sdl_context = sdl2::init().unwrap();
+        #[cfg(feature = "gl")]
         let video_subsystem = sdl_context.video().unwrap();
+        #[cfg(feature = "gl")]
         let window = video_subsystem
             .window("webrogue", 600, 300)
             .position_centered()
@@ -84,15 +89,23 @@ fn main() -> Result<()> {
             .resizable()
             .build()
             .unwrap();
+        #[cfg(feature = "gl")]
         let gl_context = window.gl_create_context().unwrap();
+        #[cfg(feature = "gl")]
         let mut webrogue_gl_context = webrogue_gl::wr_gl::Context { window: window };
         lifecycle.run(
             backend,
             make_imports(),
-            make_context_vec(&mut wasi, &mut webrogue_gl_context),
+            make_context_vec(
+                &mut wasi,
+                #[cfg(feature = "gl")]
+                &mut webrogue_gl_context,
+            ),
             reader,
         )?;
+        #[cfg(feature = "gl")]
         drop(webrogue_gl_context);
+        #[cfg(feature = "gl")]
         drop(gl_context);
         drop(wasi);
     }
