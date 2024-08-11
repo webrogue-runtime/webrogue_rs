@@ -97,6 +97,14 @@ impl Reader<'_> {
             seekable: Arc::new(Mutex::new(seekable)),
         })
     }
+
+    pub fn from_static_slice(bytes: &'static [u8]) -> anyhow::Result<Self> {
+        let seekable = zstd_seekable::Seekable::init(Box::new(Cursor::new(bytes)))?;
+        let seekable = ZSTDSeekableProvider::new(seekable);
+        anyhow::Ok(Self {
+            seekable: Arc::new(Mutex::new(seekable)),
+        })
+    }
 }
 
 impl Reader<'_> {

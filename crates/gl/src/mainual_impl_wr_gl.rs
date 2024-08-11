@@ -101,11 +101,11 @@ pub fn glGetAttribLocation(
                     name + byte_offset,
                 ))
                 .unwrap();
+            source.push(byte);
             if byte == 0 {
                 break;
             } else {
                 byte_offset += 1;
-                source.push(byte);
             }
         }
         source
