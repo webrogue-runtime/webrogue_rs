@@ -7,7 +7,7 @@ pub fn archive(
     dir_path: std::path::PathBuf,
     output_path: std::path::PathBuf,
 ) -> anyhow::Result<()> {
-    let mut cstream = zstd_seekable::SeekableCStream::new(10, 1024).unwrap();
+    let mut cstream = zstd_seekable::SeekableCStream::new(5, 64*1024).unwrap();
 
     let mut output = std::fs::File::create(output_path.clone())?;
     let mut out_buffer = [0; 10];

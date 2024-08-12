@@ -13,15 +13,7 @@ fn simple_type_rust_to_wasm(ty: GLType, name: String) -> Option<String> {
 }
 
 pub fn get_as_str(parse_results: &ParseResults) -> String {
-    let mut result = "
-pub fn present(
-    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut Context,
-) {
-    _context.window.gl_swap_window();
-}
-"
-    .to_owned();
+    let mut result = "".to_owned();
 
     let mut keywords = HashSet::new();
     keywords.insert("type");

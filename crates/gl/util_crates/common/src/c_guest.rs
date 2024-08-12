@@ -8,11 +8,6 @@ pub fn write_to_file(file: &mut std::fs::File, parse_results: &ParseResults) {
 
 // clang-format off
 
-__attribute__((import_name("present")))
-__attribute__((import_module("wr_gl")))
-void imported_wr_gl_present();
-
-void wr_gl_present() { imported_wr_gl_present(); }
 "#
         .as_bytes(),
     )
@@ -35,7 +30,7 @@ void wr_gl_present() { imported_wr_gl_present(); }
             format!(
                 r#"
 __attribute__((import_name("{}")))
-__attribute__((import_module("wr_gl")))
+__attribute__((import_module("webrogue_gl")))
 {} imported_{}({});
 
 {} {}({}) {{

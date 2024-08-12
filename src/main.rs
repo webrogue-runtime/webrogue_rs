@@ -30,13 +30,15 @@ fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
 
 make_funcs!({
     "wasi_snapshot_preview1": {
-        // defs: "crates/wasi/defs.in",
         module: webrogue_wasi::wasi_snapshot_preview1
     },
-    "wr_gl": {
+    "webrogue_gl": {
         attribute: "#[cfg(feature = \"gl\")]",
-        // defs: "crates/gl/defs.in",
-        module: webrogue_gl::wr_gl
+        module: webrogue_gl::api
+    },
+    "webrogue_gfx": {
+        attribute: "#[cfg(feature = \"_gfx\")]",
+        module: webrogue_gfx
     }
 });
 
@@ -44,9 +46,6 @@ make_funcs!({
 struct Cli {
     path: std::path::PathBuf,
 }
-
-#[cfg(feature = "gl")]
-use webrogue_gl::sdl2;
 
 fn main() -> Result<()> {
     let lifecycle = webrogue_runtime::Lifecycle::new();
@@ -77,22 +76,11 @@ fn main() -> Result<()> {
         webrogue_std_stream_os::bind_streams(&mut wasi);
 
         let backend = make_backend();
+
         #[cfg(feature = "gl")]
-        let sdl_context = sdl2::init().unwrap();
-        #[cfg(feature = "gl")]
-        let video_subsystem = sdl_context.video().unwrap();
-        #[cfg(feature = "gl")]
-        let window = video_subsystem
-            .window("webrogue", 600, 300)
-            .position_centered()
-            .opengl()
-            .resizable()
-            .build()
-            .unwrap();
-        #[cfg(feature = "gl")]
-        let gl_context = window.gl_create_context().unwrap();
-        #[cfg(feature = "gl")]
-        let mut webrogue_gl_context = webrogue_gl::wr_gl::Context { window: window };
+        let mut webrogue_gl_context = webrogue_gl::api::Context {};
+        #[cfg(feature = "_gfx")]
+        let mut webrogue_gfx_context = webrogue_gfx::Context::new();
         lifecycle.run(
             backend,
             make_imports(),
@@ -100,13 +88,15 @@ fn main() -> Result<()> {
                 &mut wasi,
                 #[cfg(feature = "gl")]
                 &mut webrogue_gl_context,
+                #[cfg(feature = "_gfx")]
+                &mut webrogue_gfx_context,
             ),
             reader,
         )?;
         #[cfg(feature = "gl")]
         drop(webrogue_gl_context);
-        #[cfg(feature = "gl")]
-        drop(gl_context);
+        #[cfg(feature = "_gfx")]
+        drop(webrogue_gfx_context);
         drop(wasi);
     }
 

@@ -261,3 +261,22 @@ pub fn poll_oneoff(
         }
     }
 }
+
+// clock_time_get(i32, i64, i32) -> (i32)
+// pub fn clock_time_get(
+//     memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+//     context: &mut wasi_common::WasiCtx,
+//     a: i32,
+//     b: i64,
+//     c: i32,
+// ) -> i32 {
+//     let mut memory = memory_factory.make_memory();
+//     let future = context.clock_time_get(
+//         &mut memory,
+//         GuestPtr::<wasi_common::snapshots::preview_1::types::Subscription>::new(
+//             subscription_in_ptr,
+//         ),
+//         GuestPtr::<wasi_common::snapshots::preview_1::types::Event>::new(out_ptr),
+//         nsubscriptions,
+//     );
+// }

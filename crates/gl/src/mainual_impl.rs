@@ -132,9 +132,6 @@ pub fn glVertexAttribPointer(
     let converted__type = _type;
     let converted_normalized = normalized as u8;
     let converted_stride = stride;
-    if pointer != 0 {
-        panic!();
-    }
 
     let result = unsafe {
         crate::ffi::glVertexAttribPointer(
@@ -143,8 +140,75 @@ pub fn glVertexAttribPointer(
             converted__type,
             converted_normalized,
             converted_stride,
-            std::ptr::null_mut(),
+            pointer as *mut (),
         )
     };
     result
+}
+
+#[allow(non_snake_case)]
+pub fn glBindAttribLocation(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    program: u32,
+    index: u32,
+    name: u32,
+) -> () {
+    let memory = _memory_factory.make_memory();
+    let converted_program = program;
+    let converted_index = index;
+    let mut vec_name: Vec<i8> = {
+        let mut source: Vec<i8> = vec![];
+        let mut byte_offset = 0;
+        loop {
+            let byte = memory
+                .read::<i8>(webrogue_runtime::wiggle::GuestPtr::<i8>::new(
+                    name + byte_offset,
+                ))
+                .unwrap();
+            source.push(byte);
+            if byte == 0 {
+                break;
+            } else {
+                byte_offset += 1;
+            }
+        }
+        source
+    };
+    let converted_name = vec_name.as_mut_ptr() as *mut i8;
+    let result = unsafe {
+        crate::ffi::glBindAttribLocation(converted_program, converted_index, converted_name)
+    };
+    result
+}
+#[allow(non_snake_case)]
+pub fn glGetUniformLocation(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    program: u32,
+    name: u32,
+) -> i32 {
+    let memory = _memory_factory.make_memory();
+    let converted_program = program;
+    let mut vec_name: Vec<i8> = {
+        let mut source: Vec<i8> = vec![];
+        let mut byte_offset = 0;
+        loop {
+            let byte = memory
+                .read::<i8>(webrogue_runtime::wiggle::GuestPtr::<i8>::new(
+                    name + byte_offset,
+                ))
+                .unwrap();
+            source.push(byte);
+            if byte == 0 {
+                break;
+            } else {
+                byte_offset += 1;
+            }
+        }
+        source
+    };
+    let converted_name = vec_name.as_mut_ptr() as *mut i8;
+    let result = unsafe { crate::ffi::glGetUniformLocation(converted_program, converted_name) };
+    result.into()
 }

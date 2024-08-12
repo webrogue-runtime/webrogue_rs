@@ -154,7 +154,12 @@ impl syn::parse::Parse for Imports {
                         "wasi_snapshot_preview1" => {
                             String::from_utf8_lossy(include_bytes!("../../wasi/defs.in"))
                         }
-                        "wr_gl" => String::from_utf8_lossy(include_bytes!("../../gl/defs.in")),
+                        "webrogue_gl" => {
+                            String::from_utf8_lossy(include_bytes!("../../gl/defs.in"))
+                        }
+                        "webrogue_gfx" => {
+                            String::from_utf8_lossy(include_bytes!("../../gfx/defs.in"))
+                        }
                         _ => {
                             return Err(syn::Error::new(
                                 _lbrace.span.span(),

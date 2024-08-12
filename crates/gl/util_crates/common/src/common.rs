@@ -1,6 +1,6 @@
-pub const EXCLUDED: [&str; 37] = [
+pub const EXCLUDED: [&str; 35] = [
     "glGetString",
-    "glBindAttribLocation",
+    // "glBindAttribLocation",
     "glBufferSubData",
     "glCompressedTexImage2D",
     "glCompressedTexSubImage2D",
@@ -25,7 +25,7 @@ pub const EXCLUDED: [&str; 37] = [
     "glGetShaderSource",
     "glGetTexParameterfv",
     "glGetTexParameteriv",
-    "glGetUniformLocation",
+    // "glGetUniformLocation",
     "glGetUniformfv",
     "glGetUniformiv",
     "glGetVertexAttribPointerv",
@@ -38,9 +38,11 @@ pub const EXCLUDED: [&str; 37] = [
     "glTexSubImage2D",
 ];
 
-pub const MANUAL_IMPL: [&str; 3] = [
+pub const MANUAL_IMPL: [&str; 5] = [
     // "glGenBuffers",
     "glShaderSource",
     "glGetAttribLocation",
     "glVertexAttribPointer",
+    "glBindAttribLocation",
+    "glGetUniformLocation",
 ];

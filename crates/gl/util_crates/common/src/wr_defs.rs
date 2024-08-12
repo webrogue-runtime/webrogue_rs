@@ -2,8 +2,6 @@ use crate::types::*;
 use std::io::Write;
 
 pub fn write_to_file(file: &mut std::fs::File, parse_results: &ParseResults) {
-    file.write("present() -> ()\n".as_bytes()).unwrap();
-
     for command in parse_results.commands.clone() {
         if crate::common::EXCLUDED.contains(&command.name.as_str()) {
             continue;
