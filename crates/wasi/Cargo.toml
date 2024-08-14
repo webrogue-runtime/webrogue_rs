@@ -6,5 +6,6 @@ edition = "2021"
 [dependencies]
 webrogue_runtime = { path = "../runtime" }
 wasi-common = { path = "../../external/wasmtime/crates/wasi-common", default-features = false, features = ["trace_log"] }
-wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false }
+wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false, features = ["wiggle_metadata"] }
 futures =  { version = "0.3" }
+anyhow = { version = "1" }

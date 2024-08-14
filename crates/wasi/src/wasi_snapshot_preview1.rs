@@ -1,303 +1,155 @@
-use wasi_common::snapshots::preview_1::wasi_snapshot_preview1::WasiSnapshotPreview1;
 pub use wasi_common::WasiCtx as Context;
-use wiggle::GuestPtr;
 
-pub fn args_get(
-    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut wasi_common::WasiCtx,
-    _a: u32,
-    _b: u32,
-) -> u32 {
-    0
+// from https://github.com/wasmi-labs/wasmi/blob/main/crates/wasi/src/sync/snapshots/preview_1.rs
+
+// Creates a dummy `RawWaker`. We can only create Wakers from `RawWaker`s
+fn dummy_raw_waker() -> std::task::RawWaker {
+    fn no_op(_: *const ()) {}
+    //returns a new RawWaker by calling dummy_raw_waker again
+    fn clone(_: *const ()) -> std::task::RawWaker {
+        dummy_raw_waker()
+    }
+    // RawWakerVTable specifies the functions that should be called when the RawWaker is cloned, woken, or dropped.
+    let vtable = &std::task::RawWakerVTable::new(clone, no_op, no_op, no_op);
+
+    std::task::RawWaker::new(std::ptr::null::<()>(), vtable)
 }
 
-pub fn args_sizes_get(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    a: u32,
-    b: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-    let args = context.args_sizes_get(&mut memory);
-    match futures::executor::block_on(args) {
-        Ok(args) => {
-            match memory.write(wiggle::GuestPtr::new(a), args.0) {
-                Err(_) => {
-                    return 1;
-                }
-                Ok(_) => {}
+// Creates a dummy waker which does *nothing*, as the future itsef polls to ready at first poll
+// A waker is needed to do any polling at all, as it is the primary constituent of the `Context` for polling
+fn run_in_dummy_executor<F: std::future::Future>(f: F) -> anyhow::Result<F::Output> {
+    let mut f = std::pin::Pin::from(Box::new(f));
+    let waker = unsafe { std::task::Waker::from_raw(dummy_raw_waker()) };
+    let mut cx = std::task::Context::from_waker(&waker);
+    match f.as_mut().poll(&mut cx) {
+        std::task::Poll::Ready(val) => Ok(val),
+        std::task::Poll::Pending => anyhow::bail!("Cannot wait on pending future"),
+    }
+}
+
+macro_rules! add_funcs {
+    (
+        $(
+            fn $fname:ident ($( $arg:ident : $typ:ty ),* $(,)? ) -> $ret:tt
+        );+ $(;)?
+    ) => {
+        $(
+            // $(#[$docs])* // TODO: find place for docs
+            pub fn $fname(
+                    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+                    context: &mut wasi_common::WasiCtx,
+                    $($arg : $typ,)*
+            ) -> $ret {
+                run_in_dummy_executor(async {
+                    let mut memory = memory_factory.make_memory();
+                    match wasi_common::snapshots::preview_1::wasi_snapshot_preview1::$fname(context, &mut memory, $($arg,)*).await {
+                        Ok(r) => <$ret>::from(r),
+                        _ => panic!("{} returned error", stringify!($fname)),
+                    }
+                }).unwrap()
             }
-            match memory.write(wiggle::GuestPtr::new(b), args.1) {
-                Err(_) => {
-                    return 1;
-                }
-                Ok(_) => {}
-            }
-            return 0;
-        }
-        Err(_) => {
-            return 1;
-        }
-    };
-}
-pub fn proc_exit(
-    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut wasi_common::WasiCtx,
-    _code: u32,
-) -> () {
-    todo!()
-}
-
-pub fn fd_close(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    fd: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-    match futures::executor::block_on(context.fd_close(&mut memory, fd.into())) {
-        Ok(_) => 0,
-        Err(_) => 1,
-    }
-}
-
-pub fn fd_fdstat_get(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    fd: u32,
-    out: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-
-    match futures::executor::block_on(context.fd_fdstat_get(&mut memory, fd.into())) {
-        Ok(fdstat) => {
-            match memory.write(wiggle::GuestPtr::<_>::new(out), fdstat) {
-                Err(_) => {
-                    return 1;
-                }
-                Ok(_) => {}
-            };
-            return 0;
-        }
-        Err(_) => {
-            return 1;
-        }
-    };
-}
-pub fn fd_seek(
-    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut wasi_common::WasiCtx,
-    _a: u32,
-    _b: u64,
-    _c: u32,
-    _d: u32,
-) -> u32 {
-    todo!()
-}
-pub fn fd_write(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    fd: u32,
-    wasi_iovs: u32,
-    iovs_len: u32,
-    nwritten_ptr: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-
-    match futures::executor::block_on(context.fd_write(
-        &mut memory,
-        fd.into(),
-        wasi_common::snapshots::preview_1::types::CiovecArray::new((wasi_iovs, iovs_len)),
-    )) {
-        Ok(nwritten) => {
-            match memory.write(wiggle::GuestPtr::<u32>::new(nwritten_ptr), nwritten) {
-                Err(_) => {
-                    return 1;
-                }
-                Ok(_) => {}
-            };
-            return 0;
-        }
-        Err(_) => {
-            return 1;
-        }
+        )*
     };
 }
 
-pub fn fd_fdstat_set_flags(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut wasi_common::WasiCtx,
-    _a: u32,
-    _b: u32,
-) -> u32 {
-    let _memory = memory_factory.make_memory();
-    todo!()
-}
-pub fn fd_prestat_get(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    fd: u32,
-    buf: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-
-    match futures::executor::block_on(context.fd_prestat_get(
-        &mut memory,
-        wasi_common::snapshots::preview_1::types::Fd::from(fd),
-    )) {
-        Ok(prestat) => {
-            match memory.write(wiggle::GuestPtr::<_>::new(buf), prestat) {
-                Err(_) => {
-                    return 1;
-                }
-                Ok(_) => {}
-            };
-            return 0;
-        }
-        Err(_) => {
-            return 8;
-        }
-    };
-}
-pub fn fd_prestat_dir_name(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    fd: u32,
-    path: u32,
-    path_len: u32,
-) -> u32 {
-    let mut memory: wiggle::GuestMemory = memory_factory.make_memory();
-
-    let future =
-        context.fd_prestat_dir_name(&mut memory, fd.into(), GuestPtr::<u8>::new(path), path_len);
-
-    match futures::executor::block_on(future) {
-        Err(_) => 1,
-        Ok(()) => 0,
-    }
-}
-pub fn fd_read(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    fd: u32,
-    wasi_iovs: u32,
-    iovs_len: u32,
-    nread: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-    let future = context.fd_read(
-        &mut memory,
-        fd.into(),
-        wasi_common::snapshots::preview_1::types::IovecArray::new((wasi_iovs, iovs_len)),
-    );
-    match futures::executor::block_on(future) {
-        Err(_) => 1,
-        Ok(result) => {
-            memory.write(GuestPtr::<_>::new(nread), result).unwrap();
-            0
-        }
-    }
-}
-pub fn path_open(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    dirfd: u32,
-    dirflags: u32,
-    path: u32,
-    path_len: u32,
-    oflags: u32,
-    fs_rights_base: u64,
-    fs_rights_inheriting: u64,
-    fs_flags: u32,
-    fd: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-
-    let future = context.path_open(
-        &mut memory,
-        dirfd.into(),
-        wasi_common::snapshots::preview_1::types::Lookupflags::from_bits(dirflags).unwrap(),
-        GuestPtr::<str>::new((path, path_len)),
-        wasi_common::snapshots::preview_1::types::Oflags::from_bits(oflags as u16).unwrap(),
-        wasi_common::snapshots::preview_1::types::Rights::from_bits(fs_rights_base).unwrap(),
-        wasi_common::snapshots::preview_1::types::Rights::from_bits(fs_rights_inheriting).unwrap(),
-        wasi_common::snapshots::preview_1::types::Fdflags::from_bits(fs_flags as u16).unwrap(),
-    );
-
-    match futures::executor::block_on(future) {
-        Err(_) => 1,
-        Ok(result) => {
-            memory.write(GuestPtr::<_>::new(fd), result).unwrap();
-            0
-        }
-    }
-}
-
-pub fn poll_oneoff(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    subscription_in_ptr: u32,
-    out_ptr: u32,
-    nsubscriptions: u32,
-    nevents_ptr: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-
-    let future = context.poll_oneoff(
-        &mut memory,
-        GuestPtr::<wasi_common::snapshots::preview_1::types::Subscription>::new(
-            subscription_in_ptr,
-        ),
-        GuestPtr::<wasi_common::snapshots::preview_1::types::Event>::new(out_ptr),
-        nsubscriptions,
-    );
-
-    match futures::executor::block_on(future) {
-        Err(_) => 1,
-        Ok(result) => {
-            memory
-                .write(GuestPtr::<_>::new(nevents_ptr), result)
-                .unwrap();
-            0
-        }
-    }
-}
-
-pub fn clock_time_get(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-    clock_id: u32,
-    precision: u64,
-    time: u32,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-    let future = context.clock_time_get(
-        &mut memory,
-        match clock_id {
-            0 => wasi_common::snapshots::preview_1::types::Clockid::Realtime,
-            1 => wasi_common::snapshots::preview_1::types::Clockid::Monotonic,
-            2 => wasi_common::snapshots::preview_1::types::Clockid::ProcessCputimeId,
-            3 => wasi_common::snapshots::preview_1::types::Clockid::ThreadCputimeId,
-            _ => panic!("invalid clock id: {}", clock_id),
-        },
-        wasi_common::snapshots::preview_1::types::Timestamp::from_le(precision.to_le()),
-    );
-    match futures::executor::block_on(future) {
-        Err(_) => 1,
-        Ok(result) => {
-            memory.write(GuestPtr::<_>::new(time), result).unwrap();
-            0
-        }
-    }
-}
-
-pub fn sched_yield(
-    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    context: &mut wasi_common::WasiCtx,
-) -> u32 {
-    let mut memory = memory_factory.make_memory();
-    let future = context.sched_yield(&mut memory);
-    match futures::executor::block_on(future) {
-        Err(_) => 1,
-        Ok(_) => 0,
-    }
+add_funcs! {
+    fn args_get(argv: i32, argv_buf: i32) -> i32;
+    fn args_sizes_get(offset0: i32, offset1: i32) -> i32;
+    fn environ_get(environ: i32, environ_buf: i32) -> i32;
+    fn environ_sizes_get(offset0: i32, offset1: i32) -> i32;
+    fn clock_res_get(id: i32, offset0: i32) -> i32;
+    fn clock_time_get(id: i32, precision: i64, offset0: i32) -> i32;
+    fn fd_advise(fd: i32, offset: i64, len: i64, advice: i32) -> i32;
+    fn fd_allocate(fd: i32, offset: i64, len: i64) -> i32;
+    fn fd_close(fd: i32) -> i32;
+    fn fd_datasync(fd: i32) -> i32;
+    fn fd_fdstat_get(fd: i32, offset0: i32) -> i32;
+    fn fd_fdstat_set_flags(fd: i32, flags: i32) -> i32;
+    fn fd_fdstat_set_rights(fd: i32, fs_rights_base: i64, fs_rights_inheriting: i64) -> i32;
+    fn fd_filestat_get(fd: i32, offset0: i32) -> i32;
+    fn fd_filestat_set_size(fd: i32, size: i64) -> i32;
+    fn fd_filestat_set_times(fd: i32, atim: i64, mtim: i64, fst_flags: i32) -> i32;
+    fn fd_pread(fd: i32, iov_buf: i32, iov_buf_len: i32, offset: i64, offset0: i32) -> i32;
+    fn fd_prestat_get(fd: i32, offset0: i32) -> i32;
+    fn fd_prestat_dir_name(fd: i32, path: i32, path_len: i32) -> i32;
+    fn fd_pwrite(fd: i32, ciov_buf: i32, ciov_buf_len: i32, offset: i64, offset0: i32) -> i32;
+    fn fd_read(fd: i32, iov_buf: i32, iov_buf_len: i32, offset1: i32) -> i32;
+    fn fd_readdir(fd: i32, buf: i32, buf_len: i32, cookie: i64, offset0: i32) -> i32;
+    fn fd_renumber(fd: i32, to: i32) -> i32;
+    fn fd_seek(fd: i32, offset: i64, whence: i32, offset0: i32) -> i32;
+    fn fd_sync(fd: i32) -> i32;
+    fn fd_tell(fd: i32, offset0: i32) -> i32;
+    fn fd_write(fd: i32, ciov_buf: i32, ciov_buf_len: i32, offset0: i32) -> i32;
+    fn path_create_directory(fd: i32, offset: i32, length: i32) -> i32;
+    fn path_filestat_get(fd: i32, flags: i32, offset: i32, length: i32, offset0: i32) -> i32;
+    fn path_filestat_set_times(
+        fd: i32,
+        flags: i32,
+        offset: i32,
+        length: i32,
+        atim: i64,
+        mtim: i64,
+        fst_flags: i32,
+    ) -> i32;
+    fn path_link(
+        old_fd: i32,
+        old_flags: i32,
+        old_offset: i32,
+        old_length: i32,
+        new_fd: i32,
+        new_offset: i32,
+        new_length: i32,
+    ) -> i32;
+    fn path_open(
+        fd: i32,
+        dirflags: i32,
+        offset: i32,
+        length: i32,
+        oflags: i32,
+        fs_rights_base: i64,
+        fdflags: i64,
+        fs_rights_inheriting: i32,
+        offset0: i32,
+    ) -> i32;
+    fn path_readlink(
+        fd: i32,
+        offset: i32,
+        length: i32,
+        buf: i32,
+        buf_len: i32,
+        offset0: i32,
+    ) -> i32;
+    fn path_remove_directory(fd: i32, offset: i32, length: i32) -> i32;
+    fn path_rename(
+        fd: i32,
+        old_offset: i32,
+        old_length: i32,
+        new_fd: i32,
+        new_offset: i32,
+        new_length: i32,
+    ) -> i32;
+    fn path_symlink(
+        old_offset: i32,
+        old_length: i32,
+        fd: i32,
+        new_offset: i32,
+        new_length: i32,
+    ) -> i32;
+    fn path_unlink_file(fd: i32, offset: i32, length: i32) -> i32;
+    fn poll_oneoff(in_: i32, out: i32, nsubscriptions: i32, offset0: i32) -> i32;
+    fn proc_exit(rval: i32) -> ();
+    fn proc_raise(sig: i32) -> i32;
+    fn sched_yield() -> i32;
+    fn random_get(buf: i32, buf_len: i32) -> i32;
+    fn sock_accept(fd: i32, flags: i32, offset0: i32) -> i32;
+    fn sock_recv(
+        fd: i32,
+        iov_buf: i32,
+        iov_buf_len: i32,
+        ri_flags: i32,
+        offset0: i32,
+        offset1: i32,
+    ) -> i32;
+    fn sock_send(fd: i32, ciov_buf: i32, ciov_buf_len: i32, si_flags: i32, offset0: i32) -> i32;
+    fn sock_shutdown(fd: i32, how: i32) -> i32;
 }
