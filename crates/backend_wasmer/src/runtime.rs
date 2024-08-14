@@ -14,6 +14,7 @@ impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
         imports: crate::Imports,
         context_vec: webrogue_runtime::ContextVec,
         bytecode: Vec<u8>,
+        memory_size_range: Option<(u64, u64)>,
     ) -> anyhow::Result<()> {
         let mut store = wasmer::Store::default();
         let context = crate::context::Context {
@@ -34,6 +35,25 @@ impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
 
         (imports.f)(&mut import_object, &mut store, env);
 
+        if let Some(memory_size_range) = memory_size_range {
+            import_object.define(
+                "env",
+                "memory",
+                wasmer::Memory::new(
+                    &mut store,
+                    wasmer::MemoryType {
+                        minimum: wasmer::Pages {
+                            0: memory_size_range.0 as u32,
+                        },
+                        maximum: Some(wasmer::Pages {
+                            0: memory_size_range.1 as u32,
+                        }),
+                        shared: true,
+                    },
+                )?,
+            )
+        }
+        
         let instance = wasmer::Instance::new(&mut store, &module, &import_object)?;
         let memory = instance.exports.get_memory("memory")?;
         context_arc.lock().unwrap().memory_factory = Box::new(crate::memory::MemoryFactory {

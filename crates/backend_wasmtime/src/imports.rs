@@ -9,6 +9,7 @@ pub struct Imports {
 
 pub fn implement_imports(
     i: Imports,
+    memory: Option<wasmtime::SharedMemory>,
     module: &wasmtime::Module,
     store: *mut wasmtime::Store<crate::context::Context>,
     engine: &wasmtime::Engine,
@@ -36,7 +37,11 @@ pub fn implement_imports(
                 anyhow::bail!("Missing global import: {}", full_name)
             }
             wasmtime::ExternType::Memory(_) => {
-                anyhow::bail!("Missing memory import: {}", full_name)
+                if let Some(memory) = memory.clone() {
+                    imports.push(wasmtime::Extern::SharedMemory(memory))
+                } else {
+                    anyhow::bail!("Missing memory import: {}", full_name)
+                }
             }
             wasmtime::ExternType::Table(_) => anyhow::bail!("Missing table import: {}", full_name),
         };

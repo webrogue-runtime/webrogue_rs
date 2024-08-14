@@ -18,6 +18,7 @@ impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
         imports: crate::Imports,
         context_vec: webrogue_runtime::ContextVec,
         bytecode: Vec<u8>,
+        memory_size_range: Option<(u64, u64)>,
     ) -> anyhow::Result<()> {
         {
             let platform = v8::new_default_platform(0, false).make_shared();
@@ -77,6 +78,33 @@ impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
                     global
                         .set(scope, name.into(), imports_object.into())
                         .unwrap();
+                    if let Some(memory_size_range) = memory_size_range {
+                        let name = v8::String::new(scope, "wasm_memory_inital").unwrap();
+                        let value = v8::Number::new(scope, memory_size_range.0 as f64);
+                        global
+                            .set(scope, name.into(), value.into())
+                            .unwrap();
+                        let name = v8::String::new(scope, "wasm_memory_maximum").unwrap();
+                        let value = v8::Number::new(scope, memory_size_range.1 as f64);
+                        global
+                            .set(scope, name.into(), value.into())
+                            .unwrap();
+
+                        let c_source = r#"
+const memory = new WebAssembly.Memory({
+    initial: wasm_memory_inital,
+    maximum: wasm_memory_maximum,
+    shared: true,
+});
+if (!imports["env"]) {
+    imports["env"] = {};
+}
+imports["env"]["memory"] = memory;
+                "#;
+                        let source = v8::String::new(scope, c_source).unwrap();
+                        let script = v8::Script::compile(scope, source, None).unwrap();
+                        script.run(scope).unwrap();
+                    }
                 }
                 scope.set_data(
                     1,

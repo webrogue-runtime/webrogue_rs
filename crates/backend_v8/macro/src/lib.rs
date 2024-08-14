@@ -82,7 +82,7 @@ pub fn make_funcs(item: TokenStream) -> TokenStream {
         }},
     )
     .unwrap();
-    webrogue_backend_v8::register_import(scope, imports, \"{}\", \"{}\", func);
+    webrogue_backend_v8::register_import(scope, imports, \"{}\", \"{}\", func.into());
             ",
                 imported_module.rust_module,
                 i,

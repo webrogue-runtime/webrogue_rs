@@ -23,4 +23,10 @@ fn main() {
         "../../../../crates/gl/defs.in",
         &parse_results,
     );
+
+    run_flavor(
+        c_guest_loader::write_to_file,
+        "../../../../examples/libs/webrogue_gfx/webrogue_gl_loader.c",
+        &parse_results,
+    );
 }

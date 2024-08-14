@@ -10,3 +10,4 @@ webrogue_wrapp = { path = "../wrapp" }
 wasi-common = { path = "../../external/wasmtime/crates/wasi-common", default-features = false, features = ["trace_log"] }
 wiggle = { path = "../../external/wasmtime/crates/wiggle", default-features = false }
 futures =  { version = "0.3" }
+wasmparser = { version = ">=0.215"}

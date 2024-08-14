@@ -262,21 +262,42 @@ pub fn poll_oneoff(
     }
 }
 
-// clock_time_get(i32, i64, i32) -> (i32)
-// pub fn clock_time_get(
-//     memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-//     context: &mut wasi_common::WasiCtx,
-//     a: i32,
-//     b: i64,
-//     c: i32,
-// ) -> i32 {
-//     let mut memory = memory_factory.make_memory();
-//     let future = context.clock_time_get(
-//         &mut memory,
-//         GuestPtr::<wasi_common::snapshots::preview_1::types::Subscription>::new(
-//             subscription_in_ptr,
-//         ),
-//         GuestPtr::<wasi_common::snapshots::preview_1::types::Event>::new(out_ptr),
-//         nsubscriptions,
-//     );
-// }
+pub fn clock_time_get(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+    clock_id: u32,
+    precision: u64,
+    time: u32,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
+    let future = context.clock_time_get(
+        &mut memory,
+        match clock_id {
+            0 => wasi_common::snapshots::preview_1::types::Clockid::Realtime,
+            1 => wasi_common::snapshots::preview_1::types::Clockid::Monotonic,
+            2 => wasi_common::snapshots::preview_1::types::Clockid::ProcessCputimeId,
+            3 => wasi_common::snapshots::preview_1::types::Clockid::ThreadCputimeId,
+            _ => panic!("invalid clock id: {}", clock_id),
+        },
+        wasi_common::snapshots::preview_1::types::Timestamp::from_le(precision.to_le()),
+    );
+    match futures::executor::block_on(future) {
+        Err(_) => 1,
+        Ok(result) => {
+            memory.write(GuestPtr::<_>::new(time), result).unwrap();
+            0
+        }
+    }
+}
+
+pub fn sched_yield(
+    memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    context: &mut wasi_common::WasiCtx,
+) -> u32 {
+    let mut memory = memory_factory.make_memory();
+    let future = context.sched_yield(&mut memory);
+    match futures::executor::block_on(future) {
+        Err(_) => 1,
+        Ok(_) => 0,
+    }
+}

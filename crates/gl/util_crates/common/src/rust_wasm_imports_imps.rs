@@ -1,5 +1,4 @@
 use crate::types::*;
-use std::collections::HashSet;
 
 fn simple_type_rust_to_wasm(ty: GLType, name: String) -> Option<String> {
     match ty {
@@ -12,13 +11,16 @@ fn simple_type_rust_to_wasm(ty: GLType, name: String) -> Option<String> {
     }
 }
 
+fn map_param_name(original: String) -> String {
+    match original.as_str() {
+        "type" => "_type".to_owned(),
+        "ref" => "_ref".to_owned(),
+        _ => original,
+    }
+}
+
 pub fn get_as_str(parse_results: &ParseResults) -> String {
     let mut result = "".to_owned();
-
-    let mut keywords = HashSet::new();
-    keywords.insert("type");
-    keywords.insert("ref");
-
     for command in parse_results.commands.clone() {
         if crate::common::EXCLUDED.contains(&command.name.as_str()) {
             continue;
@@ -34,10 +36,7 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
         let mut is_memory_mut = None;
 
         for param in command.params.clone() {
-            let mut mapped_name = param.name.clone();
-            if keywords.contains(mapped_name.as_str()) {
-                mapped_name = format!("_{}", mapped_name)
-            }
+            let mapped_name = map_param_name(param.name.clone());
             import_args.push(format!(
                 "    {}: {},\n",
                 mapped_name,
@@ -76,10 +75,14 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
                         .unwrap();
                     if len_param.starts_with("COMPSIZE") {
                         len_param = format!(
-                            "crate::compsize::{}_{}_compsize{}",
+                            "crate::compsize::{}_{}_compsize({})",
                             command.name,
-                            param.name,
-                            len_param[8..].to_owned()
+                            mapped_name,
+                            len_param[9..len_param.len() - 1]
+                                .split(",")
+                                .map(|s| { map_param_name(s.to_owned()) })
+                                .collect::<Vec<_>>()
+                                .join(",")
                         )
                     }
                     if !is_const {
@@ -92,10 +95,10 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
             )
             .unwrap()
     }}",
-                            param.name,
+                            mapped_name,
                             inner_ty.to_wasm_mem_type(),
                             inner_ty.to_wasm_mem_type(),
-                            param.name,
+                            mapped_name,
                             inner_ty.wasm_type_size(),
                             inner_ty.to_wasm_mem_type()
                         ))
@@ -115,21 +118,21 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
     }}
     let converted_{} = vec_{}.as_mut_ptr() as {};
 ",
-                        param.name,
+                        mapped_name,
                         len_param,
-                        param.name,
+                        mapped_name,
                         rust_type,
-                        param.name,
-                        param.name,
-                        param.name,
-                        param.name,
+                        mapped_name,
+                        mapped_name,
+                        mapped_name,
+                        mapped_name,
                         inner_ty.to_wasm_mem_type(),
                         inner_ty.to_wasm_mem_type(),
-                        param.name,
+                        mapped_name,
                         inner_ty.wasm_type_size(),
                         rust_type,
-                        param.name,
-                        param.name,
+                        mapped_name,
+                        mapped_name,
                         param.ty.to_rust_type(),
                     )
                 }

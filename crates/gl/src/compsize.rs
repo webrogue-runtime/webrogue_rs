@@ -1,10 +1,14 @@
 use crate::ffi::{self};
 
-pub(crate) fn shader_param_count(pname: u32) -> usize {
+fn shader_param_count(pname: u32) -> usize {
     // https://registry.khronos.org/OpenGL-Refpages/es3/html/glGet.xhtml
     match pname {
         // likely missed
         ffi::GL_COMPILE_STATUS => 1,
+        // likely missed
+        ffi::GL_CONTEXT_PROFILE_MASK => 1,
+        // likely missed
+        ffi::GL_CONTEXT_RELEASE_BEHAVIOR => 1,
         //     data returns a single value indicating the active multitexture unit. The initial value is ffi::GL_TEXTURE0. See glActiveTexture.
         ffi::GL_ACTIVE_TEXTURE => 1,
         //     data returns a pair of values indicating the range of widths supported for aliased lines. See glLineWidth.
@@ -539,11 +543,148 @@ pub(crate) fn shader_param_count(pname: u32) -> usize {
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetShaderiv_params_compsize(pname: u32) -> usize {
-    shader_param_count(pname)
+pub(crate) fn glGetShaderiv_params_compsize(_pname: u32) -> usize {
+    1
 }
 
 #[allow(non_snake_case)]
 pub(crate) fn glGetProgramiv_params_compsize(_pname: u32) -> usize {
     1
 }
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetBooleanv_data_compsize(pname: u32) -> usize {
+    shader_param_count(pname)
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetBufferParameteriv_params_compsize(_pname: u32) -> usize {
+    1
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetFloatv_data_compsize(pname: u32) -> usize {
+    shader_param_count(pname)
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetFramebufferAttachmentParameteriv_params_compsize(_pname: u32) -> usize {
+    1
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetIntegerv_data_compsize(pname: u32) -> usize {
+    shader_param_count(pname)
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetRenderbufferParameteriv_params_compsize(_pname: u32) -> usize {
+    1
+}
+
+fn tex_param_count(pname: u32) -> usize {
+    // https://registry.khronos.org/OpenGL-Refpages/es3/html/glGetTexParameter.xhtml
+    match pname {
+        ffi::GL_TEXTURE_BORDER_COLOR => 4,
+        _ => 1,
+    }
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetTexParameterfv_params_compsize(pname: u32) -> usize {
+    tex_param_count(pname)
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetTexParameteriv_params_compsize(pname: u32) -> usize {
+    tex_param_count(pname)
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetUniformfv_params_compsize(_program: u32, _location: i32) -> usize {
+    // TODO somehow check, cz it is unsafe
+    4
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetUniformiv_params_compsize(_program: u32, _location: i32) -> usize {
+    // TODO somehow check, cz it is unsafe
+    4
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glReadPixels_pixels_compsize(
+    _format: u32,
+    _type: u32,
+    width: i32,
+    height: i32,
+) -> usize {
+    return (width * height) as usize
+        * pixel_type_width(_type);
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glTexImage2D_pixels_compsize(
+    _format: u32,
+    _type: u32,
+    width: i32,
+    height: i32,
+) -> usize {
+    return (width * height) as usize
+        * pixel_type_width(_type);
+}
+
+fn pixel_type_width(_type: u32) -> usize {
+    match _type {
+        ffi::GL_UNSIGNED_BYTE => 1,
+        ffi::GL_BYTE => 1,
+        ffi::GL_UNSIGNED_SHORT => 2,
+        ffi::GL_SHORT => 2,
+        ffi::GL_UNSIGNED_INT => 4,
+        ffi::GL_INT => 4,
+        ffi::GL_HALF_FLOAT => 2,
+        ffi::GL_FLOAT => 4,
+        ffi::GL_UNSIGNED_BYTE_3_3_2 => 1,
+        ffi::GL_UNSIGNED_BYTE_2_3_3_REV => 1,
+        ffi::GL_UNSIGNED_SHORT_5_6_5 => 2,
+        ffi::GL_UNSIGNED_SHORT_5_6_5_REV => 2,
+        ffi::GL_UNSIGNED_SHORT_4_4_4_4 => 2,
+        ffi::GL_UNSIGNED_SHORT_4_4_4_4_REV => 2,
+        ffi::GL_UNSIGNED_SHORT_5_5_5_1 => 2,
+        ffi::GL_UNSIGNED_SHORT_1_5_5_5_REV => 2,
+        ffi::GL_UNSIGNED_INT_8_8_8_8 => 4,
+        ffi::GL_UNSIGNED_INT_8_8_8_8_REV => 4,
+        ffi::GL_UNSIGNED_INT_10_10_10_2 => 4,
+        ffi::GL_UNSIGNED_INT_2_10_10_10_REV => 4,
+        _ => panic!(),
+    }
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glTexParameterfv_params_compsize(pname: u32) -> usize {
+    tex_param_count(pname)
+}
+#[allow(non_snake_case)]
+pub(crate) fn glTexParameteriv_params_compsize(pname: u32) -> usize {
+    tex_param_count(pname)
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glTexSubImage2D_pixels_compsize(
+    _format: u32,
+    _type: u32,
+    width: i32,
+    height: i32,
+) -> usize {
+    return (width * height) as usize
+        * pixel_type_width(_type);
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glDrawElements_indices_compsize(
+    count: i32,
+    _type: u32,
+) -> usize {
+    return count as usize
+        * pixel_type_width(_type);
+}
+

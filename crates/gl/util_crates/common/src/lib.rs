@@ -1,4 +1,5 @@
 pub mod c_guest;
+pub mod c_guest_loader;
 pub mod common;
 pub mod parse;
 pub mod rust_ffi;

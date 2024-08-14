@@ -40,3 +40,19 @@ impl webrogue_runtime::MemoryFactory for MemoryFactory {
         webrogue_runtime::GuestMemory::Unshared(self.wasmtime_memory.data_mut(self.store_ref()))
     }
 }
+
+pub struct SharedMemoryFactory {
+    wasmtime_memory: wasmtime::SharedMemory,
+}
+
+impl SharedMemoryFactory {
+    pub fn new(wasmtime_memory: wasmtime::SharedMemory) -> Self {
+        Self { wasmtime_memory }
+    }
+}
+
+impl webrogue_runtime::MemoryFactory for SharedMemoryFactory {
+    fn make_memory(&self) -> webrogue_runtime::GuestMemory {
+        webrogue_runtime::GuestMemory::Shared(self.wasmtime_memory.data())
+    }
+}

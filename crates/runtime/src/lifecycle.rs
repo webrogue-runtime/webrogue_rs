@@ -1,4 +1,5 @@
 use crate::backend::Backend;
+use anyhow::bail;
 pub use anyhow::Result;
 
 pub struct Lifecycle {}
@@ -17,7 +18,38 @@ impl Lifecycle {
     ) -> Result<()> {
         let mut archive_reader = archive_reader;
         let runtime = backend.make_runtime();
-        runtime.run(imports, context_vec, archive_reader.read_wasm()?)?;
+        let parser = wasmparser::Parser::new(0);
+        let bytecode = archive_reader.read_wasm()?;
+        let mut memory_size_range = None;
+        for payload in parser.parse_all(&bytecode) {
+            let payload =
+                payload.map_err(|wasm_err| anyhow::format_err!("{}", wasm_err.message()))?;
+            match payload {
+                wasmparser::Payload::ImportSection(import_section) => {
+                    for import in import_section {
+                        let import = import
+                            .map_err(|wasm_err| anyhow::format_err!("{}", wasm_err.message()))?;
+                        if import.module == "env" && import.name == "memory" {
+                            if let wasmparser::TypeRef::Memory(memory) = import.ty {
+                                if !memory.shared {
+                                    bail!("env.memory must be shared")
+                                }
+                                if let Some(max_size) = memory.maximum {
+                                    memory_size_range = Some((memory.initial, max_size));
+                                } else {
+                                    bail!("env.memory has no maximum size")
+                                }
+                            } else {
+                                bail!("env.memory has invalid type")
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        runtime.run(imports, context_vec, bytecode, memory_size_range)?;
         Ok(())
     }
 }
