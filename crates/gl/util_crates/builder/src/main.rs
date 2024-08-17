@@ -14,7 +14,7 @@ fn main() {
 
     run_flavor(
         c_guest::write_to_file,
-        "../../../../examples/libs/GLES2/gl2.c",
+        "../../../../examples/libs/GLES2/gl2.inc",
         &parse_results,
     );
 

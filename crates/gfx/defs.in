@@ -1,2 +1,4 @@
 make_window() -> ()
 present() -> ()
+get_window_width() -> (u32)
+get_window_height() -> (u32)

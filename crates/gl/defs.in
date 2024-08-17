@@ -1,5 +1,5 @@
 glGetStringData(u32, u32) -> ()
-glGetStringLen(u32) -> (u32)
+glGetStringLen(u32) -> (i32)
 glActiveTexture(u32) -> ()
 glAttachShader(u32, u32) -> ()
 glBindAttribLocation(u32, u32, u32) -> ()

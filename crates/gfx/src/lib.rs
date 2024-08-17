@@ -19,7 +19,7 @@ pub fn make_window(
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let window = video_subsystem
-        .window("webrogue", 600, 300)
+        .window("webrogue", 800, 450)
         .position_centered()
         .opengl()
         .resizable()
@@ -38,4 +38,26 @@ pub fn present(
         .window
         .as_mut()
         .inspect(|window| window.gl_swap_window());
+}
+
+pub fn get_window_width(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+) -> u32 {
+    _context
+        .window
+        .as_ref()
+        .and_then(|window| Some(window.size().0))
+        .unwrap_or_default()
+}
+
+pub fn get_window_height(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+) -> u32 {
+    _context
+        .window
+        .as_ref()
+        .and_then(|window| Some(window.size().1))
+        .unwrap_or_default()
 }

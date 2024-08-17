@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["backend_v8", "wasi_sync", "std_stream_os", "gl"]
+default = ["backend_wasmtime", "wasi_sync", "std_stream_os", "gl"]
 
 backend_v8 = ["dep:webrogue_backend_v8"]
 backend_wasmer_cranelift = ["_backend_wasmer", "webrogue_backend_wasmer/cranelift"]

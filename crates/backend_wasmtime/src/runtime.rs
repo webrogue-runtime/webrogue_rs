@@ -21,6 +21,7 @@ impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
         let mut config = wasmtime::Config::new();
         config.debug_info(true);
         config.cranelift_opt_level(wasmtime::OptLevel::None);
+        // config.cranelift_opt_level(wasmtime::OptLevel::Speed);
         let engine = wasmtime::Engine::new(&config)?;
         let module = wasmtime::Module::new(&engine, bytecode)?;
 

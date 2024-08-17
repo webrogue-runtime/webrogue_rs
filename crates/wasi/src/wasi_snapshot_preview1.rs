@@ -34,7 +34,6 @@ macro_rules! add_funcs {
         );+ $(;)?
     ) => {
         $(
-            // $(#[$docs])* // TODO: find place for docs
             pub fn $fname(
                     memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
                     context: &mut wasi_common::WasiCtx,

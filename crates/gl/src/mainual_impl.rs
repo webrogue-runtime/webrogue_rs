@@ -212,3 +212,99 @@ pub fn glGetUniformLocation(
     let result = unsafe { crate::ffi::glGetUniformLocation(converted_program, converted_name) };
     result.into()
 }
+
+#[allow(non_snake_case)]
+pub fn glTexImage2D(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    target: u32,
+    level: i32,
+    internalformat: i32,
+    width: i32,
+    height: i32,
+    border: i32,
+    format: u32,
+    _type: u32,
+    pixels: u32,
+) -> () {
+    let memory = _memory_factory.make_memory();
+    let converted_target = target;
+    let converted_level = level;
+    let converted_internalformat = internalformat;
+    let converted_width = width;
+    let converted_height = height;
+    let converted_border = border;
+    let converted_format = format;
+    let converted__type = _type;
+    let len_pixels =
+        (crate::compsize::glTexImage2D_pixels_compsize(format, _type, width, height)) as usize;
+    let mut vec_pixels: Vec<u8> = vec![];
+    let converted_pixels = if pixels != 0 {
+        vec_pixels.reserve(len_pixels);
+        for i in 0..(len_pixels as u32) {
+            vec_pixels.push(
+                memory
+                    .read::<u8>(webrogue_runtime::wiggle::GuestPtr::<u8>::new(
+                        pixels + i * 1,
+                    ))
+                    .unwrap() as u8,
+            );
+        }
+        vec_pixels.as_mut_ptr() as *mut ()
+    } else {
+        std::ptr::null_mut()
+    };
+    let result = unsafe {
+        crate::ffi::glTexImage2D(
+            converted_target,
+            converted_level,
+            converted_internalformat,
+            converted_width,
+            converted_height,
+            converted_border,
+            converted_format,
+            converted__type,
+            converted_pixels,
+        )
+    };
+    let e = unsafe { crate::ffi::glGetError() };
+    println!("{}", e);
+    result
+}
+
+fn get_string(name: u32) -> Option<Vec<u8>> {
+    if name == crate::ffi::GL_EXTENSIONS {
+        return Some(Vec::new());
+    }
+    let gl_str = unsafe { crate::ffi::glGetString(name) } as *const i8;
+    if gl_str.is_null() {
+        return None;
+    }
+    let owned_str = unsafe { std::ffi::CStr::from_ptr(gl_str) };
+    Some(owned_str.to_bytes_with_nul().to_vec())
+}
+
+#[allow(non_snake_case)]
+pub fn glGetStringData(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    name: u32,
+    data_ptr: u32,
+) {
+    if let Some(s) = get_string(name) {
+        let mut memory = _memory_factory.make_memory();
+        let ptr = webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((data_ptr, s.len() as u32));
+        let _ = memory.copy_from_slice(s.as_slice(), ptr);
+    }
+}
+#[allow(non_snake_case)]
+pub fn glGetStringLen(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    name: u32,
+) -> i32 {
+    match get_string(name) {
+        None => -1,
+        Some(s) => s.len() as i32,
+    }
+}
