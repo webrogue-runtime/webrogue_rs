@@ -267,8 +267,6 @@ pub fn glTexImage2D(
             converted_pixels,
         )
     };
-    let e = unsafe { crate::ffi::glGetError() };
-    println!("{}", e);
     result
 }
 

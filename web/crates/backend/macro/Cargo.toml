@@ -1,0 +1,10 @@
+[package]
+name = "webrogue_backend_web_macro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+webrogue_macro_common = { path = "../../../../crates/macro_common" }
+
+[lib]
+proc-macro = true

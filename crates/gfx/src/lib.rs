@@ -18,9 +18,9 @@ pub fn make_window(
 ) {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
+    video_subsystem.gl_attr().set_double_buffer(true);
     let window = video_subsystem
         .window("webrogue", 800, 450)
-        .position_centered()
         .opengl()
         .resizable()
         .build()
@@ -37,7 +37,7 @@ pub fn present(
     _context
         .window
         .as_mut()
-        .inspect(|window| window.gl_swap_window());
+        .inspect(|window| { window.gl_swap_window();});
 }
 
 pub fn get_window_width(
