@@ -32,6 +32,7 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
         let mut ffi_args = vec![];
         let mut converts = vec![];
         let mut writes = vec![];
+        let mut ffi_arg_types = vec![];
 
         let mut is_memory_mut = None;
 
@@ -41,6 +42,12 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
                 "    {}: {},\n",
                 mapped_name,
                 param.ty.to_wasm_param_type()
+            ));
+
+            ffi_arg_types.push(format!(
+                "    {}: {},\n",
+                mapped_name,
+                param.ty.to_rust_type()
             ));
 
             let converted_param = match param.ty.clone() {
@@ -154,7 +161,21 @@ pub fn {}(
     _context: &mut Context,
 {}) -> {} {{
 {}{}
-    let result = unsafe {{ crate::ffi::{}({}) }};{}{}
+    let result = unsafe {{ std::mem::transmute::<
+            *const (),
+            unsafe extern \"C\" fn(
+                {}
+            ) -> {},
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address(\"{}\")
+        )({}) }};{}{} 
 }}
 ",
             command.name,
@@ -165,6 +186,11 @@ pub fn {}(
             },
             memory_init,
             converts.join("\n"),
+            ffi_arg_types.join(""),
+            match command.ret {
+                GLType::Void => "()".to_owned(),
+                _ => command.ret.to_wasm_param_type(),
+            },
             command.name,
             ffi_args.join(", "),
             writes.join("\n"),

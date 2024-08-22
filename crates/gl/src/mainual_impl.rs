@@ -72,7 +72,24 @@ pub fn glShaderSource(
     });
 
     let result = unsafe {
-        crate::ffi::glShaderSource(
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                shader: std::os::raw::c_uint,
+                count: std::os::raw::c_int,
+                string: *mut *mut i8,
+                length: *mut std::os::raw::c_int,
+            ) -> (),
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glShaderSource"),
+        )(
             shader as std::os::raw::c_uint,
             count as std::os::raw::c_int,
             converted_string.as_mut_ptr(),
@@ -112,7 +129,24 @@ pub fn glGetAttribLocation(
     };
     let converted_name = vec_name.as_mut_ptr() as *mut i8;
 
-    let result = unsafe { crate::ffi::glGetAttribLocation(converted_program, converted_name) };
+    let result = unsafe {
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                program: std::os::raw::c_uint,
+                name: *mut i8,
+            ) -> std::os::raw::c_int,
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glGetAttribLocation"),
+        )(converted_program, converted_name)
+    };
     result.into()
 }
 
@@ -133,8 +167,29 @@ pub fn glVertexAttribPointer(
     let converted_normalized = normalized as u8;
     let converted_stride = stride;
 
+    //glVertexAttribPointer()
+
     let result = unsafe {
-        crate::ffi::glVertexAttribPointer(
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                index: std::os::raw::c_uint,
+                size: std::os::raw::c_int,
+                _type: std::os::raw::c_uint,
+                normalized: u8,
+                stride: std::os::raw::c_int,
+                pointer: *mut (),
+            ) -> (),
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glVertexAttribPointer"),
+        )(
             converted_index,
             converted_size,
             converted__type,
@@ -177,7 +232,23 @@ pub fn glBindAttribLocation(
     };
     let converted_name = vec_name.as_mut_ptr() as *mut i8;
     let result = unsafe {
-        crate::ffi::glBindAttribLocation(converted_program, converted_index, converted_name)
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                program: std::os::raw::c_uint,
+                index: std::os::raw::c_uint,
+                name: *mut i8,
+            ) -> (),
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glBindAttribLocation"),
+        )(converted_program, converted_index, converted_name)
     };
     result
 }
@@ -209,7 +280,24 @@ pub fn glGetUniformLocation(
         source
     };
     let converted_name = vec_name.as_mut_ptr() as *mut i8;
-    let result = unsafe { crate::ffi::glGetUniformLocation(converted_program, converted_name) };
+    let result = unsafe {
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                program: std::os::raw::c_uint,
+                name: *mut i8,
+            ) -> std::os::raw::c_int,
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glGetUniformLocation"),
+        )(converted_program, converted_name)
+    };
     result.into()
 }
 
@@ -254,8 +342,31 @@ pub fn glTexImage2D(
     } else {
         std::ptr::null_mut()
     };
+    // ()
     let result = unsafe {
-        crate::ffi::glTexImage2D(
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                target: std::os::raw::c_uint,
+                level: std::os::raw::c_int,
+                internalformat: std::os::raw::c_int,
+                width: std::os::raw::c_int,
+                height: std::os::raw::c_int,
+                border: std::os::raw::c_int,
+                format: std::os::raw::c_uint,
+                _type: std::os::raw::c_uint,
+                pixels: *mut (),
+            ) -> (),
+        >(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glTexImage2D"),
+        )(
             converted_target,
             converted_level,
             converted_internalformat,
@@ -270,11 +381,22 @@ pub fn glTexImage2D(
     result
 }
 
-fn get_string(name: u32) -> Option<Vec<u8>> {
+fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
     if name == crate::ffi::GL_EXTENSIONS {
         return Some(Vec::new());
     }
-    let gl_str = unsafe { crate::ffi::glGetString(name) } as *const i8;
+    let gl_str = unsafe {
+        std::mem::transmute::<*const (), unsafe extern "C" fn(name: std::os::raw::c_uint) -> *mut u8>(
+            _context
+                .gfx_context
+                .as_mut()
+                .unwrap()
+                .video_subsystem
+                .as_mut()
+                .unwrap()
+                .gl_get_proc_address("glGetString"),
+        )(name)
+    } as *const i8;
     if gl_str.is_null() {
         return None;
     }
@@ -289,7 +411,7 @@ pub fn glGetStringData(
     name: u32,
     data_ptr: u32,
 ) {
-    if let Some(s) = get_string(name) {
+    if let Some(s) = get_string(_context, name) {
         let mut memory = _memory_factory.make_memory();
         let ptr = webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((data_ptr, s.len() as u32));
         let _ = memory.copy_from_slice(s.as_slice(), ptr);
@@ -301,7 +423,7 @@ pub fn glGetStringLen(
     _context: &mut Context,
     name: u32,
 ) -> i32 {
-    match get_string(name) {
+    match get_string(_context, name) {
         None => -1,
         Some(s) => s.len() as i32,
     }

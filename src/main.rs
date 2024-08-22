@@ -77,10 +77,12 @@ fn main() -> Result<()> {
 
         let backend = make_backend();
 
-        #[cfg(feature = "gl")]
-        let mut webrogue_gl_context = webrogue_gl::api::Context {};
         #[cfg(feature = "_gfx")]
         let mut webrogue_gfx_context = webrogue_gfx::Context::new();
+        #[cfg(feature = "gl")]
+        let mut webrogue_gl_context = webrogue_gl::api::Context {
+            gfx_context: &mut webrogue_gfx_context
+        };
         lifecycle.run(
             backend,
             make_imports(),
