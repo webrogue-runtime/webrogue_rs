@@ -21,6 +21,8 @@ pub fn make_window(
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     video_subsystem.gl_attr().set_double_buffer(true);
+    video_subsystem.gl_attr().set_context_profile(sdl2::video::GLProfile::GLES);
+    video_subsystem.gl_attr().set_context_version(2, 0);
     let _ = video_subsystem.gl_load_library_default();
     let window = video_subsystem
         .window("webrogue", 800, 450)
