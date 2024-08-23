@@ -54,11 +54,12 @@ pub fn make_window(
         .set_context_profile(sdl2::video::GLProfile::GLES);
     video_subsystem.gl_attr().set_context_version(2, 0);
     load_gl(&video_subsystem);
-    let mut binding = video_subsystem.window("webrogue", 800, 450);
-    let window = binding.opengl().resizable();
-    window.set_window_flags(sdl2::sys::SDL_WindowFlags::SDL_WINDOW_SHOWN as u32);
-
-    let window = window.build().unwrap();
+    let window = video_subsystem
+        .window("webrogue", 800, 450)
+        .opengl()
+        .resizable()
+        .build()
+        .unwrap();
 
     let gl_context: sdl2::video::GLContext = window.gl_create_context().unwrap();
     _context.gl_context = Some(gl_context);
