@@ -27,7 +27,6 @@ anyhow = { version = "1" }
 clap = { version = "4.0", features = ["derive"] }
 webrogue_wasi = { path = "crates/wasi" }
 
-webrogue_gl = { path = "crates/gl", optional = true }
 webrogue_gfx = { path = "crates/gfx", optional = true }
 webrogue_backend_v8 = { path = "crates/backend_v8", optional = true }
 webrogue_backend_wasmer = { path = "crates/backend_wasmer", optional = true }
@@ -35,3 +34,9 @@ webrogue_backend_wasmtime = { path = "crates/backend_wasmtime", optional = true 
 webrogue_std_stream_os = { path = "crates/std_stream_os", optional = true }
 webrogue_std_stream_sdl = { path = "crates/std_stream_sdl", optional = true }
 webrogue_wasi_sync = { path = "crates/wasi_sync", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+webrogue_gl = { path = "crates/gl", optional = true, features = ["sdl_static", "sdl_bundled"] }
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+webrogue_gl = { path = "crates/gl", optional = true, features = [] }

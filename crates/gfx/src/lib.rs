@@ -14,6 +14,34 @@ impl Context {
     }
 }
 
+fn load_gl(video_subsystem: &sdl2::VideoSubsystem) {
+    #[cfg(target_os = "macos")]
+    {
+        let result = (|| {
+            let path = std::env::current_exe().ok()?;
+            let path = path.parent()?;
+
+            if path.join("libGLESv2.dylib").exists() && path.join("libEGL.dylib").exists() {
+                std::env::set_var("SDL_VIDEO_EGL_DRIVER", path.join("libEGL.dylib"));
+                std::env::set_var("SDL_VIDEO_GL_DRIVER", path.join("libGLESv2.dylib"));
+                return Some(());
+            } else {
+                return None;
+            }
+        })();
+
+        if result.is_some() {
+            return;
+        }
+    }
+    let result = video_subsystem.gl_load_library_default();
+    if result.is_ok() {
+        return;
+    }
+
+    panic!("failed to load opengl")
+}
+
 pub fn make_window(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
@@ -21,15 +49,17 @@ pub fn make_window(
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     video_subsystem.gl_attr().set_double_buffer(true);
-    video_subsystem.gl_attr().set_context_profile(sdl2::video::GLProfile::GLES);
+    video_subsystem
+        .gl_attr()
+        .set_context_profile(sdl2::video::GLProfile::GLES);
     video_subsystem.gl_attr().set_context_version(2, 0);
-    let _ = video_subsystem.gl_load_library_default();
-    let window = video_subsystem
-        .window("webrogue", 800, 450)
-        .opengl()
-        .resizable()
-        .build()
-        .unwrap();
+    load_gl(&video_subsystem);
+    let mut binding = video_subsystem.window("webrogue", 800, 450);
+    let window = binding.opengl().resizable();
+    window.set_window_flags(sdl2::sys::SDL_WindowFlags::SDL_WINDOW_SHOWN as u32);
+
+    let window = window.build().unwrap();
+
     let gl_context: sdl2::video::GLContext = window.gl_create_context().unwrap();
     _context.gl_context = Some(gl_context);
     _context.window = Some(window);
@@ -43,6 +73,15 @@ pub fn present(
     _context.window.as_mut().inspect(|window| {
         window.gl_swap_window();
     });
+
+    unsafe {
+        let mut event: ::core::mem::MaybeUninit<sdl2::sys::SDL_Event> =
+            ::core::mem::MaybeUninit::uninit();
+        sdl2::sys::SDL_PollEvent(event.as_mut_ptr());
+        if (*event.as_ptr()).type_ == sdl2::sys::SDL_EventType::SDL_QUIT as u32 {
+            return;
+        }
+    }
 }
 
 pub fn get_window_width(

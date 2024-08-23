@@ -2,6 +2,8 @@ use anyhow::Result;
 use clap::Parser;
 use webrogue_runtime::WasiFactory;
 
+// embed_plist::embed_info_plist!("Info.plist");
+
 #[cfg(feature = "backend_wasmtime")]
 fn make_backend() -> webrogue_backend_wasmtime::Backend {
     webrogue_backend_wasmtime::Backend::new()
@@ -81,7 +83,7 @@ fn main() -> Result<()> {
         let mut webrogue_gfx_context = webrogue_gfx::Context::new();
         #[cfg(feature = "gl")]
         let mut webrogue_gl_context = webrogue_gl::api::Context {
-            gfx_context: &mut webrogue_gfx_context
+            gfx_context: &mut webrogue_gfx_context,
         };
         lifecycle.run(
             backend,
