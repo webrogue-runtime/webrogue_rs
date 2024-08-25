@@ -65,8 +65,6 @@ pub fn make_window(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
 ) {
-    // unsafe { sdl2::sys::SDL_GL_SetAttribute(sdl2::sys::SDL_GLattr::SDL_GL_CONTEXT_EGL, 1) };
-    // SDL_GetHint(SDL_HINT_VIDEODRIVER) WINDOWS_bootstrap SDL_VIDEO_DRIVER_WINRT
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     video_subsystem.gl_attr().set_double_buffer(true);

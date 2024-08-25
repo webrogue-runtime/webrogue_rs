@@ -326,23 +326,25 @@ pub fn glTexImage2D(
     let converted__type = _type;
     let len_pixels =
         (crate::compsize::glTexImage2D_pixels_compsize(format, _type, width, height)) as usize;
-    let mut vec_pixels: Vec<u8> = vec![];
-    let converted_pixels = if pixels != 0 {
-        vec_pixels.reserve(len_pixels);
-        for i in 0..(len_pixels as u32) {
-            vec_pixels.push(
-                memory
-                    .read::<u8>(webrogue_runtime::wiggle::GuestPtr::<u8>::new(
-                        pixels + i * 1,
-                    ))
-                    .unwrap() as u8,
-            );
-        }
-        vec_pixels.as_mut_ptr() as *mut ()
+
+    let slice = if pixels != 0 {
+        Some(
+            memory
+                .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
+                    pixels as u32,
+                    len_pixels as u32,
+                )))
+                .unwrap(),
+        )
     } else {
-        std::ptr::null_mut()
+        None
     };
-    // ()
+
+    let converted_pixels = match &slice {
+        Some(slice) => slice.as_ptr() as *mut (),
+        None => std::ptr::null_mut(),
+    };
+    
     let result = unsafe {
         std::mem::transmute::<
             *const (),
@@ -378,6 +380,7 @@ pub fn glTexImage2D(
             converted_pixels,
         )
     };
+    drop(slice);
     result
 }
 
