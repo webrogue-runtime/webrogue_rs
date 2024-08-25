@@ -74,7 +74,7 @@ pub fn glShaderSource(
     let result = unsafe {
         std::mem::transmute::<
             *const (),
-            unsafe extern "C" fn(
+            unsafe extern "stdcall" fn(
                 shader: std::os::raw::c_uint,
                 count: std::os::raw::c_int,
                 string: *mut *mut i8,
@@ -132,7 +132,7 @@ pub fn glGetAttribLocation(
     let result = unsafe {
         std::mem::transmute::<
             *const (),
-            unsafe extern "C" fn(
+            unsafe extern "stdcall" fn(
                 program: std::os::raw::c_uint,
                 name: *mut i8,
             ) -> std::os::raw::c_int,
@@ -172,7 +172,7 @@ pub fn glVertexAttribPointer(
     let result = unsafe {
         std::mem::transmute::<
             *const (),
-            unsafe extern "C" fn(
+            unsafe extern "stdcall" fn(
                 index: std::os::raw::c_uint,
                 size: std::os::raw::c_int,
                 _type: std::os::raw::c_uint,
@@ -234,7 +234,7 @@ pub fn glBindAttribLocation(
     let result = unsafe {
         std::mem::transmute::<
             *const (),
-            unsafe extern "C" fn(
+            unsafe extern "stdcall" fn(
                 program: std::os::raw::c_uint,
                 index: std::os::raw::c_uint,
                 name: *mut i8,
@@ -283,7 +283,7 @@ pub fn glGetUniformLocation(
     let result = unsafe {
         std::mem::transmute::<
             *const (),
-            unsafe extern "C" fn(
+            unsafe extern "stdcall" fn(
                 program: std::os::raw::c_uint,
                 name: *mut i8,
             ) -> std::os::raw::c_int,
@@ -346,7 +346,7 @@ pub fn glTexImage2D(
     let result = unsafe {
         std::mem::transmute::<
             *const (),
-            unsafe extern "C" fn(
+            unsafe extern "stdcall" fn(
                 target: std::os::raw::c_uint,
                 level: std::os::raw::c_int,
                 internalformat: std::os::raw::c_int,
@@ -386,7 +386,7 @@ fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
         return Some(Vec::new());
     }
     let gl_str = unsafe {
-        std::mem::transmute::<*const (), unsafe extern "C" fn(name: std::os::raw::c_uint) -> *mut u8>(
+        std::mem::transmute::<*const (), unsafe extern "stdcall" fn(name: std::os::raw::c_uint) -> *mut u8>(
             _context
                 .gfx_context
                 .as_mut()

@@ -34,18 +34,39 @@ fn load_gl(video_subsystem: &sdl2::VideoSubsystem) {
             return;
         }
     }
+    #[cfg(target_os = "windows")]
+    {
+        let result = (|| {
+            let path = std::env::current_exe().ok()?;
+            let path = path.parent()?;
+
+            if path.join("libGLESv2.dll").exists() && path.join("libEGL.dll").exists() {
+                std::env::set_var("SDL_VIDEO_EGL_DRIVER", path.join("libEGL.dll"));
+                std::env::set_var("SDL_OPENGL_LIBRARY", path.join("libGLESv2.dll"));
+                std::env::set_var("SDL_VIDEO_GL_DRIVER", path.join("libGLESv2.dll"));
+                return Some(());
+            } else {
+                return None;
+            }
+        })();
+
+        if result.is_some() {
+            return;
+        }
+    }
+
     let result = video_subsystem.gl_load_library_default();
     if result.is_ok() {
         return;
     }
-
-    panic!("failed to load opengl")
 }
 
 pub fn make_window(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
 ) {
+    // unsafe { sdl2::sys::SDL_GL_SetAttribute(sdl2::sys::SDL_GLattr::SDL_GL_CONTEXT_EGL, 1) };
+    // SDL_GetHint(SDL_HINT_VIDEODRIVER) WINDOWS_bootstrap SDL_VIDEO_DRIVER_WINRT
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     video_subsystem.gl_attr().set_double_buffer(true);

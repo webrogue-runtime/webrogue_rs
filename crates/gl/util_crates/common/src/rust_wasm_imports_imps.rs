@@ -163,7 +163,7 @@ pub fn {}(
 {}{}
     let result = unsafe {{ std::mem::transmute::<
             *const (),
-            unsafe extern \"C\" fn(
+            unsafe extern \"stdcall\" fn(
                 {}
             ) -> {},
         >(
