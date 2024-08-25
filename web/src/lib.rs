@@ -40,9 +40,11 @@ fn main() -> anyhow::Result<()> {
     webrogue_std_stream_os::bind_streams(&mut wasi);
 
     #[cfg(feature = "gl")]
-    let mut webrogue_gl_context = webrogue_gl::api::Context {};
-    #[cfg(feature = "gl")]
     let mut webrogue_gfx_context = webrogue_gfx::Context::new();
+    #[cfg(feature = "gl")]
+    let mut webrogue_gl_context = webrogue_gl::api::Context {
+        gfx_context: &mut webrogue_gfx_context,
+    };
 
     let backend = webrogue_backend_web::Backend::new();
     lifecycle.run(
