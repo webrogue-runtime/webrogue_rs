@@ -21,9 +21,6 @@ fn main() {
     let target_os = target.as_str().splitn(3, '-').nth(2).unwrap();
     let target_is_windows = target_os.contains("windows");
     let target_is_macos = target_os == "darwin";
-    if !target_is_windows {
-        panic!("!target_is_windows");
-    }
     if target_is_macos || target_is_windows {
         let anglebuild_dir = schema_dir.join("anglebuild");
         let _ = std::fs::create_dir(anglebuild_dir.clone());
