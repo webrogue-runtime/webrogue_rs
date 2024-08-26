@@ -54,7 +54,7 @@ fn download_windows_x64(output_path: &std::path::Path) {
         return;
     }
     let archive_bytes = reqwest::blocking::get(
-        "https://github.com/webrogue-runtime/angle-builder/releases/download/latestwindows_x64.zip
+        "https://github.com/webrogue-runtime/angle-builder/releases/download/latest/windows_x64.zip
 ",
     )
     .unwrap()
