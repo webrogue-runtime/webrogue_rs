@@ -12,3 +12,7 @@ webrogue_runtime = { path = "../runtime" }
 webrogue_gl_gen_macro = { path = "util_crates/macro" }
 webrogue_gfx = { path = "../gfx" }
 sdl2 = { path = "../../external/rust-sdl2" }
+
+[build-dependencies]
+reqwest = { version = "0.12", features = ["blocking"] }
+zip-extract = { version = "0.2.1" }
