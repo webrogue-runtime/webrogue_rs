@@ -1,34 +1,38 @@
 package io.github.webrogue_runtime;
 
+import android.graphics.Color;
 import android.os.Bundle;
-//import android.support.annotation.Keep;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Keep;
-
 import org.libsdl.app.SDLActivity;
-import java.io.ByteArrayOutputStream;
-import java.io.Console;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class WebrogueActivity extends SDLActivity {
+    TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedWebrogueActivity = this;
         super.onCreate(savedInstanceState);
-        // setWindowStyle(true);
+        setWindowStyle(true);
+        textView = new TextView(this);
+        textView.setText("asbdfb");
+        textView.setTextColor(Color.parseColor("#ffd9ff04"));
+        RelativeLayout.LayoutParams lp = new  RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+        mLayout.addView(textView, lp);
     }
 
     private static WebrogueActivity sharedWebrogueActivity;
 
-    private String getStoragePath() {
-        return getFilesDir().getAbsolutePath();
-    }
-
     @Keep
     public static void printBytes(byte[] bytes) {
-        System.out.println(new String(bytes, StandardCharsets.UTF_8));
+        sharedWebrogueActivity.runOnUiThread(() -> {
+            sharedWebrogueActivity.textView.setText(new String(bytes, StandardCharsets.UTF_8));
+        });
     }
     @Override
     protected String[] getLibraries() {
