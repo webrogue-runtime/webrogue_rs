@@ -344,7 +344,7 @@ pub fn glTexImage2D(
         Some(slice) => slice.as_ptr() as *mut (),
         None => std::ptr::null_mut(),
     };
-    
+
     let result = unsafe {
         std::mem::transmute::<
             *const (),
@@ -389,7 +389,10 @@ fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
         return Some(Vec::new());
     }
     let gl_str = unsafe {
-        std::mem::transmute::<*const (), unsafe extern "stdcall" fn(name: std::os::raw::c_uint) -> *mut u8>(
+        std::mem::transmute::<
+            *const (),
+            unsafe extern "stdcall" fn(name: std::os::raw::c_uint) -> *mut u8,
+        >(
             _context
                 .gfx_context
                 .as_mut()
@@ -399,11 +402,11 @@ fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
                 .unwrap()
                 .gl_get_proc_address("glGetString"),
         )(name)
-    } as *const i8;
+    };
     if gl_str.is_null() {
         return None;
     }
-    let owned_str = unsafe { std::ffi::CStr::from_ptr(gl_str) };
+    let owned_str = unsafe { std::ffi::CStr::from_ptr(gl_str as *const std::ffi::c_char) };
     Some(owned_str.to_bytes_with_nul().to_vec())
 }
 
