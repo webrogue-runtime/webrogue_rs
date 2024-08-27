@@ -19,6 +19,8 @@ webrogue_backend_v8 = { path = "../../../../../crates/backend_v8", optional = tr
 webrogue_backend_wasmtime = { path = "../../../../../crates/backend_wasmtime", default-features = false, optional = true }
 webrogue_wasi = { path = "../../../../../crates/wasi" }
 webrogue_wasi_sync = { path = "../../../../../crates/wasi_sync" }
+webrogue_gl = { path = "../../../../../crates/gl" }
+webrogue_gfx = { path = "../../../../../crates/gfx" }
 webrogue_std_stream_os = { path = "../../../../../crates/std_stream_os", default-features = false }
 
 [target.'cfg(unix)'.dependencies]

@@ -99,14 +99,12 @@ make_funcs!({
     "wasi_snapshot_preview1": {
         module: webrogue_wasi::wasi_snapshot_preview1
     },
-    // "webrogue_gl": {
-    //     attribute: "#[cfg(feature = \"gl\")]",
-    //     module: webrogue_gl::api
-    // },
-    // "webrogue_gfx": {
-    //     attribute: "#[cfg(feature = \"_gfx\")]",
-    //     module: webrogue_gfx
-    // }
+    "webrogue_gl": {
+        module: webrogue_gl::api
+    },
+    "webrogue_gfx": {
+        module: webrogue_gfx
+    }
 });
 
 fn main() -> anyhow::Result<()> {
@@ -130,16 +128,19 @@ fn main() -> anyhow::Result<()> {
     let backend = make_backend();
 
     let reader = webrogue_runtime::wrapp::Reader::from_static_slice(include_bytes!(
-        "../../../../../../examples/simple/simple.wrapp"
+        "../../../../../../examples/gears/gears.wrapp"
     ))?;
-
+    let mut webrogue_gfx_context = webrogue_gfx::Context::new();
+    let mut webrogue_gl_context = webrogue_gl::api::Context {
+        gfx_context: &mut webrogue_gfx_context,
+    };
     lifecycle.run(
         backend,
         make_imports(),
         make_context_vec(
             &mut wasi,
-            // &mut webrogue_gl_context,
-            // &mut webrogue_gfx_context,
+            &mut webrogue_gl_context,
+            &mut webrogue_gfx_context,
         ),
         reader,
     )?;

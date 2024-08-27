@@ -2,36 +2,45 @@ package io.github.webrogue_runtime;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
+
 import org.libsdl.app.SDLActivity;
+
 import java.nio.charset.StandardCharsets;
 
 public class WebrogueActivity extends SDLActivity {
-    TextView textView;
+    private TextView textView;
+    private String consoleText = "";
+    private static WebrogueActivity sharedWebrogueActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedWebrogueActivity = this;
         super.onCreate(savedInstanceState);
+
         setWindowStyle(true);
-        textView = new TextView(this);
-        textView.setText("asbdfb");
-        textView.setTextColor(Color.parseColor("#ffd9ff04"));
-        RelativeLayout.LayoutParams lp = new  RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mLayout.addView(textView, lp);
+
+        textView = new TextView(this);
+        textView.setTextColor(Color.parseColor("#ffd9ff04"));
+        layoutParams.addRule(RelativeLayout.ALIGN_TOP);
+        mLayout.addView(textView, layoutParams);
     }
 
-    private static WebrogueActivity sharedWebrogueActivity;
 
     @Keep
     public static void printBytes(byte[] bytes) {
         sharedWebrogueActivity.runOnUiThread(() -> {
-            sharedWebrogueActivity.textView.setText(new String(bytes, StandardCharsets.UTF_8));
+            sharedWebrogueActivity.consoleText += new String(bytes, StandardCharsets.UTF_8) + "\n";
+            sharedWebrogueActivity.textView.setText(sharedWebrogueActivity.consoleText);
         });
     }
     @Override
