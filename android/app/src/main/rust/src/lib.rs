@@ -149,6 +149,6 @@ fn main() -> anyhow::Result<()> {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn webrogue_android_main() {
+pub unsafe extern "C" fn webrogue_main() {
     main().unwrap();
 }

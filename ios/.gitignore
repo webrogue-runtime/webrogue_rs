@@ -1,0 +1,7 @@
+/cmake_build
+/target
+/Cargo.lock
+/artifacts
+/build
+/external/SDL-release-*.zip
+/external/SDL

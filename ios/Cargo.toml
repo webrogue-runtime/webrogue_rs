@@ -1,0 +1,20 @@
+[package]
+name = "webrogue_ios"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "webrogue_ios"
+crate-type = ["staticlib"]
+
+[features]
+
+[dependencies]
+anyhow = { version = "1" }
+webrogue_runtime = { path = "../crates/runtime" }
+webrogue_backend_wasmer = { path = "../crates/backend_wasmer", default-features = false, features = ["jsc"] }
+webrogue_wasi = { path = "../crates/wasi" }
+webrogue_gl = { path = "../crates/gl" }
+webrogue_gfx = { path = "../crates/gfx" }
+webrogue_wasi_sync = { path = "../crates/wasi_sync" }
+webrogue_std_stream_os = { path = "../crates/std_stream_os", default-features = false }
