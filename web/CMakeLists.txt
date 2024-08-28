@@ -45,4 +45,6 @@ target_link_options(
     # -sFETCH 
     # --js-library ${CMAKE_CURRENT_LIST_DIR}/game/vmlib.js 
     "-sASYNCIFY_IMPORTS=[wr_em_js_initWasmModule, wr_em_js_execFunc, wr_em_js_continueFuncExecution, wr_em_js_readModMem, wr_em_js_writeModMem]"
+    "-sOFFSCREEN_FRAMEBUFFER"
+    "-sOFFSCREENCANVAS_SUPPORT"
 )
