@@ -3,103 +3,70 @@
 
 // clang-format off
 EM_JS(void, wr_em_js_execFunc, (const char *funcNamePtr), {
-    Asyncify.handleSleep(wakeUp => {
-        Module.modsExecFinished = wakeUp;
-        let funcName = UTF8ToString(funcNamePtr);
-        Module.modsWorker.postMessage([ "exec", funcName ]);
-    });
+  Module.wSA[0] = BigInt(0);
+  Module.wSA[1] = BigInt(0);
+  let funcName = UTF8ToString(funcNamePtr);
+  Module.modsWorker.postMessage([ "exec", funcName ]);
 });
-EM_JS(void, wr_em_js_readModMem, (uint32_t modPtr, uint32_t size, void *hostPtr), {
-    Asyncify.handleSleep(wakeUp => {
-        Module.gotMemorySlice = function (memorySlice) {
-            HEAP8.set(new Int8Array(memorySlice), hostPtr);
-            wakeUp();
-        };
-        Module.workerSharedArray[1] = BigInt(modPtr);
-        Module.workerSharedArray[2] = BigInt(size);
-        Atomics.store(Module.workerSharedArray, 0, BigInt(2));
-        Atomics.notify(Module.workerSharedArray, 0);
-    });
+EM_ASYNC_JS(void, wr_em_js_readModMem, (uint32_t modPtr, uint32_t size, void *hostPtr), {
+  Module.wSA[1] = BigInt(modPtr);
+  Module.wSA[2] = BigInt(size);
+  Atomics.store(Module.wSA, 0, BigInt(2));
+  Atomics.notify(Module.wSA, 0);
+  await Atomics.waitAsync(Module.wSA, 0, BigInt(2));
+  // while(Module.wSA[0] == BigInt(2)) {};
+  HEAP8.set(new Int8Array(Module.workerSharedBuffer).slice(32, 32 + size), hostPtr);
 });
-EM_JS(void, wr_em_js_writeModMem, (uint32_t modPtr, uint32_t size, const void *hostPtr), {
-    Asyncify.handleSleep(wakeUp => {
-        let dataToWrite = HEAP8.slice(hostPtr, hostPtr + size);
-        Module.gotMemorySlice = function (memorySlice) {
-            new Int8Array(memorySlice).set(dataToWrite);
-            Module.sliceWrote = wakeUp;
-            Atomics.store(Module.workerSharedArray, 0, BigInt(3));
-            Atomics.notify(Module.workerSharedArray, 0);
-        };
-        Module.workerSharedArray[1] = BigInt(modPtr);
-        Module.workerSharedArray[2] = BigInt(size);
-        Atomics.store(Module.workerSharedArray, 0, BigInt(2));
-        Atomics.notify(Module.workerSharedArray, 0);
-    });
+EM_ASYNC_JS(void, wr_em_js_writeModMem, (uint32_t modPtr, uint32_t size, const void *hostPtr), {
+  Module.wSA[1] = BigInt(modPtr);
+  Module.wSA[2] = BigInt(size);
+  (new Int8Array(Module.workerSharedBuffer)).set(HEAP8.slice(hostPtr, hostPtr + size), 32);
+  Atomics.store(Module.wSA, 0, BigInt(3));
+  Atomics.notify(Module.wSA, 0);
+  await Atomics.waitAsync(Module.wSA, 0, BigInt(3));
+  // while(Module.wSA[0] == BigInt(3)) {};
 });
 EM_JS(void, wr_em_js_initWasmModule, (const uint8_t *pointer, int size), {
-    Asyncify.handleSleep(wakeUp => {
-        Module.workerSharedBuffer = new SharedArrayBuffer(256);
-        Module.workerSharedArray = new BigInt64Array(Module.workerSharedBuffer);
-        var modsWasmData = HEAPU8.subarray(pointer, pointer + size);
+  Asyncify.handleSleep(wakeUp => {
+    Module.workerSharedBuffer = new SharedArrayBuffer(256*1024);
+    Module.wSA = new BigInt64Array(Module.workerSharedBuffer);
+    var modsWasmData = HEAPU8.subarray(pointer, pointer + size);
 
-        Module.modsWorker.onmessage = function (message) {
-            let command = message.data[0];
-            if (command == 0) { // instantiated
-                wakeUp();
-            } else if (command == 1) { // exec_finished
-                Module.executionFinished = true;
-        
-                let modsExecFinished = Module.modsExecFinished;
-                Module.modsExecFinished = undefined;
-                modsExecFinished();
-            } else if (command == 2) { // exec_imported
-                Module.importedFuncId = message.data[1];
-                Module.importedFuncArgs = message.data[2];
-                Module.memorySize = message.data[3];
-                Module.executionFinished = false;
-
-                let modsExecFinished = Module.modsExecFinished;
-                Module.modsExecFinished = undefined;
-                modsExecFinished();
-            } else if (command == 3) { // memory_slice
-                Module.gotMemorySlice(message.data[1]);
-            } else if (command == 4) { // memory_slice_wrote
-                Module.sliceWrote();
-            } else if (command = 5) { // error
-                Module.modError = message.data[1];
-                Module.modError = Int8Array.from(Array.from(Module.modError).map(letter => letter.charCodeAt(0)));
-                // Module.modErrorStack = message.data[2];
-                Module.executionFinished = true;
-                
-                let modsExecFinished = Module.modsExecFinished;
-                Module.modsExecFinished = undefined;
-                modsExecFinished();
-            } else {
-                console.error("host: unknown command ", command);
-            }
-        };
-        Module.modsWorker.postMessage(["instantiate", modsWasmData, Module.importedFuncNames, Module.workerSharedBuffer, Module.sharedMemory]);
-    });
+    Module.modsWorker.onmessage = function (message) {
+      let command = message.data[0];
+      if (command == "instantiated") {
+        wakeUp();
+      } else if (command == "exec_finished") {
+        console.error(command);
+      } else {
+        console.error("host: unknown command ", command);
+      }
+    };
+    Module.modsWorker.postMessage(["instantiate", modsWasmData, Module.importedFuncNames, Module.workerSharedBuffer, Module.sharedMemory]);
+  });
 });
 EM_JS(void, wr_em_js_continueFuncExecution, (), {
-    Asyncify.handleSleep(wakeUp => {
-        Module.modsExecFinished = wakeUp;
-        Atomics.store(Module.workerSharedArray, 0, BigInt(1));
-        Atomics.notify(Module.workerSharedArray, 0);
-    });
+  Atomics.store(Module.wSA, 1, BigInt(0));
+  // TODO omit
+  Atomics.notify(Module.wSA, 1);
+
+  Atomics.store(Module.wSA, 0, BigInt(1));
+  Atomics.notify(Module.wSA, 0);
 });
-EM_JS(bool, wr_em_js_isExecutionFinished, (), {
-    return Module.executionFinished;
+EM_ASYNC_JS(int, wr_em_js_waitForStatus, (), {
+  await Atomics.waitAsync(Module.wSA, 1, BigInt(0));
+  // while(Module.wSA[1] == BigInt(0)) {};
+  return Number(Atomics.load(Module.wSA, 1));
 });
 EM_JS(int, wr_em_js_getImportedFuncId, (), {
-    return Module.importedFuncId;
+    return Number(Module.wSA[2]);
 });
-EM_JS(int,wr_em_js_modErrorSize, (), {
-    return Module.modError ? Module.modError.length : 0
-});
-EM_JS(void, wr_em_js_getModError, (char *error), {
-    HEAP8.set(Module.modError, error);
-});
+// EM_JS(int,wr_em_js_modErrorSize, (), {
+//     return Module.modError ? Module.modError.length : 0
+// });
+// EM_JS(void, wr_em_js_getModError, (char *error), {
+//     HEAP8.set(Module.modError, error);
+// });
 EM_JS(void, wr_em_js_makeWorker, (const char *jsonPtr), {
     Module.modsWorker = new Worker("worker.js");
     let namesJson = UTF8ToString(jsonPtr);
@@ -112,47 +79,51 @@ EM_JS(void, wr_em_js_terminateWorker, (), {
     Module.executionFinished = true;
 });
 EM_JS(int32_t, wr_em_js_getArgInt32, (uint32_t argNum), {
-    return Module.importedFuncArgs[argNum]
+    return Number(Module.wSA[3+argNum]);
 });
 EM_JS(uint32_t, wr_em_js_getArgUInt32, (uint32_t argNum), {
-    return Module.importedFuncArgs[argNum]
+    return Number(Module.wSA[3+argNum]);
 });
 EM_JS(int64_t, wr_em_js_getArgInt64, (uint32_t argNum), {
-    return Module.importedFuncArgs[argNum]
+    return Module.wSA[3+argNum];
 });
 EM_JS(uint64_t, wr_em_js_getArgUInt64, (uint32_t argNum), {
-    return Module.importedFuncArgs[argNum]
+    return Module.wSA[3+argNum];
 });
 EM_JS(float, wr_em_js_getArgFloat, (uint32_t argNum), {
-    return Module.importedFuncArgs[argNum]
+    let buffer = new ArrayBuffer(8);
+    (new BigInt64Array(buffer))[0] = Module.wSA[3+argNum];
+    return (new Float64Array(buffer))[0];
 });
 EM_JS(double, wr_em_js_getArgDouble, (uint32_t argNum), {
-    return Module.importedFuncArgs[argNum]
+    let buffer = new ArrayBuffer(8);
+    (new BigInt64Array(buffer))[0] = Module.wSA[3+argNum];
+    return (new Float64Array(buffer))[0];
 });
 EM_JS(void, wr_em_js_writeInt32Result, (int32_t result), {
-    Module.workerSharedArray[1] = BigInt(result)
+    Module.wSA[2] = BigInt(result)
 });
 EM_JS(void, wr_em_js_writeUInt32Result, (uint32_t result), {
-    Module.workerSharedArray[1] = BigInt(result)
+    Module.wSA[2] = BigInt(result)
 });
 EM_JS(void, wr_em_js_writeInt64Result, (int64_t result), {
-    Module.workerSharedArray[1] = result
+    Module.wSA[2] = result
 });
 EM_JS(void, wr_em_js_writeUInt64Result, (uint64_t result), {
-    Module.workerSharedArray[1] = result
+    Module.wSA[2] = result
 });
 EM_JS(void, wr_em_js_writeFloatResult, (float result), {
     let buffer = new ArrayBuffer(8);
     (new Float64Array(buffer))[0] = result;
-    Module.workerSharedArray[1] = (new BigInt64Array(buffer))[0];
+    Module.wSA[2] = (new BigInt64Array(buffer))[0];
 });
 EM_JS(void, wr_em_js_writeDoubleResult, (double result), {
     let buffer = new ArrayBuffer(8);
     (new Float64Array(buffer))[0] = result;
-    Module.workerSharedArray[1] = (new BigInt64Array(buffer))[0];
+    Module.wSA[2] = (new BigInt64Array(buffer))[0];
 });
 EM_JS(uint32_t, wr_em_js_memorySize, (), {
-    return Module.memorySize
+    return Module.wSA[3];
 });
 EM_JS(void, wr_em_js_makeSharedMemory, (uint32_t inital_pages, uint32_t max_pages), {
     const memory = new WebAssembly.Memory({
@@ -175,16 +146,14 @@ extern void wr_rs_em_js_terminateWorker() { wr_em_js_terminateWorker(); }
 extern void wr_rs_em_js_execFunc(const char *funcNamePtr) {
   wr_em_js_execFunc(funcNamePtr);
 }
-extern bool wr_rs_em_js_isExecutionFinished() {
-  return wr_em_js_isExecutionFinished();
-}
+extern bool wr_rs_em_js_waitForStatus() { return wr_em_js_waitForStatus(); }
 extern void wr_rs_em_js_continueFuncExecution() {
   wr_em_js_continueFuncExecution();
 }
-extern uint32_t wr_rs_em_js_modErrorSize() { return wr_em_js_modErrorSize(); }
-extern void wr_rs_em_js_getModError(char *error) {
-  wr_em_js_getModError(error);
-}
+// extern uint32_t wr_rs_em_js_modErrorSize() { return wr_em_js_modErrorSize();
+// } extern void wr_rs_em_js_getModError(char *error) {
+//   wr_em_js_getModError(error);
+// }
 extern uint32_t wr_rs_em_js_getImportedFuncId() {
   return wr_em_js_getImportedFuncId();
 }
@@ -234,6 +203,7 @@ extern void wr_rs_em_js_writeModMem(uint32_t modPtr, uint32_t size,
 }
 extern void wr_rs_sleep(uint32_t ms) { emscripten_sleep(ms); }
 extern uint32_t wr_rs_em_js_memorySize() { return wr_em_js_memorySize(); }
-extern void wr_rs_em_js_makeSharedMemory(uint32_t inital_pages, uint32_t max_pages) { 
-  wr_em_js_makeSharedMemory(inital_pages, max_pages); 
+extern void wr_rs_em_js_makeSharedMemory(uint32_t inital_pages,
+                                         uint32_t max_pages) {
+  wr_em_js_makeSharedMemory(inital_pages, max_pages);
 }

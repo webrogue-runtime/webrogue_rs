@@ -1,5 +1,5 @@
 let modsModule
-let wSA
+let workerSharedArray
 let getMemory
 
 onmessage = function (message) {
@@ -7,7 +7,7 @@ onmessage = function (message) {
     if (command === "instantiate") {
         let modsWasmData = message.data[1]
         let importFuncNames = message.data[2]
-        wSA = new BigInt64Array(message.data[3]);
+        workerSharedArray = new BigInt64Array(message.data[3]);
         let sharedMemory = message.data[4];
         let importObject = {};
         for (const [importModuleName, importedFuncs] of Object.entries(importFuncNames)) {
@@ -16,46 +16,40 @@ onmessage = function (message) {
                 const retType = funcDetails.ret_type
                 const funcId = funcDetails.func_id;
                 importModule[funcName] = function (...args) {
-                    Atomics.store(wSA, 2, BigInt(funcId))
-                    Atomics.store(wSA, 3, BigInt(getMemory().byteLength))
-                    Atomics.store(wSA, 1, BigInt(1))
-                    Atomics.notify(wSA, 1)
+                    Atomics.store(workerSharedArray, 0, BigInt(0))
+                    postMessage([2, funcId, args, getMemory().byteLength]); // exec_imported
+                    let modPtr;
+                    let size;
+                    let slice;
                     while (true) {
-                        Atomics.wait(wSA, 0, BigInt(0));
-                        let requestNumber = wSA[0];
-                        if (requestNumber == 1) {
-                            Atomics.store(wSA, 0, BigInt(0));
-                            // TODO try to omit notify
-                            Atomics.notify(wSA, 0, BigInt(0));
+                        Atomics.wait(workerSharedArray, 0, BigInt(0));
+                        if (workerSharedArray[0] == 1)
                             break;
-                        } else if (requestNumber == 2) {
-                            let modPtr = Number(wSA[2]);
-                            let size = Number(wSA[3]);
-                            let shared_slice = new Uint8Array(wSA).slice(32, 32 + size);
-                            let memory_slice = new Uint8Array(getMemory().slice(modPtr, modPtr + size));
-                            (shared_slice).set(memory_slice);
-                        } else if (wSA[0] == 3) {
-                            let modPtr = Number(wSA[2]);
-                            let size = Number(wSA[3]);
-                            let shared_slice = new Uint8Array(wSA).slice(32, 32 + size);
-                            let memory_slice = new Uint8Array(getMemory().slice(modPtr, modPtr + size));
-                            (memory_slice).set(shared_slice);
+                        else if (workerSharedArray[0] == 2) {
+                            modPtr = Number(workerSharedArray[1]);
+                            size = Number(workerSharedArray[2]);
+                            slice = new SharedArrayBuffer(size);
+                            (new Uint8Array(slice)).set(new Uint8Array(getMemory().slice(modPtr, modPtr + size)));
+                            Atomics.store(workerSharedArray, 0, BigInt(0))
+                            postMessage([3, slice]); // memory_slice
+                        } else if (workerSharedArray[0] == 3) {
+                            new Uint8Array(getMemory()).set(new Uint8Array(slice), modPtr);
+                            Atomics.store(workerSharedArray, 0, BigInt(0))
+                            postMessage([4, slice]); // memory_slice_wrote
                         } else {
-                            console.error("worker: unknown buffer command: ", wSA[0])
+                            console.error("worker: unknown buffer command: ", workerSharedArray[0])
                         }
-                        Atomics.store(wSA, 0, BigInt(0));
-                        Atomics.notify(wSA, 0, BigInt(0));
                     }
                     let result
                     if (retType == "void") {
                         result = undefined
                     } else if (retType == "int32_t" || retType == "uint32_t") {
-                        result = Number(wSA[2])
+                        result = Number(workerSharedArray[1])
                     } else if (retType == "int64_t" || retType == "uint64_t") {
-                        result = wSA[2]
+                        result = workerSharedArray[1]
                     } else if (retType == "float" || retType == "double") {
                         let buffer = new ArrayBuffer(8);
-                        (new BigInt64Array(buffer))[0] = wSA[2];
+                        (new BigInt64Array(buffer))[0] = workerSharedArray[1];
                         result = (new Float64Array(buffer))[0];
                     } else {
                         console.error("unknown retType: ", retType)
@@ -64,8 +58,8 @@ onmessage = function (message) {
                 }
             }
             importObject[importModuleName] = importModule
-            if (sharedMemory) {
-                if (!importObject["env"]) {
+            if(sharedMemory) {
+                if(!importObject["env"]) {
                     importObject["env"] = {};
                 }
                 importObject["env"]["memory"] = sharedMemory;
@@ -75,19 +69,16 @@ onmessage = function (message) {
         WebAssembly.instantiate(modsWasmData, importObject).then((newModule) => {
             modsModule = newModule;
             getMemory = function () { return modsModule.instance.exports.memory.buffer }
-            // TODO omit
-            postMessage(["instantiated"]);
+            postMessage([0]); // instantiated
         });
     } else if (command === "exec") {
         let funcName = message.data[1]
-        let error_string, error_stack
         try {
             modsModule.instance.exports[funcName]();
+            postMessage([1]) // exec_finished
         } catch (error) {
-            error_string = error.toString();
-            error_stack = error.stack
+            postMessage([5, error.toString(), error.stack]) // error 
         }
-        postMessage(["exec_finished", error_string, error_stack])
     } else {
         console.error("worker: unknown command ", command)
     }
