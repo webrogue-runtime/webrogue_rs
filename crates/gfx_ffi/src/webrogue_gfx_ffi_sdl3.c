@@ -1,0 +1,55 @@
+#include "webrogue_gfx_ffi.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
+#include <stdlib.h>
+
+typedef struct System {
+
+} System;
+
+void *webrogue_gfx_ffi_create_system() {
+  System *system_ptr = malloc(sizeof(System));
+  SDL_Init(SDL_INIT_VIDEO);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+  return system_ptr;
+}
+void webrogue_gfx_ffi_destroy_system(void *raw_system_ptr) {
+  free(raw_system_ptr);
+}
+typedef struct Window {
+  SDL_Window *sdl_window;
+} Window;
+void *webrogue_gfx_ffi_create_window(void *raw_system_ptr) {
+  System *system_ptr = (System *)raw_system_ptr;
+  Window *window_ptr = malloc(sizeof(Window));
+  window_ptr->sdl_window =
+      SDL_CreateWindow("webrogue", 800, 450, SDL_WINDOW_OPENGL);
+  SDL_GL_CreateContext(window_ptr->sdl_window);
+  return window_ptr;
+}
+void webrogue_gfx_ffi_destroy_window(void *raw_window_ptr) {
+  Window *window_ptr = (Window *)raw_window_ptr;
+  SDL_DestroyWindow(window_ptr->sdl_window);
+  free(window_ptr);
+}
+void *webrogue_gfx_ffi_gl_get_proc_address(void *raw_system_ptr,
+                                           char *procname) {
+  return SDL_GL_GetProcAddress(procname);
+}
+void webrogue_gfx_ffi_get_window_size(void *raw_window_ptr, uint32_t *out_width,
+                                      uint32_t *out_height) {
+  Window *window_ptr = (Window *)raw_window_ptr;
+  int width, height;
+  SDL_GetWindowSize(window_ptr->sdl_window, &width, &height);
+  *out_width = width;
+  *out_height = height;
+}
+void webrogue_gfx_ffi_present_window(void *raw_window_ptr) {
+  Window *window_ptr = (Window *)raw_window_ptr;
+  SDL_GL_SwapWindow(window_ptr->sdl_window);
+}

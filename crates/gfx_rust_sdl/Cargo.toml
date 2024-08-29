@@ -1,0 +1,12 @@
+[package]
+name = "webrogue_gfx_rust_sdl"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+sdl_static = ["sdl2/static-link"]
+sdl_bundled = ["sdl2/bundled"]
+
+[dependencies]
+webrogue_gfx = { path = "../gfx" }
+sdl2 = { path = "../../external/rust-sdl2" }

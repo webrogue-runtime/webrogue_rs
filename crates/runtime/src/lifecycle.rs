@@ -22,24 +22,31 @@ impl Lifecycle {
         let bytecode = archive_reader.read_wasm()?;
         let mut memory_size_range = None;
         for payload in parser.parse_all(&bytecode) {
-            let payload =
-                payload.map_err(|wasm_err| anyhow::format_err!("{}", wasm_err.message()))?;
+            let payload = payload.map_err(|wasm_err| {
+                println!("{}", wasm_err.message());
+                anyhow::format_err!("{}", wasm_err.message())
+            })?;
             match payload {
                 wasmparser::Payload::ImportSection(import_section) => {
                     for import in import_section {
-                        let import = import
-                            .map_err(|wasm_err| anyhow::format_err!("{}", wasm_err.message()))?;
+                        let import = import.map_err(|wasm_err| {
+                            println!("{}", wasm_err.message());
+                            anyhow::format_err!("{}", wasm_err.message())
+                        })?;
                         if import.module == "env" && import.name == "memory" {
                             if let wasmparser::TypeRef::Memory(memory) = import.ty {
                                 if !memory.shared {
+                                    println!("env.memory must be shared");
                                     bail!("env.memory must be shared")
                                 }
                                 if let Some(max_size) = memory.maximum {
                                     memory_size_range = Some((memory.initial, max_size));
                                 } else {
+                                    println!("env.memory has no maximum size");
                                     bail!("env.memory has no maximum size")
                                 }
                             } else {
+                                println!("env.memory has invalid type");
                                 bail!("env.memory has invalid type")
                             }
                         }
@@ -48,7 +55,6 @@ impl Lifecycle {
                 _ => {}
             }
         }
-
         runtime.run(imports, context_vec, bytecode, memory_size_range)?;
         Ok(())
     }

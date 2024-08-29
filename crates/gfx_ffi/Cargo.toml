@@ -1,0 +1,7 @@
+[package]
+name = "webrogue_gfx_ffi"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+webrogue_gfx = { path = "../gfx" }

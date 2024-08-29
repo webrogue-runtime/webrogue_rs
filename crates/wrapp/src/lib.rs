@@ -7,7 +7,7 @@ pub fn archive(
     dir_path: std::path::PathBuf,
     output_path: std::path::PathBuf,
 ) -> anyhow::Result<()> {
-    let mut cstream = zstd_seekable::SeekableCStream::new(5, 64*1024).unwrap();
+    let mut cstream = zstd_seekable::SeekableCStream::new(5, 64 * 1024).unwrap();
 
     let mut output = std::fs::File::create(output_path.clone())?;
     let mut out_buffer = [0; 10];
@@ -84,6 +84,15 @@ impl Reader<'_> {
     #[cfg(not(target_family = "wasm"))]
     pub fn from_file_path(path: std::path::PathBuf) -> anyhow::Result<Self> {
         let seekable = zstd_seekable::Seekable::init_file(path.to_str().unwrap())?;
+        let seekable = ZSTDSeekableProvider::new(seekable);
+        anyhow::Ok(Self {
+            seekable: Arc::new(Mutex::new(seekable)),
+        })
+    }
+    #[cfg(target_family = "wasm")]
+    pub fn from_file_path(path: std::path::PathBuf) -> anyhow::Result<Self> {
+        let file = std::fs::File::open(path).unwrap();
+        let seekable = zstd_seekable::Seekable::init(Box::new(file))?;
         let seekable = ZSTDSeekableProvider::new(seekable);
         anyhow::Ok(Self {
             seekable: Arc::new(Mutex::new(seekable)),

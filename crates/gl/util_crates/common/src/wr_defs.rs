@@ -2,9 +2,13 @@ use crate::types::*;
 use std::io::Write;
 
 pub fn write_to_file(file: &mut std::fs::File, parse_results: &ParseResults) {
-    file.write(b"glGetStringData(u32, u32) -> ()
-glGetStringLen(u32) -> (u32)
-").unwrap();
+    file.write(
+        b"glGetStringData(u32, u32) -> ()
+glGetStringLen(u32) -> (i32)
+init_ptrs() -> ()
+",
+    )
+    .unwrap();
 
     for command in parse_results.commands.clone() {
         if crate::common::EXCLUDED.contains(&command.name.as_str()) {

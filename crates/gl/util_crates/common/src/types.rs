@@ -38,8 +38,8 @@ impl GLType {
             GLType::U8 => "u8".to_owned(),
             GLType::UInt => "std::os::raw::c_uint".to_owned(),
             GLType::Void => "()".to_owned(),
-            GLType::Ptr(inner, false) => format!("*const {}", (*inner).to_rust_type()),
-            GLType::Ptr(inner, true) => format!("*mut {}", (*inner).to_rust_type()),
+            GLType::Ptr(inner, false) => format!("*mut {}", (*inner).to_rust_type()),
+            GLType::Ptr(inner, true) => format!("*const {}", (*inner).to_rust_type()),
         }
     }
 

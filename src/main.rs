@@ -2,8 +2,6 @@ use anyhow::Result;
 use clap::Parser;
 use webrogue_runtime::WasiFactory;
 
-// embed_plist::embed_info_plist!("Info.plist");
-
 #[cfg(feature = "backend_wasmtime")]
 fn make_backend() -> webrogue_backend_wasmtime::Backend {
     webrogue_backend_wasmtime::Backend::new()
@@ -60,49 +58,32 @@ fn main() -> Result<()> {
     let args = Cli::parse();
     let reader = webrogue_runtime::wrapp::Reader::from_file_path(args.path)?;
 
-    #[cfg(all(feature = "std_stream_sdl", feature = "std_stream_os"))]
-    compile_error!("webrogue_rs currently can't use more than one std_stream implementation");
+    webrogue_std_stream_os::bind_streams(&mut wasi);
 
-    #[cfg(feature = "std_stream_sdl")]
-    webrogue_std_stream_sdl::run_in_terminal(
-        wasi,
-        std::sync::Arc::new(move |wasi| {
-            let backend = make_backend();
-            lifecycle.run(backend, wasi, reader.clone()).unwrap();
-        }),
-    );
+    let backend = make_backend();
 
-    #[cfg(not(feature = "std_stream_sdl"))]
-    {
-        #[cfg(feature = "std_stream_os")]
-        webrogue_std_stream_os::bind_streams(&mut wasi);
-
-        let backend = make_backend();
-
-        #[cfg(feature = "_gfx")]
-        let mut webrogue_gfx_context = webrogue_gfx::Context::new();
-        #[cfg(feature = "gl")]
-        let mut webrogue_gl_context = webrogue_gl::api::Context {
-            gfx_context: &mut webrogue_gfx_context,
-        };
-        lifecycle.run(
-            backend,
-            make_imports(),
-            make_context_vec(
-                &mut wasi,
-                #[cfg(feature = "gl")]
-                &mut webrogue_gl_context,
-                #[cfg(feature = "_gfx")]
-                &mut webrogue_gfx_context,
-            ),
-            reader,
-        )?;
-        #[cfg(feature = "gl")]
-        drop(webrogue_gl_context);
-        #[cfg(feature = "_gfx")]
-        drop(webrogue_gfx_context);
-        drop(wasi);
-    }
+    #[cfg(feature = "_gfx")]
+    let mut webrogue_gfx_context =
+        webrogue_gfx::Context::new(Box::new(webrogue_gfx_rust_sdl::make_system));
+    #[cfg(feature = "gl")]
+    let mut webrogue_gl_context = webrogue_gl::api::Context::new(&mut webrogue_gfx_context);
+    lifecycle.run(
+        backend,
+        make_imports(),
+        make_context_vec(
+            &mut wasi,
+            #[cfg(feature = "gl")]
+            &mut webrogue_gl_context,
+            #[cfg(feature = "_gfx")]
+            &mut webrogue_gfx_context,
+        ),
+        reader,
+    )?;
+    #[cfg(feature = "gl")]
+    drop(webrogue_gl_context);
+    #[cfg(feature = "_gfx")]
+    drop(webrogue_gfx_context);
+    drop(wasi);
 
     Ok(())
 }

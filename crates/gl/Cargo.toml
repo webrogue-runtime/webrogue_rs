@@ -3,15 +3,10 @@ name = "webrogue_gl"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-sdl_static = ["sdl2/static-link"]
-sdl_bundled = ["sdl2/bundled"]
-
 [dependencies]
 webrogue_runtime = { path = "../runtime" }
 webrogue_gl_gen_macro = { path = "util_crates/macro" }
 webrogue_gfx = { path = "../gfx" }
-sdl2 = { path = "../../external/rust-sdl2" }
 
 [build-dependencies]
 reqwest = { version = "0.12", features = ["blocking"] }

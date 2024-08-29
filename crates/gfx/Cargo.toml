@@ -3,11 +3,6 @@ name = "webrogue_gfx"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-sdl_static = ["sdl2/static-link"]
-sdl_bundled = ["sdl2/bundled"]
-
 [dependencies]
 webrogue_runtime = { path = "../runtime" }
 anyhow = { version = "1" }
-sdl2 = { path = "../../external/rust-sdl2" }

@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["backend_wasmtime", "wasi_sync", "std_stream_os", "gl"]
+default = ["backend_wasmtime", "wasi_sync", "gl"]
 
 backend_v8 = ["dep:webrogue_backend_v8"]
 backend_wasmer_cranelift = ["_backend_wasmer", "webrogue_backend_wasmer/cranelift"]
@@ -13,13 +13,10 @@ backend_wasmer_singlepass = ["_backend_wasmer", "webrogue_backend_wasmer/singlep
 backend_wasmtime = ["dep:webrogue_backend_wasmtime"]
 _backend_wasmer = ["dep:webrogue_backend_wasmer"]
 
-std_stream_sdl = ["dep:webrogue_std_stream_sdl"]
-std_stream_os = ["dep:webrogue_std_stream_os"]
-
 wasi_sync = ["dep:webrogue_wasi_sync"]
 
 gl = ["_gfx", "dep:webrogue_gl"]
-_gfx = ["dep:webrogue_gfx"]
+_gfx = ["dep:webrogue_gfx", "dep:webrogue_gfx_rust_sdl"]
 
 [dependencies]
 webrogue_runtime = { path = "crates/runtime" }
@@ -27,16 +24,18 @@ anyhow = { version = "1" }
 clap = { version = "4.0", features = ["derive"] }
 webrogue_wasi = { path = "crates/wasi" }
 
+webrogue_gl = { path = "crates/gl", optional = true }
 webrogue_gfx = { path = "crates/gfx", optional = true }
+webrogue_gfx_rust_sdl = { path = "crates/gfx_rust_sdl", optional = true }
+webrogue_gfx_ffi = { path = "crates/gfx_ffi", optional = true }
 webrogue_backend_v8 = { path = "crates/backend_v8", optional = true }
 webrogue_backend_wasmer = { path = "crates/backend_wasmer", optional = true }
 webrogue_backend_wasmtime = { path = "crates/backend_wasmtime", optional = true }
-webrogue_std_stream_os = { path = "crates/std_stream_os", optional = true }
-webrogue_std_stream_sdl = { path = "crates/std_stream_sdl", optional = true }
+webrogue_std_stream_os = { path = "crates/std_stream_os" }
 webrogue_wasi_sync = { path = "crates/wasi_sync", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
-webrogue_gl = { path = "crates/gl", optional = true, features = ["sdl_static", "sdl_bundled"] }
+webrogue_gfx_rust_sdl = { path = "crates/gfx_rust_sdl", optional = true, features = ["sdl_static", "sdl_bundled"] }
 
 [target.'cfg(not(any(target_os = "macos", target_os = "windows")))'.dependencies]
-webrogue_gl = { path = "crates/gl", optional = true, features = [] }
+webrogue_gfx_rust_sdl = { path = "crates/gfx_rust_sdl", optional = true, features = [] }

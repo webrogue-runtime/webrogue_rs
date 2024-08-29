@@ -58,7 +58,10 @@ impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
     ) -> anyhow::Result<()> {
         unsafe {
             if let Some(memory_size_range) = memory_size_range {
-                wr_rs_em_js_makeSharedMemory(memory_size_range.0 as u32, memory_size_range.1 as u32);
+                wr_rs_em_js_makeSharedMemory(
+                    memory_size_range.0 as u32,
+                    memory_size_range.1 as u32,
+                );
             }
             let mut worker_config = imports.to_json().as_bytes().to_vec();
             worker_config.push(0);

@@ -33,20 +33,18 @@ fn main() -> anyhow::Result<()> {
 
     wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
 
-    let reader = webrogue_runtime::wrapp::Reader::from_static_slice(include_bytes!(
-        "../../examples/raylib/raylib.wrapp"
-    ))?;
+    let reader = webrogue_runtime::wrapp::Reader::from_file_path("raylib.wrapp".into())?;
 
     webrogue_std_stream_os::bind_streams(&mut wasi);
 
     #[cfg(feature = "gl")]
-    let mut webrogue_gfx_context = webrogue_gfx::Context::new();
+    let mut webrogue_gfx_context =
+        webrogue_gfx::Context::new(Box::new(webrogue_gfx_ffi::make_system));
     #[cfg(feature = "gl")]
-    let mut webrogue_gl_context = webrogue_gl::api::Context {
-        gfx_context: &mut webrogue_gfx_context,
-    };
+    let mut webrogue_gl_context = webrogue_gl::api::Context::new(&mut webrogue_gfx_context);
 
     let backend = webrogue_backend_web::Backend::new();
+
     lifecycle.run(
         backend,
         make_imports(),

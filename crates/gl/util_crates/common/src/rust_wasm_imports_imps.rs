@@ -161,20 +161,8 @@ pub fn {}(
     _context: &mut Context,
 {}) -> {} {{
 {}{}
-    let result = unsafe {{ std::mem::transmute::<
-            *const (),
-            unsafe extern \"stdcall\" fn(
-                {}
-            ) -> {},
-        >(
-            _context
-                .gfx_context
-                .as_mut()
-                .unwrap()
-                .video_subsystem
-                .as_mut()
-                .unwrap()
-                .gl_get_proc_address(\"{}\")
+    let result = unsafe {{ (
+            _context.proc_addresses.{}
         )({}) }};{}{} 
 }}
 ",
@@ -186,11 +174,6 @@ pub fn {}(
             },
             memory_init,
             converts.join("\n"),
-            ffi_arg_types.join(""),
-            match command.ret {
-                GLType::Void => "()".to_owned(),
-                _ => command.ret.to_wasm_param_type(),
-            },
             command.name,
             ffi_args.join(", "),
             writes.join("\n"),
