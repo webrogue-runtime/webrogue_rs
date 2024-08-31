@@ -56,7 +56,7 @@ fn main() -> Result<()> {
     wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
 
     let args = Cli::parse();
-    let reader = webrogue_runtime::wrapp::Reader::from_file_path(args.path)?;
+    let reader = webrogue_runtime::wrapp::Wrapp::from_file_path(args.path)?;
 
     webrogue_std_stream_os::bind_streams(&mut wasi);
 

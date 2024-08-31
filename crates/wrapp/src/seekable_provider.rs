@@ -7,16 +7,19 @@ pub trait SeekableProvider<'a>: Send {
 }
 
 pub struct ZSTDSeekableProvider<'a, OverallReader: Read + Seek> {
-    seekable: zstd_seekable::Seekable<'a, crate::subreader::SubReader<OverallReader>>,
+    seekable: zstd_seekable::Seekable<'a, crate::offsetted_reader::OffsettedReader<OverallReader>>,
 }
 
 unsafe impl<OverallReader: Read + Seek> Send for ZSTDSeekableProvider<'_, OverallReader> {}
 
 impl<'a, OverallReader: Read + Seek> ZSTDSeekableProvider<'a, OverallReader> {
-    pub fn new(overall_reader: OverallReader) -> anyhow::Result<Self> {
-        let subreader = Box::new(crate::subreader::SubReader::new(overall_reader)?);
+    pub fn new(overall_reader: OverallReader, offset: u64) -> anyhow::Result<Self> {
+        let offsetted_reader = Box::new(crate::offsetted_reader::OffsettedReader::new(
+            overall_reader,
+            offset,
+        )?);
         Ok(Self {
-            seekable: zstd_seekable::Seekable::init(subreader)?,
+            seekable: zstd_seekable::Seekable::init(offsetted_reader)?,
         })
     }
 }
