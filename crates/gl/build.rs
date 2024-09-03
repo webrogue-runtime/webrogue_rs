@@ -33,7 +33,7 @@ fn download_macos_fat(output_path: &std::path::Path) {
         return;
     }
     let archive_bytes = reqwest::blocking::get(
-        "https://github.com/webrogue-runtime/angle-builder/releases/download/latest/macos_fat.zip",
+        "https://github.com/webrogue-runtime/angle-builder/releases/latest/download/macos_fat.zip",
     )
     .unwrap()
     .bytes()
@@ -54,8 +54,7 @@ fn download_windows_x64(output_path: &std::path::Path) {
         return;
     }
     let archive_bytes = reqwest::blocking::get(
-        "https://github.com/webrogue-runtime/angle-builder/releases/download/latest/windows_x64.zip
-",
+        "https://github.com/webrogue-runtime/angle-builder/releases/latest/download/windows_x64.zip",
     )
     .unwrap()
     .bytes()
