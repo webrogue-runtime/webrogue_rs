@@ -14,7 +14,7 @@ impl Lifecycle {
         backend: impl Backend<Imports>,
         imports: Imports,
         context_vec: crate::context::ContextVec,
-        archive_reader: webrogue_wrapp::Reader,
+        archive_reader: webrogue_wrapp::Wrapp,
     ) -> Result<()> {
         let mut archive_reader = archive_reader;
         let runtime = backend.make_runtime();

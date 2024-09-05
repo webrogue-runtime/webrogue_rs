@@ -4,6 +4,7 @@ fn shader_param_count(pname: u32) -> usize {
     match pname {
         // likely missed
         ffi::GL_COMPILE_STATUS => 1,
+        ffi::GL_INFO_LOG_LENGTH => 1,
         _ => panic!(),
     }
 }
