@@ -1,13 +1,13 @@
 #include "webrogue_gfx_ffi.h"
-#include <SDL.h>
-#include <SDL_video.h>
+#include "SDL.h"
+#include "SDL_video.h"
 #include <stdlib.h>
 
 typedef struct System {
 
 } System;
 
-void *webrogue_gfx_ffi_create_system() {
+void *webrogue_gfx_ffi_create_system(void) {
   System *system_ptr = malloc(sizeof(System));
   SDL_Init(SDL_INIT_VIDEO);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -25,7 +25,7 @@ typedef struct Window {
   SDL_Window *sdl_window;
 } Window;
 void *webrogue_gfx_ffi_create_window(void *raw_system_ptr) {
-  System *system_ptr = (System *)raw_system_ptr;
+//  System *system_ptr = (System *)raw_system_ptr;
   Window *window_ptr = malloc(sizeof(Window));
   window_ptr->sdl_window =
       SDL_CreateWindow("webrogue", SDL_WINDOWPOS_UNDEFINED,

@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-void *webrogue_gfx_ffi_create_system();
+void *webrogue_gfx_ffi_create_system(void);
 void webrogue_gfx_ffi_destroy_system(void *raw_system_ptr);
 void *webrogue_gfx_ffi_create_window(void *raw_system_ptr);
 void webrogue_gfx_ffi_destroy_window(void *raw_window_ptr);

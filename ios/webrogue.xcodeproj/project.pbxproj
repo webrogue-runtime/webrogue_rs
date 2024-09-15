@@ -1,0 +1,575 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AC1FE6042C97307D005F5D40 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC1FE5FD2C97307D005F5D40 /* main.mm */; };
+		AC1FE6052C97307D005F5D40 /* WebrogueAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1FE5FF2C97307D005F5D40 /* WebrogueAppDelegate.swift */; };
+		AC1FE6062C97307D005F5D40 /* WebrogueUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1FE6002C97307D005F5D40 /* WebrogueUIViewController.swift */; };
+		AC1FE6072C97307D005F5D40 /* WebrogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1FE6012C97307D005F5D40 /* WebrogueView.swift */; };
+		AC1FE60B2C973172005F5D40 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE60A2C973172005F5D40 /* JavaScriptCore.framework */; };
+		AC1FE61A2C97350B005F5D40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE6182C97350B005F5D40 /* Assets.xcassets */; };
+		AC1FE61B2C97350B005F5D40 /* colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE6192C97350B005F5D40 /* colors.xcassets */; };
+		AC1FE61D2C973799005F5D40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */; };
+		AC1FE67C2C979A0F005F5D40 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE67B2C979A0F005F5D40 /* AVFoundation.framework */; };
+		AC1FE67E2C979A17005F5D40 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE67D2C979A17005F5D40 /* AudioToolbox.framework */; };
+		AC1FE6802C979A1D005F5D40 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE67F2C979A1D005F5D40 /* CoreAudio.framework */; };
+		AC1FE6822C979A24005F5D40 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6812C979A24005F5D40 /* CoreBluetooth.framework */; };
+		AC1FE6842C979A2B005F5D40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6832C979A2B005F5D40 /* CoreFoundation.framework */; };
+		AC1FE6862C979A32005F5D40 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6852C979A32005F5D40 /* CoreGraphics.framework */; };
+		AC1FE6882C979A38005F5D40 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6872C979A38005F5D40 /* CoreHaptics.framework */; };
+		AC1FE68A2C979A3F005F5D40 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6892C979A3F005F5D40 /* CoreMotion.framework */; };
+		AC1FE68C2C979A45005F5D40 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE68B2C979A45005F5D40 /* CoreVideo.framework */; };
+		AC1FE68E2C979A4B005F5D40 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE68D2C979A4A005F5D40 /* GameController.framework */; };
+		AC1FE6902C979A51005F5D40 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE68F2C979A51005F5D40 /* Metal.framework */; };
+		AC1FE6922C979A57005F5D40 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6912C979A57005F5D40 /* OpenGLES.framework */; platformFilter = ios; };
+		AC1FE6942C979A5D005F5D40 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6932C979A5D005F5D40 /* QuartzCore.framework */; };
+		AC1FE6962C979A63005F5D40 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE6952C979A63005F5D40 /* UIKit.framework */; };
+		AC83EF0E2C97A8A30002368F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC83EF0D2C97A8A30002368F /* libSDL2.a */; };
+		AC83EF132C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c in Sources */ = {isa = PBXBuildFile; fileRef = AC83EF122C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AC1FE5E42C972E0F005F5D40 /* webrogue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = webrogue.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC1FE5FC2C97307D005F5D40 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		AC1FE5FD2C97307D005F5D40 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		AC1FE5FE2C97307D005F5D40 /* webrogue-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "webrogue-Bridging-Header.h"; sourceTree = "<group>"; };
+		AC1FE5FF2C97307D005F5D40 /* WebrogueAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebrogueAppDelegate.swift; sourceTree = "<group>"; };
+		AC1FE6002C97307D005F5D40 /* WebrogueUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebrogueUIViewController.swift; sourceTree = "<group>"; };
+		AC1FE6012C97307D005F5D40 /* WebrogueView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebrogueView.swift; sourceTree = "<group>"; };
+		AC1FE60A2C973172005F5D40 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		AC1FE6182C97350B005F5D40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AC1FE6192C97350B005F5D40 /* colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = colors.xcassets; sourceTree = "<group>"; };
+		AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		AC1FE67B2C979A0F005F5D40 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		AC1FE67D2C979A17005F5D40 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		AC1FE67F2C979A1D005F5D40 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		AC1FE6812C979A24005F5D40 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		AC1FE6832C979A2B005F5D40 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		AC1FE6852C979A32005F5D40 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		AC1FE6872C979A38005F5D40 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
+		AC1FE6892C979A3F005F5D40 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		AC1FE68B2C979A45005F5D40 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		AC1FE68D2C979A4A005F5D40 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		AC1FE68F2C979A51005F5D40 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		AC1FE6912C979A57005F5D40 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		AC1FE6932C979A5D005F5D40 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		AC1FE6952C979A63005F5D40 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		AC83EF0D2C97A8A30002368F /* libSDL2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDL2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC83EF122C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = webrogue_gfx_ffi_sdl2.c; path = ../../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AC1FE5E12C972E0F005F5D40 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC83EF0E2C97A8A30002368F /* libSDL2.a in Frameworks */,
+				AC1FE6962C979A63005F5D40 /* UIKit.framework in Frameworks */,
+				AC1FE6942C979A5D005F5D40 /* QuartzCore.framework in Frameworks */,
+				AC1FE6922C979A57005F5D40 /* OpenGLES.framework in Frameworks */,
+				AC1FE6902C979A51005F5D40 /* Metal.framework in Frameworks */,
+				AC1FE68E2C979A4B005F5D40 /* GameController.framework in Frameworks */,
+				AC1FE68C2C979A45005F5D40 /* CoreVideo.framework in Frameworks */,
+				AC1FE68A2C979A3F005F5D40 /* CoreMotion.framework in Frameworks */,
+				AC1FE6882C979A38005F5D40 /* CoreHaptics.framework in Frameworks */,
+				AC1FE6862C979A32005F5D40 /* CoreGraphics.framework in Frameworks */,
+				AC1FE6842C979A2B005F5D40 /* CoreFoundation.framework in Frameworks */,
+				AC1FE6822C979A24005F5D40 /* CoreBluetooth.framework in Frameworks */,
+				AC1FE6802C979A1D005F5D40 /* CoreAudio.framework in Frameworks */,
+				AC1FE67E2C979A17005F5D40 /* AudioToolbox.framework in Frameworks */,
+				AC1FE67C2C979A0F005F5D40 /* AVFoundation.framework in Frameworks */,
+				AC1FE60B2C973172005F5D40 /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AC1FE5DB2C972E0F005F5D40 = {
+			isa = PBXGroup;
+			children = (
+				AC1FE6022C97307D005F5D40 /* Sources */,
+				AC1FE6172C9734F1005F5D40 /* Assets */,
+				AC1FE5E52C972E0F005F5D40 /* Products */,
+				AC83EF112C97A8FF0002368F /* Recovered References */,
+			);
+			sourceTree = "<group>";
+		};
+		AC1FE5E52C972E0F005F5D40 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AC1FE5E42C972E0F005F5D40 /* webrogue.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AC1FE6022C97307D005F5D40 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AC83EF122C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c */,
+				AC1FE5FC2C97307D005F5D40 /* main.h */,
+				AC1FE5FD2C97307D005F5D40 /* main.mm */,
+				AC1FE5FE2C97307D005F5D40 /* webrogue-Bridging-Header.h */,
+				AC1FE5FF2C97307D005F5D40 /* WebrogueAppDelegate.swift */,
+				AC1FE6002C97307D005F5D40 /* WebrogueUIViewController.swift */,
+				AC1FE6012C97307D005F5D40 /* WebrogueView.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		AC1FE6172C9734F1005F5D40 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */,
+				AC1FE6182C97350B005F5D40 /* Assets.xcassets */,
+				AC1FE6192C97350B005F5D40 /* colors.xcassets */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+		AC83EF112C97A8FF0002368F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				AC83EF0D2C97A8A30002368F /* libSDL2.a */,
+				AC1FE6952C979A63005F5D40 /* UIKit.framework */,
+				AC1FE6932C979A5D005F5D40 /* QuartzCore.framework */,
+				AC1FE6912C979A57005F5D40 /* OpenGLES.framework */,
+				AC1FE68F2C979A51005F5D40 /* Metal.framework */,
+				AC1FE68D2C979A4A005F5D40 /* GameController.framework */,
+				AC1FE68B2C979A45005F5D40 /* CoreVideo.framework */,
+				AC1FE6892C979A3F005F5D40 /* CoreMotion.framework */,
+				AC1FE6872C979A38005F5D40 /* CoreHaptics.framework */,
+				AC1FE6852C979A32005F5D40 /* CoreGraphics.framework */,
+				AC1FE6832C979A2B005F5D40 /* CoreFoundation.framework */,
+				AC1FE6812C979A24005F5D40 /* CoreBluetooth.framework */,
+				AC1FE67F2C979A1D005F5D40 /* CoreAudio.framework */,
+				AC1FE67D2C979A17005F5D40 /* AudioToolbox.framework */,
+				AC1FE67B2C979A0F005F5D40 /* AVFoundation.framework */,
+				AC1FE60A2C973172005F5D40 /* JavaScriptCore.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		AC1FE62D2C977935005F5D40 /* cargo */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = scripts/cargo_lipo_builder.sh;
+			buildConfigurationList = AC1FE62E2C977935005F5D40 /* Build configuration list for PBXLegacyTarget "cargo" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			buildWorkingDirectory = "$(SRCROOT)/";
+			dependencies = (
+			);
+			name = cargo;
+			passBuildSettingsInEnvironment = 1;
+			productName = rust_code_2;
+		};
+		AC1FE64F2C978680005F5D40 /* fetch_dependencies */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = scripts/fetch_dependencies.sh;
+			buildConfigurationList = AC1FE6502C978680005F5D40 /* Build configuration list for PBXLegacyTarget "fetch_dependencies" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			buildWorkingDirectory = "$(SRCROOT)/";
+			dependencies = (
+			);
+			name = fetch_dependencies;
+			passBuildSettingsInEnvironment = 1;
+			productName = fetch_dependencies;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		AC1FE5E32C972E0F005F5D40 /* webrogue */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC1FE5F22C972E12005F5D40 /* Build configuration list for PBXNativeTarget "webrogue" */;
+			buildPhases = (
+				AC1FE5E02C972E0F005F5D40 /* Sources */,
+				AC1FE5E12C972E0F005F5D40 /* Frameworks */,
+				AC1FE5E22C972E0F005F5D40 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC1FE6412C977CBE005F5D40 /* PBXTargetDependency */,
+			);
+			name = webrogue;
+			productName = webrogue;
+			productReference = AC1FE5E42C972E0F005F5D40 /* webrogue.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AC1FE5DC2C972E0F005F5D40 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					AC1FE5E32C972E0F005F5D40 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					AC1FE62D2C977935005F5D40 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					AC1FE64F2C978680005F5D40 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = AC1FE5DF2C972E0F005F5D40 /* Build configuration list for PBXProject "webrogue" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AC1FE5DB2C972E0F005F5D40;
+			productRefGroup = AC1FE5E52C972E0F005F5D40 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AC1FE5E32C972E0F005F5D40 /* webrogue */,
+				AC1FE62D2C977935005F5D40 /* cargo */,
+				AC1FE64F2C978680005F5D40 /* fetch_dependencies */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AC1FE5E22C972E0F005F5D40 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC1FE61D2C973799005F5D40 /* LaunchScreen.storyboard in Resources */,
+				AC1FE61B2C97350B005F5D40 /* colors.xcassets in Resources */,
+				AC1FE61A2C97350B005F5D40 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AC1FE5E02C972E0F005F5D40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC1FE6042C97307D005F5D40 /* main.mm in Sources */,
+				AC1FE6072C97307D005F5D40 /* WebrogueView.swift in Sources */,
+				AC1FE6052C97307D005F5D40 /* WebrogueAppDelegate.swift in Sources */,
+				AC83EF132C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c in Sources */,
+				AC1FE6062C97307D005F5D40 /* WebrogueUIViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AC1FE6412C977CBE005F5D40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC1FE62D2C977935005F5D40 /* cargo */;
+			targetProxy = AC1FE6402C977CBE005F5D40 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AC1FE5F02C972E12005F5D40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AC1FE5F12C972E12005F5D40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AC1FE5F32C972E12005F5D40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LC5F8UX2W7;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/external/SDL2/include";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-lwebrogue_ios";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.webrogue";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/webrogue-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC1FE5F42C972E12005F5D40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LC5F8UX2W7;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/external/SDL2/include";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-lwebrogue_ios";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.webrogue";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/webrogue-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AC1FE62F2C977935005F5D40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AC1FE6302C977935005F5D40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		AC1FE6512C978680005F5D40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AC1FE6522C978680005F5D40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AC1FE5DF2C972E0F005F5D40 /* Build configuration list for PBXProject "webrogue" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC1FE5F02C972E12005F5D40 /* Debug */,
+				AC1FE5F12C972E12005F5D40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC1FE5F22C972E12005F5D40 /* Build configuration list for PBXNativeTarget "webrogue" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC1FE5F32C972E12005F5D40 /* Debug */,
+				AC1FE5F42C972E12005F5D40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC1FE62E2C977935005F5D40 /* Build configuration list for PBXLegacyTarget "cargo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC1FE62F2C977935005F5D40 /* Debug */,
+				AC1FE6302C977935005F5D40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC1FE6502C978680005F5D40 /* Build configuration list for PBXLegacyTarget "fetch_dependencies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC1FE6512C978680005F5D40 /* Debug */,
+				AC1FE6522C978680005F5D40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AC1FE5DC2C972E0F005F5D40 /* Project object */;
+}

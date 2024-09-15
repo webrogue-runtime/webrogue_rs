@@ -9,7 +9,7 @@ extern "C" void webrogue_ios_main();
 
 typedef void (*onMainCallback)(void* userdata);
 
-extern "C" int webrogueRunOnMainThread(onMainCallback f, void* userdata) {
+extern "C" void webrogueRunOnMainThread(onMainCallback f, void* userdata) {
     dispatch_sync(dispatch_get_main_queue(), ^{
         f(userdata);
     });
@@ -19,7 +19,6 @@ bool checkWASMJSCSupport() {
     JSContext *context = [[JSContext alloc] init];
     JSValue *retValue = [context evaluateScript: @"typeof WebAssembly"];
     bool result = [[retValue toString] isEqualToString: @"object"];
-    [context release];
     return result;
 }
 
