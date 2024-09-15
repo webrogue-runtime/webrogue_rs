@@ -55,8 +55,15 @@ add_executable(
     ${CMAKE_CURRENT_LIST_DIR}/src/main.h
     ${CMAKE_CURRENT_LIST_DIR}/src/main.mm
     ${CMAKE_CURRENT_LIST_DIR}/src/webrogue-Bridging-Header.h
+    ${CMAKE_CURRENT_LIST_DIR}/../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c
 
     ${WEBROGUE_SWIFT_SOURCES}
+)
+
+target_include_directories(
+    webrogue
+    PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/external/SDL/include
 )
 
 set_target_properties(webrogue PROPERTIES XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "$(SRCROOT)/cmake_build/sdl/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\n$(SRCROOT)/cmake_build/sdl_ttf/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\n$(SRCROOT)/cmake_build/sdl_ttf/external/freetype/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)")

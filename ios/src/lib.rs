@@ -28,10 +28,10 @@ fn main() -> anyhow::Result<()> {
     webrogue_std_stream_os::bind_streams(&mut wasi);
     let backend = make_backend();
 
-    let reader = webrogue_runtime::wrapp::Reader::from_static_slice(include_bytes!(
+    let reader = webrogue_runtime::wrapp::Wrapp::from_static_slice(include_bytes!(
         "../../examples/gears/gears.wrapp"
     ))?;
-    let mut webrogue_gfx_context = webrogue_gfx::Context::new(Box::new(webrogue_gfx_rust_sdl::make_system));
+    let mut webrogue_gfx_context = webrogue_gfx::Context::new(Box::new(webrogue_gfx_ffi::make_system));
     let mut webrogue_gl_context = webrogue_gl::api::Context::new(
         &mut webrogue_gfx_context,
     );

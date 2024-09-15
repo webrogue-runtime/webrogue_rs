@@ -1,6 +1,6 @@
 #include "webrogue_gfx_ffi.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_video.h>
+#include <SDL.h>
+#include <SDL_video.h>
 #include <stdlib.h>
 
 typedef struct System {
@@ -29,7 +29,7 @@ void *webrogue_gfx_ffi_create_window(void *raw_system_ptr) {
   Window *window_ptr = malloc(sizeof(Window));
   window_ptr->sdl_window =
       SDL_CreateWindow("webrogue", SDL_WINDOWPOS_UNDEFINED,
-                       SDL_WINDOWPOS_UNDEFINED, 800, 450, SDL_WINDOW_OPENGL);
+                       SDL_WINDOWPOS_UNDEFINED, 800, 450, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   SDL_GL_CreateContext(window_ptr->sdl_window);
   return window_ptr;
 }
@@ -53,4 +53,6 @@ void webrogue_gfx_ffi_get_window_size(void *raw_window_ptr, uint32_t *out_width,
 void webrogue_gfx_ffi_present_window(void *raw_window_ptr) {
   Window *window_ptr = (Window *)raw_window_ptr;
   SDL_GL_SwapWindow(window_ptr->sdl_window);
+  SDL_Event event;
+  SDL_PollEvent(&event);
 }

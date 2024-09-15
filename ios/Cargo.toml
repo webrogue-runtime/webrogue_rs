@@ -18,4 +18,4 @@ webrogue_gl = { path = "../crates/gl" }
 webrogue_gfx = { path = "../crates/gfx" }
 webrogue_wasi_sync = { path = "../crates/wasi_sync" }
 webrogue_std_stream_os = { path = "../crates/std_stream_os", default-features = false }
-webrogue_gfx_rust_sdl = { path = "../crates/gfx_rust_sdl", features = [] }
+webrogue_gfx_ffi = { path = "../crates/gfx_ffi" }
