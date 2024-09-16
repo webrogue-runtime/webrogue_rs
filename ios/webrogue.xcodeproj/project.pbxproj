@@ -13,7 +13,6 @@
 		AC1FE6072C97307D005F5D40 /* WebrogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1FE6012C97307D005F5D40 /* WebrogueView.swift */; };
 		AC1FE60B2C973172005F5D40 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE60A2C973172005F5D40 /* JavaScriptCore.framework */; };
 		AC1FE61A2C97350B005F5D40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE6182C97350B005F5D40 /* Assets.xcassets */; };
-		AC1FE61B2C97350B005F5D40 /* colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE6192C97350B005F5D40 /* colors.xcassets */; };
 		AC1FE61D2C973799005F5D40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */; };
 		AC1FE67C2C979A0F005F5D40 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE67B2C979A0F005F5D40 /* AVFoundation.framework */; };
 		AC1FE67E2C979A17005F5D40 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1FE67D2C979A17005F5D40 /* AudioToolbox.framework */; };
@@ -33,6 +32,16 @@
 		AC83EF132C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c in Sources */ = {isa = PBXBuildFile; fileRef = AC83EF122C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		ACF1A7A02C985FFC0015B916 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC1FE5DC2C972E0F005F5D40 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC1FE62D2C977935005F5D40;
+			remoteInfo = cargo;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		AC1FE5E42C972E0F005F5D40 /* webrogue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = webrogue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC1FE5FC2C97307D005F5D40 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
@@ -43,7 +52,6 @@
 		AC1FE6012C97307D005F5D40 /* WebrogueView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebrogueView.swift; sourceTree = "<group>"; };
 		AC1FE60A2C973172005F5D40 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		AC1FE6182C97350B005F5D40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AC1FE6192C97350B005F5D40 /* colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = colors.xcassets; sourceTree = "<group>"; };
 		AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AC1FE67B2C979A0F005F5D40 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		AC1FE67D2C979A17005F5D40 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -93,8 +101,8 @@
 		AC1FE5DB2C972E0F005F5D40 = {
 			isa = PBXGroup;
 			children = (
-				AC1FE6022C97307D005F5D40 /* Sources */,
-				AC1FE6172C9734F1005F5D40 /* Assets */,
+				ACF1A7A12C9860DE0015B916 /* Assets */,
+				AC1FE6022C97307D005F5D40 /* Source */,
 				AC1FE5E52C972E0F005F5D40 /* Products */,
 				AC83EF112C97A8FF0002368F /* Recovered References */,
 			);
@@ -108,7 +116,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AC1FE6022C97307D005F5D40 /* Sources */ = {
+		AC1FE6022C97307D005F5D40 /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				AC83EF122C97A96C0002368F /* webrogue_gfx_ffi_sdl2.c */,
@@ -119,17 +127,7 @@
 				AC1FE6002C97307D005F5D40 /* WebrogueUIViewController.swift */,
 				AC1FE6012C97307D005F5D40 /* WebrogueView.swift */,
 			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		AC1FE6172C9734F1005F5D40 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */,
-				AC1FE6182C97350B005F5D40 /* Assets.xcassets */,
-				AC1FE6192C97350B005F5D40 /* colors.xcassets */,
-			);
-			name = Assets;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		AC83EF112C97A8FF0002368F /* Recovered References */ = {
@@ -153,6 +151,15 @@
 				AC1FE60A2C973172005F5D40 /* JavaScriptCore.framework */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		ACF1A7A12C9860DE0015B916 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */,
+				AC1FE6182C97350B005F5D40 /* Assets.xcassets */,
+			);
+			path = Assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -254,7 +261,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC1FE61D2C973799005F5D40 /* LaunchScreen.storyboard in Resources */,
-				AC1FE61B2C97350B005F5D40 /* colors.xcassets in Resources */,
 				AC1FE61A2C97350B005F5D40 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,7 +286,7 @@
 		AC1FE6412C977CBE005F5D40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AC1FE62D2C977935005F5D40 /* cargo */;
-			targetProxy = AC1FE6402C977CBE005F5D40 /* PBXContainerItemProxy */;
+			targetProxy = ACF1A7A02C985FFC0015B916 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -436,7 +442,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.webrogue";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/webrogue-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Source/webrogue-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -474,7 +480,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.webrogue";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/webrogue-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Source/webrogue-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -540,7 +546,7 @@
 				AC1FE5F12C972E12005F5D40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		AC1FE5F22C972E12005F5D40 /* Build configuration list for PBXNativeTarget "webrogue" */ = {
 			isa = XCConfigurationList;
@@ -549,7 +555,7 @@
 				AC1FE5F42C972E12005F5D40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		AC1FE62E2C977935005F5D40 /* Build configuration list for PBXLegacyTarget "cargo" */ = {
 			isa = XCConfigurationList;
@@ -558,7 +564,7 @@
 				AC1FE6302C977935005F5D40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		AC1FE6502C978680005F5D40 /* Build configuration list for PBXLegacyTarget "fetch_dependencies" */ = {
 			isa = XCConfigurationList;
@@ -567,7 +573,7 @@
 				AC1FE6522C978680005F5D40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

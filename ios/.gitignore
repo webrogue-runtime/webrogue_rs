@@ -4,3 +4,4 @@
 /external/SDL2
 *.xcuserstate
 xcuserdata
+*.xcscheme
