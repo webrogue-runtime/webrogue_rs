@@ -29,7 +29,7 @@ fn main() -> anyhow::Result<()> {
     let backend = make_backend();
 
     let reader = webrogue_runtime::wrapp::Wrapp::from_static_slice(include_bytes!(
-        "../../examples/gears/gears.wrapp"
+        "../../../../../examples/gears/gears.wrapp"
     ))?;
     let mut webrogue_gfx_context = webrogue_gfx::Context::new(Box::new(webrogue_gfx_ffi::make_system));
     let mut webrogue_gl_context = webrogue_gl::api::Context::new(
@@ -50,6 +50,6 @@ fn main() -> anyhow::Result<()> {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn webrogue_ios_main() {
+pub unsafe extern "C" fn webrogue_macos_main() {
     main().unwrap();
 }

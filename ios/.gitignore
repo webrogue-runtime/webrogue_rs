@@ -1,7 +1,0 @@
-.DS_Store
-/Cargo.lock
-/external/SDL2.zip
-/external/SDL2
-*.xcuserstate
-xcuserdata
-*.xcscheme

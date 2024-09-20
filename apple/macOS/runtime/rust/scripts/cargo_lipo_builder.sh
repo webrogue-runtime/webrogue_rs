@@ -1,11 +1,14 @@
 XCODE_PATH="$HOME/.cargo/bin:$PATH"
 MODIFIED_PATH="$HOME/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
+# SDKROOT env variable somehow breaks build for ios
+unset SDKROOT
+
 cd $(dirname $(dirname $0))
 IOS_ROOT_DIR=$(pwd)
 set -ex
 
-sh scripts/fetch_dependencies.sh
+sh ../../../scripts/fetch_dependencies.sh
 
 case "$CONFIGURATION" in
     Debug)
@@ -17,7 +20,7 @@ case "$CONFIGURATION" in
         CARGO_CONFIG_NAME="release"
         ;;
     *)
-        echo "unknown CONFIGURATION: $CONFIGURATION"
+        echo "error: unknown CONFIGURATION: $CONFIGURATION"
         exit 1
         ;;
 esac
@@ -28,33 +31,22 @@ LIPO_PATHS=""
 
 for DEST_ARCH in $ARCHS; do
     case "$PLATFORM_NAME" in
-        iphonesimulator)
+        macosx)
             case "$DEST_ARCH" in
                 x86_64)
-                    CARGO_TARGET="x86_64-apple-ios"
+                    CARGO_TARGET="x86_64-apple-darwin"
                     ;;
                 arm64)
-                    CARGO_TARGET="aarch64-apple-ios-sim"
+                    CARGO_TARGET="aarch64-apple-darwin"
                     ;;
                 *)
-                    echo "unknown DEST_ARCH: $DEST_ARCH"
-                    exit 1
-                    ;;
-            esac
-            ;;
-        iphoneos)
-            case "$DEST_ARCH" in
-                arm64)
-                    CARGO_TARGET="aarch64-apple-ios"
-                    ;;
-                *)
-                    echo "unknown DEST_ARCH: $DEST_ARCH"
+                    echo "error: unknown DEST_ARCH: $DEST_ARCH"
                     exit 1
                     ;;
             esac
             ;;
         *)
-            echo "unknown PLATFORM_NAME: $PLATFORM_NAME"
+            echo "error: unknown PLATFORM_NAME: $PLATFORM_NAME"
             exit 1
             ;;
     esac
@@ -63,8 +55,8 @@ for DEST_ARCH in $ARCHS; do
     export PATH="$MODIFIED_PATH"
     CARGO_TARGET_DIR=$BUILT_PRODUCTS_DIR/rust_target cargo build $FLAGS_CONFIG --target=$CARGO_TARGET
     export PATH="$XCODE_PATH"
-    LIPO_PATHS="$LIPO_PATHS $BUILT_PRODUCTS_DIR/rust_target/$CARGO_TARGET/$CARGO_CONFIG_NAME/libwebrogue_ios.a"
+    LIPO_PATHS="$LIPO_PATHS $BUILT_PRODUCTS_DIR/rust_target/$CARGO_TARGET/$CARGO_CONFIG_NAME/libwebrogue_macos.a"
 done
 
 mkdir -p $BUILD_DIR/rust_artifacts/$CARGO_CONFIG_NAME/$PLATFORM_NAME
-lipo -create $LIPO_PATHS -output $BUILD_DIR/rust_artifacts/$CONFIGURATION/$PLATFORM_NAME/libwebrogue_ios.a
+lipo -create $LIPO_PATHS -output $BUILD_DIR/rust_artifacts/$CONFIGURATION/$PLATFORM_NAME/libwebrogue_macos.a

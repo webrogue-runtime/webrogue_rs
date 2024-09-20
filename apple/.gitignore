@@ -1,0 +1,9 @@
+/Cargo.lock
+/external/SDL2.zip
+/external/SDL2
+/external/libEGL.dylib
+/external/libGLESv2.dylib
+*.xcuserstate
+xcuserdata
+*.xcscheme
+/external/macos_fat.zip
