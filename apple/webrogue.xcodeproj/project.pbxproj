@@ -40,6 +40,8 @@
 		AC009F7D2C9E18FA000E75C8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC009F7C2C9E18FA000E75C8 /* UIKit.framework */; };
 		AC009F7F2C9E195D000E75C8 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC009F7E2C9E195D000E75C8 /* JavaScriptCore.framework */; };
 		AC009F812C9E1972000E75C8 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC009F802C9E1972000E75C8 /* libSDL2.a */; };
+		AC009F822C9E1C1A000E75C8 /* libEGL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = AC009F312C9E1742000E75C8 /* libEGL.dylib */; };
+		AC009F832C9E1C1A000E75C8 /* libGLESv2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = AC009F302C9E1742000E75C8 /* libGLESv2.dylib */; };
 		AC00A2942C9DBFBA001F3ADD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC1DB2FB2C9D921000483ACC /* Assets.xcassets */; };
 		AC00A29C2C9DCF4C001F3ADD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AC00A29B2C9DCF4C001F3ADD /* main.m */; };
 		AC00A2AA2C9DD686001F3ADD /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC00A2A92C9DD686001F3ADD /* libSDL2.a */; };
@@ -99,6 +101,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				AC009F822C9E1C1A000E75C8 /* libEGL.dylib in CopyFiles */,
+				AC009F832C9E1C1A000E75C8 /* libGLESv2.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
