@@ -123,4 +123,4 @@ macos_ico   512     1   macos512
 macos_ico   1024    1   macos512_x2
 
 # For iOS
-original | to_png_white 1024 ../../apple/iOS/Assets/Assets.xcassets/AppIcon.appiconset/ios1024.png
+original | margin  2 | to_png_white 1024 ../../apple/iOS/Assets/Assets.xcassets/AppIcon.appiconset/ios1024.png
