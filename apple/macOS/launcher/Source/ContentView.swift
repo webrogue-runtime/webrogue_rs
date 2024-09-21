@@ -15,32 +15,36 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world!")
             Button(action: {
-                var pathComponents = Bundle.main.executablePath!.components(separatedBy: "/")
-                pathComponents.removeLast()
-                pathComponents.append("webrogue_runtime")
-
-
-                let task = Process()
-                let pipe = Pipe()
-
-                task.standardOutput = pipe
-                task.standardError = pipe
-                task.arguments = []
-                task.launchPath = "/"+pathComponents.joined(separator: "/")
-                task.standardInput = nil
-                task.launch()
-
-                DispatchQueue.global().async {
-                    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                    let output = String(data: data, encoding: .utf8)!
-                    print(output)
-                }
-
+                run()
             }, label: {
                 Text("Hello, world!")
             })
         }
         .padding()
+    }
+
+    func run() {
+        var pathComponents = Bundle.main.executablePath!.components(separatedBy: "/")
+        pathComponents.removeLast()
+        pathComponents.append("webrogue_runtime")
+
+        let task = Process()
+        let pipe = Pipe()
+
+        task.standardOutput = pipe
+        task.standardError = pipe
+        task.arguments = []
+        task.launchPath = "/"+pathComponents.joined(separator: "/")
+        task.standardInput = nil
+        task.launch()
+
+        DispatchQueue.global().async {
+//            FileManager.default.urls(for: ., in: .userDomainMask).first!
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            task.waitUntilExit()
+            let output = String(data: data, encoding: .utf8)!
+            print(output)
+        }
     }
 }
 

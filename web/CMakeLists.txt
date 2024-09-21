@@ -20,6 +20,10 @@ ExternalProject_Add(
     BUILD_ALWAYS ON
 )
 
+add_compile_options(
+    -pthread
+)
+
 add_link_options(
     -sASYNCIFY
     -sASYNCIFY_STACK_SIZE=65535
@@ -28,6 +32,7 @@ add_link_options(
     -sWASMFS
     -lopfs.js
     -sOFFSCREEN_FRAMEBUFFER
+    -pthread
     # -sOFFSCREENCANVAS_SUPPORT
     -sMIN_WEBGL_VERSION=2
     --embed-file ${CMAKE_SOURCE_DIR}/../examples/raylib/raylib.wrapp@raylib.wrapp
