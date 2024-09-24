@@ -16,10 +16,16 @@
 		AC134CD12C9D8F5F00E52C69 /* WebrogueUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3714442C9D89B400E98A6A /* WebrogueUIViewController.swift */; };
 		AC134CD22C9D8F6200E52C69 /* WebrogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3714452C9D89B400E98A6A /* WebrogueView.swift */; };
 		AC134CD42C9D8F6A00E52C69 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC3714402C9D89B400E98A6A /* main.mm */; };
-		AC1DB3042C9D922300483ACC /* launcherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1DB2FE2C9D921000483ACC /* launcherApp.swift */; };
-		AC1DB3052C9D922800483ACC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1DB2FC2C9D921000483ACC /* ContentView.swift */; };
+		AC1CBBB62CA34F3700569326 /* WrappRefViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1CBBB52CA34F3700569326 /* WrappRefViewModel.swift */; };
+		AC1DB3042C9D922300483ACC /* LauncherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1DB2FE2C9D921000483ACC /* LauncherApp.swift */; };
+		AC1DB3052C9D922800483ACC /* WrappListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1DB2FC2C9D921000483ACC /* WrappListView.swift */; };
 		AC1FE61A2C97350B005F5D40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE6182C97350B005F5D40 /* Assets.xcassets */; };
 		AC1FE61D2C973799005F5D40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */; };
+		AC646A162C9F747100AFCE9F /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC646A142C9F746300AFCE9F /* CryptoKit.framework */; };
+		AC646A172C9F750600AFCE9F /* WrappDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC646A0E2C9F674E00AFCE9F /* WrappDocument.swift */; };
+		AC646A192C9F75E700AFCE9F /* WrappRefView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC646A182C9F75E700AFCE9F /* WrappRefView.swift */; };
+		AC646A1C2CA02C8100AFCE9F /* WrappMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC646A1A2CA02B0F00AFCE9F /* WrappMetadata.swift */; };
+		AC646A1E2CA0313300AFCE9F /* WrappRef+launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC646A1D2CA0313300AFCE9F /* WrappRef+launch.swift */; };
 		ACFD1CA52C9F3A070074C26A /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1C8F2C9F38DF0074C26A /* Quartz.framework */; };
 		ACFD1CA62C9F3A070074C26A /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1C902C9F38DF0074C26A /* Metal.framework */; };
 		ACFD1CA72C9F3A070074C26A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1C8A2C9F38DE0074C26A /* IOKit.framework */; };
@@ -55,6 +61,12 @@
 		ACFD1D162C9F3EE90074C26A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1CFF2C9F3ED90074C26A /* CoreAudio.framework */; };
 		ACFD1D172C9F3EE90074C26A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1CF92C9F3ED90074C26A /* AVFoundation.framework */; };
 		ACFD1D182C9F3EE90074C26A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1D002C9F3ED90074C26A /* AudioToolbox.framework */; };
+		ACFD1D302C9F53910074C26A /* WrappRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFD1D222C9F52B10074C26A /* WrappRef.swift */; };
+		ACFD1D312C9F53910074C26A /* WrappStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFD1D202C9F529A0074C26A /* WrappStorage.swift */; };
+		ACFD1D362C9F54520074C26A /* WebrogueCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */; };
+		ACFD1D372C9F54520074C26A /* WebrogueCommon.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACFD1D392C9F54580074C26A /* WebrogueCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */; };
+		ACFD1D3A2C9F54580074C26A /* WebrogueCommon.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +118,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ACFD1D382C9F54520074C26A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ACFD1D372C9F54520074C26A /* WebrogueCommon.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ACFD1D3B2C9F54580074C26A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ACFD1D3A2C9F54580074C26A /* WebrogueCommon.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -114,10 +148,11 @@
 		AC00A29B2C9DCF4C001F3ADD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AC00A2B12C9DD779001F3ADD /* webrogue_gfx_ffi_sdl2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = webrogue_gfx_ffi_sdl2.c; path = ../../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c; sourceTree = "<group>"; };
 		AC134CD92C9D917100E52C69 /* webrogue Launcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "webrogue Launcher.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC1CBBB52CA34F3700569326 /* WrappRefViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappRefViewModel.swift; sourceTree = "<group>"; };
 		AC1DB2FB2C9D921000483ACC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AC1DB2FC2C9D921000483ACC /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AC1DB2FC2C9D921000483ACC /* WrappListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrappListView.swift; sourceTree = "<group>"; };
 		AC1DB2FD2C9D921000483ACC /* launcher.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = launcher.entitlements; sourceTree = "<group>"; };
-		AC1DB2FE2C9D921000483ACC /* launcherApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = launcherApp.swift; sourceTree = "<group>"; };
+		AC1DB2FE2C9D921000483ACC /* LauncherApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherApp.swift; sourceTree = "<group>"; };
 		AC1FE5E42C972E0F005F5D40 /* webrogue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = webrogue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC1FE6182C97350B005F5D40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AC1FE61C2C973798005F5D40 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -127,6 +162,11 @@
 		AC3714432C9D89B400E98A6A /* WebrogueAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebrogueAppDelegate.swift; sourceTree = "<group>"; };
 		AC3714442C9D89B400E98A6A /* WebrogueUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebrogueUIViewController.swift; sourceTree = "<group>"; };
 		AC3714452C9D89B400E98A6A /* WebrogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebrogueView.swift; sourceTree = "<group>"; };
+		AC646A0E2C9F674E00AFCE9F /* WrappDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappDocument.swift; sourceTree = "<group>"; };
+		AC646A142C9F746300AFCE9F /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.5.sdk/System/Library/Frameworks/CryptoKit.framework; sourceTree = DEVELOPER_DIR; };
+		AC646A182C9F75E700AFCE9F /* WrappRefView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappRefView.swift; sourceTree = "<group>"; };
+		AC646A1A2CA02B0F00AFCE9F /* WrappMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappMetadata.swift; sourceTree = "<group>"; };
+		AC646A1D2CA0313300AFCE9F /* WrappRef+launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WrappRef+launch.swift"; sourceTree = "<group>"; };
 		ACF899082C9AEF2800F68B93 /* ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ios.entitlements; sourceTree = "<group>"; };
 		ACFD1C872C9F38DE0074C26A /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
 		ACFD1C882C9F38DE0074C26A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -161,6 +201,12 @@
 		ACFD1D062C9F3EDA0074C26A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.5.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		ACFD1D072C9F3EDA0074C26A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.5.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		ACFD1D082C9F3EDA0074C26A /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.5.sdk/System/Library/Frameworks/CoreMotion.framework; sourceTree = DEVELOPER_DIR; };
+		ACFD1D202C9F529A0074C26A /* WrappStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappStorage.swift; sourceTree = "<group>"; };
+		ACFD1D222C9F52B10074C26A /* WrappRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappRef.swift; sourceTree = "<group>"; };
+		ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebrogueCommon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACFD1D3C2C9F593A0074C26A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ACFD1D3D2C9F5C490074C26A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ACFD1D3E2C9F5CC40074C26A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +235,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACFD1D392C9F54580074C26A /* WebrogueCommon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +243,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACFD1D362C9F54520074C26A /* WebrogueCommon.framework in Frameworks */,
 				ACFD1CF72C9F3EBD0074C26A /* libSDL2.a in Frameworks */,
 				ACFD1D092C9F3EE90074C26A /* JavaScriptCore.framework in Frameworks */,
 				ACFD1D0A2C9F3EE90074C26A /* UIKit.framework in Frameworks */,
@@ -216,6 +264,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ACFD1D262C9F53810074C26A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC646A162C9F747100AFCE9F /* CryptoKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -230,8 +286,11 @@
 		AC00A2932C9DBF08001F3ADD /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				AC1DB2FC2C9D921000483ACC /* ContentView.swift */,
-				AC1DB2FE2C9D921000483ACC /* launcherApp.swift */,
+				AC1DB2FC2C9D921000483ACC /* WrappListView.swift */,
+				AC1DB2FE2C9D921000483ACC /* LauncherApp.swift */,
+				AC646A182C9F75E700AFCE9F /* WrappRefView.swift */,
+				AC1CBBB52CA34F3700569326 /* WrappRefViewModel.swift */,
+				AC646A1D2CA0313300AFCE9F /* WrappRef+launch.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -247,6 +306,7 @@
 		AC00A2B02C9DD75D001F3ADD /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				ACFD1D1E2C9F51B70074C26A /* WebrogueCommon */,
 				AC00A2B12C9DD779001F3ADD /* webrogue_gfx_ffi_sdl2.c */,
 			);
 			path = Common;
@@ -266,6 +326,7 @@
 			children = (
 				AC00A2932C9DBF08001F3ADD /* Source */,
 				AC00A2922C9DBC5B001F3ADD /* Assets */,
+				ACFD1D3D2C9F5C490074C26A /* Info.plist */,
 				AC1DB2FD2C9D921000483ACC /* launcher.entitlements */,
 			);
 			path = launcher;
@@ -297,6 +358,7 @@
 				AC1FE5E42C972E0F005F5D40 /* webrogue.app */,
 				AC134CD92C9D917100E52C69 /* webrogue Launcher.app */,
 				AC00A2992C9DCF4C001F3ADD /* webrogue_runtime */,
+				ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,9 +382,18 @@
 				AC3714462C9D89B400E98A6A /* Source */,
 				ACF1A7A12C9860DE0015B916 /* Assets */,
 				ACFD1CF82C9F3ECE0074C26A /* Frameworks */,
+				ACFD1D3E2C9F5CC40074C26A /* Info.plist */,
 				ACF899082C9AEF2800F68B93 /* ios.entitlements */,
 			);
 			path = iOS;
+			sourceTree = "<group>";
+		};
+		AC646A132C9F743200AFCE9F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AC646A142C9F746300AFCE9F /* CryptoKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		ACF1A7A12C9860DE0015B916 /* Assets */ = {
@@ -381,7 +452,38 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		ACFD1D1E2C9F51B70074C26A /* WebrogueCommon */ = {
+			isa = PBXGroup;
+			children = (
+				ACFD1D1F2C9F51FB0074C26A /* Source */,
+				AC646A132C9F743200AFCE9F /* Frameworks */,
+				ACFD1D3C2C9F593A0074C26A /* Info.plist */,
+			);
+			path = WebrogueCommon;
+			sourceTree = "<group>";
+		};
+		ACFD1D1F2C9F51FB0074C26A /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				ACFD1D202C9F529A0074C26A /* WrappStorage.swift */,
+				ACFD1D222C9F52B10074C26A /* WrappRef.swift */,
+				AC646A1A2CA02B0F00AFCE9F /* WrappMetadata.swift */,
+				AC646A0E2C9F674E00AFCE9F /* WrappDocument.swift */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		ACFD1D242C9F53810074C26A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXLegacyTarget section */
 		AC00A2A02C9DD0A0001F3ADD /* cargo_macos */ = {
@@ -455,6 +557,7 @@
 				AC134CD62C9D917100E52C69 /* Frameworks */,
 				AC134CD72C9D917100E52C69 /* Resources */,
 				AC0075722C9DEBBD000E75C8 /* Embed Helper Tools */,
+				ACFD1D3B2C9F54580074C26A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -473,6 +576,7 @@
 				AC1FE5E02C972E0F005F5D40 /* Sources */,
 				AC1FE5E12C972E0F005F5D40 /* Frameworks */,
 				AC1FE5E22C972E0F005F5D40 /* Resources */,
+				ACFD1D382C9F54520074C26A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -483,6 +587,24 @@
 			productName = webrogue;
 			productReference = AC1FE5E42C972E0F005F5D40 /* webrogue.app */;
 			productType = "com.apple.product-type.application";
+		};
+		ACFD1D282C9F53810074C26A /* WebrogueCommon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ACFD1D2D2C9F53810074C26A /* Build configuration list for PBXNativeTarget "WebrogueCommon" */;
+			buildPhases = (
+				ACFD1D242C9F53810074C26A /* Headers */,
+				ACFD1D252C9F53810074C26A /* Sources */,
+				ACFD1D262C9F53810074C26A /* Frameworks */,
+				ACFD1D272C9F53810074C26A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebrogueCommon;
+			productName = wrappman;
+			productReference = ACFD1D292C9F53810074C26A /* WebrogueCommon.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -512,6 +634,9 @@
 					AC1FE64F2C978680005F5D40 = {
 						CreatedOnToolsVersion = 15.4;
 					};
+					ACFD1D282C9F53810074C26A = {
+						CreatedOnToolsVersion = 15.4;
+					};
 				};
 			};
 			buildConfigurationList = AC1FE5DF2C972E0F005F5D40 /* Build configuration list for PBXProject "webrogue" */;
@@ -534,6 +659,7 @@
 				AC134CD82C9D917100E52C69 /* webrogue_launcher */,
 				AC00A2982C9DCF4C001F3ADD /* webrogue_runtime */,
 				AC00A2A02C9DD0A0001F3ADD /* cargo_macos */,
+				ACFD1D282C9F53810074C26A /* WebrogueCommon */,
 			);
 		};
 /* End PBXProject section */
@@ -556,6 +682,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ACFD1D272C9F53810074C26A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -572,8 +705,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC1DB3052C9D922800483ACC /* ContentView.swift in Sources */,
-				AC1DB3042C9D922300483ACC /* launcherApp.swift in Sources */,
+				AC1DB3052C9D922800483ACC /* WrappListView.swift in Sources */,
+				AC646A1E2CA0313300AFCE9F /* WrappRef+launch.swift in Sources */,
+				AC646A192C9F75E700AFCE9F /* WrappRefView.swift in Sources */,
+				AC1DB3042C9D922300483ACC /* LauncherApp.swift in Sources */,
+				AC1CBBB62CA34F3700569326 /* WrappRefViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,6 +722,17 @@
 				AC134CD02C9D8F5B00E52C69 /* WebrogueAppDelegate.swift in Sources */,
 				AC00A2B22C9DD779001F3ADD /* webrogue_gfx_ffi_sdl2.c in Sources */,
 				AC134CD42C9D8F6A00E52C69 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ACFD1D252C9F53810074C26A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ACFD1D302C9F53910074C26A /* WrappRef.swift in Sources */,
+				AC646A1C2CA02C8100AFCE9F /* WrappMetadata.swift in Sources */,
+				ACFD1D312C9F53910074C26A /* WrappStorage.swift in Sources */,
+				AC646A172C9F750600AFCE9F /* WrappDocument.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +837,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = macOS/launcher/launcher.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -698,6 +846,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = macOS/launcher/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -706,7 +855,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.launcher";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.WebrogueLauncher";
 				PRODUCT_NAME = "webrogue Launcher";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -721,6 +870,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = macOS/launcher/launcher.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -729,6 +879,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = macOS/launcher/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -737,7 +888,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.launcher";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.WebrogueLauncher";
 				PRODUCT_NAME = "webrogue Launcher";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -879,8 +1030,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/external/SDL2/include";
+				INFOPLIST_FILE = iOS/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -897,7 +1048,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "-lwebrogue_ios";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.webrogue";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.WebrogueLauncher";
 				PRODUCT_NAME = webrogue;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -920,8 +1071,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/external/SDL2/include";
+				INFOPLIST_FILE = iOS/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -938,7 +1089,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "-lwebrogue_ios";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.webrogue";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.WebrogueLauncher";
 				PRODUCT_NAME = webrogue;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -997,6 +1148,90 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		ACFD1D2E2C9F53810074C26A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = LC5F8UX2W7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Common/WebrogueCommon/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.WebrogueCommon";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		ACFD1D2F2C9F53810074C26A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = LC5F8UX2W7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Common/WebrogueCommon/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.webrogue-runtime.WebrogueCommon";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -1062,6 +1297,15 @@
 			buildConfigurations = (
 				AC1FE6512C978680005F5D40 /* Debug */,
 				AC1FE6522C978680005F5D40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ACFD1D2D2C9F53810074C26A /* Build configuration list for PBXNativeTarget "WebrogueCommon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ACFD1D2E2C9F53810074C26A /* Debug */,
+				ACFD1D2F2C9F53810074C26A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

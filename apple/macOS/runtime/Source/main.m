@@ -1,10 +1,15 @@
 #import <Foundation/Foundation.h>
 #include <stdio.h>
 
-void webrogue_macos_main(void);
+void webrogue_macos_main(const char*);
 
+void suicide(int sig) {
+    kill(getpid(), SIGKILL);
+}
 
 int main(int argc, const char * argv[]) {
+    signal(SIGTERM, suicide);
+    [[NSProcessInfo processInfo] setProcessName: @"abobus"];
     @autoreleasepool {
         NSString* exec_path = [NSString stringWithUTF8String: argv[0]];
         exec_path = [exec_path stringByDeletingLastPathComponent];
@@ -21,6 +26,6 @@ int main(int argc, const char * argv[]) {
 
         NSLog(@"Hello, World!");
     }
-    webrogue_macos_main();
+    webrogue_macos_main(argv[1]);
     return 0;
 }
