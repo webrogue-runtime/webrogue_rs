@@ -8,8 +8,6 @@ cd $(dirname $(dirname $0))
 IOS_ROOT_DIR=$(pwd)
 set -ex
 
-sh ../../../scripts/fetch_dependencies.sh
-
 case "$CONFIGURATION" in
     Debug)
         FLAGS_CONFIG=""

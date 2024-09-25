@@ -9,7 +9,6 @@ void suicide(int sig) {
 
 int main(int argc, const char * argv[]) {
     signal(SIGTERM, suicide);
-    [[NSProcessInfo processInfo] setProcessName: @"abobus"];
     @autoreleasepool {
         NSString* exec_path = [NSString stringWithUTF8String: argv[0]];
         exec_path = [exec_path stringByDeletingLastPathComponent];
@@ -25,8 +24,6 @@ int main(int argc, const char * argv[]) {
             [NSException raise:@"libNotFound" format:@"libGLESv2.dylib not found"];
         }
         setenv("SDL_VIDEO_GL_DRIVER", [gles_path UTF8String], 0);
-
-        NSLog(@"Hello, World!");
     }
     webrogue_macos_main(argv[1]);
     return 0;

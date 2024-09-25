@@ -37,8 +37,6 @@
 			</dict>
 		</dict>
 	</array>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.utilities</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen_Generation</key>

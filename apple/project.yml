@@ -8,7 +8,7 @@ settings:
     MACOSX_DEPLOYMENT_TARGET: 12.0
     IPHONEOS_DEPLOYMENT_TARGET: 14.0
     GENERATE_INFOPLIST_FILE: true
-    MARKETING_VERSION: 1.0
+    MARKETING_VERSION: 0.1
     CURRENT_PROJECT_VERSION: 1
 options:
   createIntermediateGroups: true
@@ -17,14 +17,16 @@ targets:
     type: application
     platform: macOS
     sources:
-    - macOS/launcher
+    - macOS/Launcher
     settings:
       base:
-        CODE_SIGN_ENTITLEMENTS: macOS/launcher/launcher.entitlements
-        INFOPLIST_FILE: macOS/launcher/Info.plist
+        CODE_SIGN_ENTITLEMENTS: macOS/Launcher/launcher.entitlements
+        INFOPLIST_FILE: macOS/Launcher/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueLauncher
         PRODUCT_NAME: webrogue Launcher
         ENABLE_HARDENED_RUNTIME: true
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        ENABLE_PREVIEWS: true
     dependencies:
     - target: WebrogueCommon
     - target: Runtime
@@ -39,10 +41,10 @@ targets:
       embed: true
       codeSign: true
     preBuildScripts:
-      - script: "cd \"${BUILT_PRODUCTS_DIR}\"; sh ${SRCROOT}/scripts/fetch_dependencies2.sh"
+      - script: "cd \"${BUILT_PRODUCTS_DIR}\"; sh ${SRCROOT}/macOS/Runtime/rust/scripts/download_angle_bin.sh"
         name: Download ANGLE
         inputFiles:
-          - ${SRCROOT}/scripts/fetch_dependencies2.sh
+          - ${SRCROOT}/macOS/runtime/rust/scripts/download_angle_bin.sh
         outputFiles:
           - ${BUILT_PRODUCTS_DIR}/macos_fat.zip
           - ${BUILT_PRODUCTS_DIR}/libEGL.dylib
@@ -51,14 +53,14 @@ targets:
     type: tool
     platform: macOS
     sources:
-    - path: macOS/runtime
+    - path: macOS/Runtime
       excludes:
       - "**/rust"
     - ../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c
     settings:
       base:
-        CODE_SIGN_ENTITLEMENTS: macOS/runtime/runtime.entitlements
-        PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.launcher.runtime
+        CODE_SIGN_ENTITLEMENTS: macOS/Runtime/runtime.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueLauncher.Runtime
         PRODUCT_NAME: webrogue_runtime
         OTHER_LDFLAGS: "-lwebrogue_macos"
         LIBRARY_SEARCH_PATHS: "$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)"
@@ -98,6 +100,8 @@ targets:
         OTHER_LDFLAGS: "-lwebrogue_ios"
         LIBRARY_SEARCH_PATHS: "$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)"
         HEADER_SEARCH_PATHS: "$(SRCROOT)/external/SDL2/include"
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        ENABLE_PREVIEWS: true
     dependencies:
     - target: Cargo iOS
     - target: SDL/Static Library-iOS
