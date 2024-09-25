@@ -101,10 +101,15 @@ targets:
         LIBRARY_SEARCH_PATHS: "$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)"
         HEADER_SEARCH_PATHS: "$(SRCROOT)/external/SDL2/include"
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"
         ENABLE_PREVIEWS: true
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen.storyboard
     dependencies:
     - target: Cargo iOS
     - target: SDL/Static Library-iOS
+    - target: WebrogueCommon
     - sdk: JavaScriptCore.framework
     - sdk: UIKit.framework
     - sdk: QuartzCore.framework
@@ -122,8 +127,8 @@ targets:
     - sdk: AVFoundation.framework
     - sdk: AudioToolbox.framework
   WebrogueCommon:
-    type: framework
-    platform: auto
+    type: framework.static
+    supportedDestinations: [macOS, iOS]
     sources:
     - Common/WebrogueCommon
     settings:

@@ -26,9 +26,9 @@ struct LauncherApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
-            WrappListView()
-        }
+//        WindowGroup {
+//            WrappListView()
+//        }
         documentGroup
             .commands {
                 CommandGroup(replacing: .undoRedo) {}

@@ -5,7 +5,7 @@
 #include <string>
 #include <cassert>
 
-extern "C" void webrogue_ios_main();
+extern "C" void webrogue_ios_main(const char* path);
 
 typedef void (*onMainCallback)(void* userdata);
 
@@ -22,8 +22,8 @@ bool checkWASMJSCSupport() {
     return result;
 }
 
-extern "C" int webrogueMain() {
+extern "C" int webrogueMain(const char* path) {
     assert(checkWASMJSCSupport());
-    webrogue_ios_main();
+    webrogue_ios_main(path);
     return 0;
 }

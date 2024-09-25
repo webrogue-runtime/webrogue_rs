@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 
-public class WrappMetadata {
+public class WrappMetadata: Codable {
     public let sha256: String
 
     public init?(data: Data) {

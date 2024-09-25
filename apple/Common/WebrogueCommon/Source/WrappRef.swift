@@ -1,4 +1,4 @@
-public class WrappRef {
+public class WrappRef: Codable {
     public let path: String
     public let metadata: WrappMetadata
 

@@ -9,6 +9,6 @@
 #define main_h
 
 NSString *_Nullable getDataDirectory();
-int webrogueMain();
+int webrogueMain(const char* path);
 
 #endif /* main_h */

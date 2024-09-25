@@ -17,7 +17,7 @@ make_funcs!({
     }
 });
 
-fn main() -> anyhow::Result<()> {
+fn main(wrapp_path: String) -> anyhow::Result<()> {
     let lifecycle = webrogue_runtime::Lifecycle::new();
 
     let wasi_factory = webrogue_wasi_sync::WasiFactory::new();
@@ -28,9 +28,7 @@ fn main() -> anyhow::Result<()> {
     webrogue_std_stream_os::bind_streams(&mut wasi);
     let backend = make_backend();
 
-    let reader = webrogue_runtime::wrapp::Wrapp::from_static_slice(include_bytes!(
-        "../../../../examples/gears/gears.wrapp"
-    ))?;
+    let reader = webrogue_runtime::wrapp::Wrapp::from_file_path(std::path::PathBuf::from(wrapp_path))?;
     let mut webrogue_gfx_context = webrogue_gfx::Context::new(Box::new(webrogue_gfx_ffi::make_system));
     let mut webrogue_gl_context = webrogue_gl::api::Context::new(
         &mut webrogue_gfx_context,
@@ -50,6 +48,7 @@ fn main() -> anyhow::Result<()> {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn webrogue_ios_main() {
-    main().unwrap();
+pub unsafe extern "C" fn webrogue_ios_main(wrapp_path: *const i8) {
+    let wrapp_path = std::ffi::CStr::from_ptr(wrapp_path as *const _).to_str().unwrap().to_owned();
+    main(wrapp_path).unwrap();
 }

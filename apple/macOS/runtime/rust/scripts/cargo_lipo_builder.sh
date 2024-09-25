@@ -25,7 +25,8 @@ esac
 
 CARGO_ARCHS=""
 
-LIPO_PATHS=""
+LIPO_PATHS=()
+LIPO_PATHS_I=0
 
 for DEST_ARCH in $ARCHS; do
     case "$PLATFORM_NAME" in
@@ -53,8 +54,9 @@ for DEST_ARCH in $ARCHS; do
     export PATH="$MODIFIED_PATH"
     CARGO_TARGET_DIR=$BUILT_PRODUCTS_DIR/rust_target cargo build $FLAGS_CONFIG --target=$CARGO_TARGET
     export PATH="$XCODE_PATH"
-    LIPO_PATHS="$LIPO_PATHS $BUILT_PRODUCTS_DIR/rust_target/$CARGO_TARGET/$CARGO_CONFIG_NAME/libwebrogue_macos.a"
+    LIPO_PATHS[$LIPO_PATHS_I]="$BUILT_PRODUCTS_DIR/rust_target/$CARGO_TARGET/$CARGO_CONFIG_NAME/libwebrogue_macos.a"
+    LIPO_PATHS_I=$(expr $LIPO_PATHS_I '+' 1)
 done
 
-mkdir -p $BUILD_DIR/rust_artifacts/$CARGO_CONFIG_NAME/$PLATFORM_NAME
-lipo -create $LIPO_PATHS -output $BUILD_DIR/rust_artifacts/$CONFIGURATION/$PLATFORM_NAME/libwebrogue_macos.a
+mkdir -p "$BUILD_DIR/rust_artifacts/$CARGO_CONFIG_NAME/$PLATFORM_NAME"
+lipo -create "${LIPO_PATHS[@]}" -output "$BUILD_DIR/rust_artifacts/$CONFIGURATION/$PLATFORM_NAME/libwebrogue_macos.a"
