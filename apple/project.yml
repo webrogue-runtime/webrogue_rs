@@ -1,0 +1,143 @@
+name: webrogue
+projectReferences:
+  SDL:
+    path: ./external/SDL2/Xcode/SDL/SDL.xcodeproj
+settings:
+  base:
+    DEVELOPMENT_TEAM: LC5F8UX2W7
+    MACOSX_DEPLOYMENT_TARGET: 12.0
+    IPHONEOS_DEPLOYMENT_TARGET: 14.0
+    GENERATE_INFOPLIST_FILE: true
+    MARKETING_VERSION: 1.0
+    CURRENT_PROJECT_VERSION: 1
+options:
+  createIntermediateGroups: true
+targets:
+  Launcher:
+    type: application
+    platform: macOS
+    sources:
+    - macOS/launcher
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: macOS/launcher/launcher.entitlements
+        INFOPLIST_FILE: macOS/launcher/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueLauncher
+        PRODUCT_NAME: webrogue Launcher
+        ENABLE_HARDENED_RUNTIME: true
+    dependencies:
+    - target: WebrogueCommon
+    - target: Runtime
+      embed: true
+      codeSign: true
+      copy:
+        destination: executables
+    - bundle: libEGL.dylib
+      embed: true
+      codeSign: true
+    - bundle: libGLESv2.dylib
+      embed: true
+      codeSign: true
+    preBuildScripts:
+      - script: "cd \"${BUILT_PRODUCTS_DIR}\"; sh ${SRCROOT}/scripts/fetch_dependencies2.sh"
+        name: Download ANGLE
+        inputFiles:
+          - ${SRCROOT}/scripts/fetch_dependencies2.sh
+        outputFiles:
+          - ${BUILT_PRODUCTS_DIR}/macos_fat.zip
+          - ${BUILT_PRODUCTS_DIR}/libEGL.dylib
+          - ${BUILT_PRODUCTS_DIR}/libGLESv2.dylib
+  Runtime:
+    type: tool
+    platform: macOS
+    sources:
+    - path: macOS/runtime
+      excludes:
+      - "**/rust"
+    - ../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: macOS/runtime/runtime.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.launcher.runtime
+        PRODUCT_NAME: webrogue_runtime
+        OTHER_LDFLAGS: "-lwebrogue_macos"
+        LIBRARY_SEARCH_PATHS: "$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)"
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/external/SDL2/include"
+        ENABLE_HARDENED_RUNTIME: true
+    dependencies:
+    - target: Cargo macOS
+    - target: SDL/Static Library
+    - sdk: Quartz.framework
+    - sdk: Metal.framework
+    - sdk: IOKit.framework
+    - sdk: GameController.framework
+    - sdk: ForceFeedback.framework
+    - sdk: CoreVideo.framework
+    - sdk: CoreHaptics.framework
+    - sdk: CoreFoundation.framework
+    - sdk: CoreAudio.framework
+    - sdk: Cocoa.framework
+    - sdk: Carbon.framework
+    - sdk: AudioToolbox.framework
+    - sdk: JavaScriptCore.framework
+  Launcher iOS:
+    type: application
+    platform: iOS
+    sources:
+    - path: iOS
+      excludes:
+      - "**/rust"
+    - ../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c
+    settings:
+      base:
+        INFOPLIST_FILE: iOS/Info.plist
+        CODE_SIGN_ENTITLEMENTS: iOS/ios.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueLauncher
+        PRODUCT_NAME: webrogue
+        SWIFT_OBJC_BRIDGING_HEADER: "$(SRCROOT)/iOS/Source/webrogue-Bridging-Header.h"
+        OTHER_LDFLAGS: "-lwebrogue_ios"
+        LIBRARY_SEARCH_PATHS: "$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)"
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/external/SDL2/include"
+    dependencies:
+    - target: Cargo iOS
+    - target: SDL/Static Library-iOS
+    - sdk: JavaScriptCore.framework
+    - sdk: UIKit.framework
+    - sdk: QuartzCore.framework
+    - sdk: OpenGLES.framework
+    - sdk: Metal.framework
+    - sdk: IOKit.framework
+    - sdk: GameController.framework
+    - sdk: CoreVideo.framework
+    - sdk: CoreMotion.framework
+    - sdk: CoreHaptics.framework
+    - sdk: CoreGraphics.framework
+    - sdk: CoreFoundation.framework
+    - sdk: CoreBluetooth.framework
+    - sdk: CoreAudio.framework
+    - sdk: AVFoundation.framework
+    - sdk: AudioToolbox.framework
+  WebrogueCommon:
+    type: framework
+    platform: auto
+    sources:
+    - Common/WebrogueCommon
+    settings:
+      base:
+        INFOPLIST_FILE: Common/WebrogueCommon/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueCommon
+        PRODUCT_NAME: WebrogueCommon
+  Cargo iOS:
+    platform: iOS
+    legacy:
+      toolPath: /bin/sh
+      arguments: iOS/rust/scripts/cargo_lipo_builder.sh
+      workingDirectory: $(SRCROOT)/
+      passSettings: true
+  Cargo macOS:
+    platform: macOS
+    legacy:
+      toolPath: /bin/sh
+      arguments: macOS/runtime/rust/scripts/cargo_lipo_builder.sh
+      workingDirectory: $(SRCROOT)/
+      passSettings: true

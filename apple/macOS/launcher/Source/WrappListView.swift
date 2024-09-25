@@ -6,8 +6,7 @@
 //
 
 import SwiftUI
-import Wrappman
-import UniformTypeIdentifiers
+import WebrogueCommon
 
 struct WrappListView: View {
     @State var isFileImporterPresented = false
@@ -27,12 +26,13 @@ struct WrappListView: View {
         .fileImporter(
             isPresented: $isFileImporterPresented,
             allowedContentTypes: [
-                Storage.wrappType
+                WrappStorage.wrappType
             ]
         ) { result in
             switch result {
             case .success(let url):
-                Storage.store(url)
+//                WrappStorage.store(url)
+                break
             case .failure(_):
                 break
             }

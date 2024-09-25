@@ -4,7 +4,7 @@
 void webrogue_macos_main(const char*);
 
 void suicide(int sig) {
-    kill(getpid(), SIGKILL);
+    exit(1);
 }
 
 int main(int argc, const char * argv[]) {
@@ -13,6 +13,8 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         NSString* exec_path = [NSString stringWithUTF8String: argv[0]];
         exec_path = [exec_path stringByDeletingLastPathComponent];
+        exec_path = [exec_path stringByDeletingLastPathComponent];
+        exec_path = [exec_path stringByAppendingPathComponent: @"Resources"];
         NSString* egl_path = [exec_path stringByAppendingPathComponent: @"libEGL.dylib"];
         if(![[NSFileManager defaultManager] fileExistsAtPath: egl_path]) {
             [NSException raise:@"libNotFound" format:@"libEGL.dylib not found"];
