@@ -8,7 +8,6 @@ projectReferences:
     path: ./external/SDL2/Xcode/SDL/SDL.xcodeproj
 settings:
   base:
-    DEVELOPMENT_TEAM: LC5F8UX2W7
     MACOSX_DEPLOYMENT_TARGET: 12.0
     IPHONEOS_DEPLOYMENT_TARGET: 14.0
     GENERATE_INFOPLIST_FILE: true
@@ -18,12 +17,18 @@ settings:
     Debug:
       CODE_SIGN_IDENTITY: "-"
       CARGO_CONFIG: Debug
+      CODE_SIGN_STYLE: Manual
+      # DEVELOPMENT_TEAM: ""
     Release:
       CODE_SIGN_IDENTITY: "Apple Development"
       CARGO_CONFIG: Release
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: LC5F8UX2W7
     ReleaseLocal:
       CODE_SIGN_IDENTITY: "-"
       CARGO_CONFIG: Release
+      CODE_SIGN_STYLE: Manual
+      # DEVELOPMENT_TEAM: ""
 options:
   createIntermediateGroups: true
 targets:
@@ -81,7 +86,7 @@ targets:
         HEADER_SEARCH_PATHS: "$(SRCROOT)/external/SDL2/include"
         ENABLE_HARDENED_RUNTIME: true
     dependencies:
-    - target: Cargo macOS
+    - target: Cargo_macOS
     - target: SDL/Static Library
     - sdk: Quartz.framework
     - sdk: Metal.framework
@@ -120,7 +125,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: true
         INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen.storyboard
     dependencies:
-    - target: Cargo iOS
+    - target: Cargo_iOS
     - target: SDL/Static Library-iOS
     - target: WebrogueCommon
     - sdk: UIKit.framework
@@ -148,14 +153,14 @@ targets:
         INFOPLIST_FILE: Common/WebrogueCommon/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueCommon
         PRODUCT_NAME: WebrogueCommon
-  Cargo iOS:
+  Cargo_iOS:
     platform: iOS
     legacy:
       toolPath: /bin/sh
       arguments: iOS/rust/scripts/cargo_lipo_builder.sh
       workingDirectory: $(SRCROOT)/
       passSettings: true
-  Cargo macOS:
+  Cargo_macOS:
     platform: macOS
     legacy:
       toolPath: /bin/sh
