@@ -2,6 +2,7 @@ name: webrogue
 configs:
   Debug: debug
   Release: release
+  ReleaseLocal: release
 projectReferences:
   SDL:
     path: ./external/SDL2/Xcode/SDL/SDL.xcodeproj
@@ -13,6 +14,16 @@ settings:
     GENERATE_INFOPLIST_FILE: true
     MARKETING_VERSION: 0.1
     CURRENT_PROJECT_VERSION: 1
+  configs:
+    Debug:
+      CODE_SIGN_IDENTITY: "-"
+      CARGO_CONFIG: Debug
+    Release:
+      CODE_SIGN_IDENTITY: "Apple Development"
+      CARGO_CONFIG: Release
+    ReleaseLocal:
+      CODE_SIGN_IDENTITY: "-"
+      CARGO_CONFIG: Release
 options:
   createIntermediateGroups: true
 targets:
@@ -164,6 +175,12 @@ schemes:
         Launcher: Release
     run:
       config: Release
+  MacOS_ReleaseLocal:
+    build:
+      targets:
+        Launcher: ReleaseLocal
+    run:
+      config: ReleaseLocal
   iOS_Debug:
     build:
       targets:
@@ -176,3 +193,9 @@ schemes:
         Launcher_iOS: Release
     run:
       config: Release
+  iOS_ReleaseLocal:
+    build:
+      targets:
+        Launcher_iOS: ReleaseLocal
+    run:
+      config: ReleaseLocal

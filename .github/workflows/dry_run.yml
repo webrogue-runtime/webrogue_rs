@@ -27,6 +27,21 @@ jobs:
         xcodebuild $XCODEBUILD_FLAGS -parallelizeTargets
         du -h -d 0 $XC_BUILD_DIR/webrogue\ Launcher.app
 
+  ios:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Submodules
+      run: |
+        git submodule update --init external/wasmtime
+    
+    - name: Setup
+      run: |
+        brew install xcodegen
+        sh apple/setup.command
+        
     - name: Build for iOS
       shell: sh # does not works on zsh
       run: |

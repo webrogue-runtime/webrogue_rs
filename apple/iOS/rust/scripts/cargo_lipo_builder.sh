@@ -8,7 +8,7 @@ cd $(dirname $(dirname $0))
 IOS_ROOT_DIR=$(pwd)
 set -ex
 
-case "$CONFIGURATION" in
+case "$CARGO_CONFIG" in
     Debug)
         FLAGS_CONFIG=""
         CARGO_CONFIG_NAME="debug"
@@ -18,7 +18,7 @@ case "$CONFIGURATION" in
         CARGO_CONFIG_NAME="release"
         ;;
     *)
-        echo "error: unknown CONFIGURATION: $CONFIGURATION"
+        echo "error: unknown CARGO_CONFIG: $CARGO_CONFIG"
         exit 1
         ;;
 esac
