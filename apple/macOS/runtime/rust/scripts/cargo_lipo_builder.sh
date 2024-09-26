@@ -58,5 +58,5 @@ for DEST_ARCH in $ARCHS; do
     LIPO_PATHS_I=$(expr $LIPO_PATHS_I '+' 1)
 done
 
-mkdir -p "$BUILD_DIR/rust_artifacts/$CARGO_CONFIG_NAME/$PLATFORM_NAME"
+mkdir -p "$BUILD_DIR/rust_artifacts/$CONFIGURATION/$PLATFORM_NAME"
 lipo -create "${LIPO_PATHS[@]}" -output "$BUILD_DIR/rust_artifacts/$CONFIGURATION/$PLATFORM_NAME/libwebrogue_macos.a"
