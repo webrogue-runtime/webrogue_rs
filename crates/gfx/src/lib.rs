@@ -101,3 +101,29 @@ pub fn get_window_height(
             .unwrap_or_default()
     })
 }
+
+pub fn get_gl_width(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+) -> u32 {
+    run_on_main_thread(|| {
+        _context
+            .window
+            .as_ref()
+            .and_then(|window| Some(window.get_gl_size().0))
+            .unwrap_or_default()
+    })
+}
+
+pub fn get_gl_height(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+) -> u32 {
+    run_on_main_thread(|| {
+        _context
+            .window
+            .as_ref()
+            .and_then(|window| Some(window.get_gl_size().1))
+            .unwrap_or_default()
+    })
+}

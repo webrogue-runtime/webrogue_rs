@@ -27,8 +27,9 @@ typedef struct Window {
 void *webrogue_gfx_ffi_create_window(void *raw_system_ptr) {
   System *system_ptr = (System *)raw_system_ptr;
   Window *window_ptr = malloc(sizeof(Window));
-  window_ptr->sdl_window =
-      SDL_CreateWindow("webrogue", 800, 450, SDL_WINDOW_OPENGL);
+  window_ptr->sdl_window = SDL_CreateWindow(
+      "webrogue", 800, 450,
+      SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
   SDL_GL_CreateContext(window_ptr->sdl_window);
   return window_ptr;
 }
@@ -46,6 +47,14 @@ void webrogue_gfx_ffi_get_window_size(void *raw_window_ptr, uint32_t *out_width,
   Window *window_ptr = (Window *)raw_window_ptr;
   int width, height;
   SDL_GetWindowSize(window_ptr->sdl_window, &width, &height);
+  *out_width = width;
+  *out_height = height;
+}
+void webrogue_gfx_ffi_get_gl_size(void *raw_window_ptr, uint32_t *out_width,
+                                  uint32_t *out_height) {
+  Window *window_ptr = (Window *)raw_window_ptr;
+  int width, height;
+  SDL_GetWindowSizeInPixels(window_ptr->sdl_window, &width, &height);
   *out_width = width;
   *out_height = height;
 }

@@ -81,7 +81,6 @@ targets:
     - sdk: Cocoa.framework
     - sdk: Carbon.framework
     - sdk: AudioToolbox.framework
-    - sdk: JavaScriptCore.framework
   Launcher iOS:
     type: application
     platform: iOS
@@ -110,7 +109,6 @@ targets:
     - target: Cargo iOS
     - target: SDL/Static Library-iOS
     - target: WebrogueCommon
-    - sdk: JavaScriptCore.framework
     - sdk: UIKit.framework
     - sdk: QuartzCore.framework
     - sdk: OpenGLES.framework

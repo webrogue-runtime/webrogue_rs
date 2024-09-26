@@ -31,6 +31,7 @@ impl System for RustSDLSystem {
             .window("webrogue", 800, 450)
             .opengl()
             .resizable()
+            .allow_highdpi()
             .build();
 
         let window = match window {
@@ -57,6 +58,9 @@ struct RustSDLWindow {
 impl Window for RustSDLWindow {
     fn get_size(&self) -> (u32, u32) {
         self.window.size()
+    }
+    fn get_gl_size(&self) -> (u32, u32) {
+        self.window.drawable_size()
     }
     fn present(&self) {
         self.window.gl_swap_window();

@@ -5,4 +5,5 @@ pub trait System {
 pub trait Window {
     fn present(&self);
     fn get_size(&self) -> (u32, u32);
+    fn get_gl_size(&self) -> (u32, u32);
 }
