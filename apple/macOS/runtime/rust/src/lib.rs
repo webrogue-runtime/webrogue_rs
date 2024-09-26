@@ -1,9 +1,9 @@
 use webrogue_runtime::WasiFactory;
 
-fn make_backend() -> webrogue_backend_wasmer::Backend {
-    webrogue_backend_wasmer::Backend::new()
+fn make_backend() -> webrogue_backend_wasmtime::Backend {
+    webrogue_backend_wasmtime::Backend::new()
 }
-use webrogue_backend_wasmer::make_funcs;
+use webrogue_backend_wasmtime::make_funcs;
 
 make_funcs!({
     "wasi_snapshot_preview1": {

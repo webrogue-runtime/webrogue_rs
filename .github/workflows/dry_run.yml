@@ -54,4 +54,5 @@ jobs:
         XCODEBUILD_DESTINATION_FLAGS="generic/platform=iOS Simulator"
         XC_BUILD_DIR=$(xcodebuild $XCODEBUILD_FLAGS "$XCODEBUILD_DESTINATION_FLAGS" -showBuildSettings | grep -m 1 "BUILT_PRODUCTS_DIR =" | grep -oEi "\/.*" || exit 3)
         xcodebuild $XCODEBUILD_FLAGS "$XCODEBUILD_DESTINATION_FLAGS" -parallelizeTargets -allowProvisioningUpdates
-        du -h -d 0 $XC_BUILD_DIR/webrogue.app 
+        XC_BUILD_DIR=$(echo $XC_BUILD_DIR | sed "s/iphoneos/iphonesimulator/")
+        du -h -d 0 $XC_BUILD_DIR/webrogue.app
