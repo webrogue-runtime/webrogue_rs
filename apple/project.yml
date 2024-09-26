@@ -1,4 +1,7 @@
 name: webrogue
+configs:
+  Debug: debug
+  Release: release
 projectReferences:
   SDL:
     path: ./external/SDL2/Xcode/SDL/SDL.xcodeproj
@@ -81,7 +84,7 @@ targets:
     - sdk: Cocoa.framework
     - sdk: Carbon.framework
     - sdk: AudioToolbox.framework
-  Launcher iOS:
+  Launcher_iOS:
     type: application
     platform: iOS
     sources:
@@ -148,3 +151,28 @@ targets:
       arguments: macOS/runtime/rust/scripts/cargo_lipo_builder.sh
       workingDirectory: $(SRCROOT)/
       passSettings: true
+schemes:
+  MacOS_Debug:
+    build:
+      targets:
+        Launcher: Debug
+    run:
+      config: Debug
+  MacOS_Release:
+    build:
+      targets:
+        Launcher: Release
+    run:
+      config: Release
+  iOS_Debug:
+    build:
+      targets:
+        Launcher_iOS: Debug
+    run:
+      config: Debug
+  iOS_Release:
+    build:
+      targets:
+        Launcher_iOS: Release
+    run:
+      config: Release
