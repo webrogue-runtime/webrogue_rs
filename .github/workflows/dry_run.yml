@@ -16,6 +16,7 @@ jobs:
     
     - name: Setup
       run: |
+        brew install xcodegen
         sh apple/setup.command
 
     - name: Build for macOS
