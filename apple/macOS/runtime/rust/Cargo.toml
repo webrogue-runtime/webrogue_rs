@@ -12,7 +12,7 @@ crate-type = ["staticlib"]
 [dependencies]
 anyhow = { version = "1" }
 webrogue_runtime = { path = "../../../../crates/runtime" }
-webrogue_backend_wasmtime = { path = "../../../../crates/backend_wasmer" }
+webrogue_backend_wasmtime = { path = "../../../../crates/backend_wasmtime" }
 webrogue_wasi = { path = "../../../../crates/wasi" }
 webrogue_gl = { path = "../../../../crates/gl" }
 webrogue_gfx = { path = "../../../../crates/gfx" }
