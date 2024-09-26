@@ -2,7 +2,7 @@ name: Dry build
 
 on:
   push:
-    
+
 jobs:
   macos:
     runs-on: macos-latest
