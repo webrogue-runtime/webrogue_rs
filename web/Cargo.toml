@@ -20,3 +20,6 @@ webrogue_wasi = { path = "../crates/wasi" }
 webrogue_gl = { path = "../crates/gl", optional = true }
 webrogue_gfx = { path = "../crates/gfx", optional = true }
 webrogue_gfx_ffi = { path = "../crates/gfx_ffi", optional = true }
+
+[patch.crates-io]
+zstd-seekable = { path = 'external/zstd-seekable' }

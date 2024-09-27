@@ -40,11 +40,11 @@ add_link_options(
     -sMIN_WEBGL_VERSION=2
     --embed-file ${CMAKE_SOURCE_DIR}/../examples/raylib/raylib.wrapp@raylib.wrapp
     # -sPTHREAD_POOL_SIZE=1
-    -sEXPORTED_FUNCTIONS=_main,_wr_rs_exported_fn
+    -sEXPORTED_FUNCTIONS=_main,_wr_rs_exported_fn,_wr_rs_exported_async_fn
     -sWASM_BIGINT
     # "-sASYNCIFY_IMPORTS=[wr_em_js_initWasmModule]"
     "-sJSPI_IMPORTS=[wr_em_js_initWasmModule, wr_em_js_execFunc]"
-    "-sJSPI_EXPORTS=[wr_rs_exported_fn]"
+    "-sJSPI_EXPORTS=[wr_rs_exported_async_fn]"
     # -sPROXY_TO_PTHREAD
     -sSUPPORT_LONGJMP=0
 )
@@ -56,12 +56,9 @@ add_executable(
     ../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl3.c
 )
 
-# add_dependencies(
-#     webrogue
-#     ${CMAKE_SOURCE_DIR}/../examples/raylib/raylib.wrapp@raylib.wrapp
-# )
+add_custom_target(a DEPENDS ${CMAKE_SOURCE_DIR}/../examples/raylib/raylib.wrapp)
 
-add_dependencies(webrogue webrogue_web)
+add_dependencies(webrogue webrogue_web a)
 target_link_libraries(
     webrogue 
     "${CMAKE_SOURCE_DIR}/target/wasm32-unknown-emscripten/release/libwebrogue_web.a"

@@ -6,6 +6,10 @@ use webrogue_runtime::wiggle;
 pub struct Sleep {
     pub f: Arc<dyn Fn(std::time::Duration)>,
 }
+#[derive(Clone)]
+pub struct Clock {
+    pub f: Arc<dyn Fn() -> std::time::Duration>,
+}
 
 pub struct WrSyncSched {
     pub actual: Box<dyn wasi_common::WasiSched>,
@@ -14,6 +18,8 @@ pub struct WrSyncSched {
 
 unsafe impl Sync for Sleep {}
 unsafe impl Send for Sleep {}
+unsafe impl Sync for Clock {}
+unsafe impl Send for Clock {}
 
 #[wiggle::async_trait]
 impl wasi_common::WasiSched for WrSyncSched {
@@ -37,11 +43,33 @@ impl wasi_common::WasiSched for WrSyncSched {
 
 pub struct WasiFactory {
     pub sleep: Option<Sleep>,
+    pub clock: Option<Clock>,
 }
 
 impl WasiFactory {
     pub fn new() -> Self {
-        Self { sleep: None }
+        Self {
+            sleep: None,
+            clock: None,
+        }
+    }
+}
+
+pub struct MonotonicClock(cap_std::time::Instant, Clock);
+impl MonotonicClock {
+    pub fn new(clock: Clock) -> Self {
+        Self {
+            0: cap_std::time::Instant::from_std(std::time::Instant::now()),
+            1: clock,
+        }
+    }
+}
+impl wasi_common::WasiMonotonicClock for MonotonicClock {
+    fn resolution(&self) -> core::time::Duration {
+        core::time::Duration::new(0, 1)
+    }
+    fn now(&self, _precision: core::time::Duration) -> cap_std::time::Instant {
+        self.0.checked_add((self.1.f)()).unwrap()
     }
 }
 
@@ -54,9 +82,14 @@ impl webrogue_runtime::WasiFactory for WasiFactory {
                 sleep: sleep.clone(),
             }),
         };
+        let mut wasi_clocks = wasi_common::sync::clocks_ctx();
+        if let Some(clock) = self.clock.clone() {
+            wasi_clocks = wasi_clocks.with_monotonic(MonotonicClock::new(clock));
+        }
+
         wasi_common::WasiCtx::new(
             wasi_common::sync::random_ctx(),
-            wasi_common::sync::clocks_ctx(),
+            wasi_clocks,
             shed,
             wasi_common::Table::new(),
         )

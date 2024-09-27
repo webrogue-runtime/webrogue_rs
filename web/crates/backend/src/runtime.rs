@@ -37,6 +37,13 @@ extern "C" fn wr_rs_exported_fn(func_i: u32, context: *mut std::ffi::c_void) {
     func(context_ref);
 }
 
+#[no_mangle]
+extern "C" fn wr_rs_exported_async_fn(func_i: u32, context: *mut std::ffi::c_void) {
+    let context_ref = unsafe { (context as *mut crate::context::Context).as_mut().unwrap() };
+    let func = &context_ref.imports.funcs[func_i as usize];
+    func(context_ref);
+}
+
 impl webrogue_runtime::Runtime<crate::Imports> for Runtime {
     fn run(
         &self,

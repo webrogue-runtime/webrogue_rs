@@ -4,6 +4,8 @@ use webrogue_runtime::WasiFactory;
 
 extern "C" {
     fn wr_rs_sleep(ms: u32);
+    fn wr_reset_timer();
+    fn wr_get_timer() -> u64;
 }
 
 webrogue_backend_web::make_funcs!({
@@ -27,7 +29,13 @@ fn main() -> anyhow::Result<()> {
 
     let mut wasi_factory = webrogue_wasi_sync::WasiFactory::new();
     wasi_factory.sleep = Some(webrogue_wasi_sync::Sleep {
-        f: Arc::new(|duration| unsafe { wr_rs_sleep((duration.as_millis() / 100) as u32) }),
+        f: Arc::new(|duration| unsafe {
+            wr_rs_sleep(duration.as_millis() as u32);
+        }),
+    });
+    unsafe { wr_reset_timer() };
+    wasi_factory.clock = Some(webrogue_wasi_sync::Clock {
+        f: Arc::new(|| unsafe { std::time::Duration::from_millis(unsafe { wr_get_timer() }) }),
     });
     let mut wasi = wasi_factory.make();
 
@@ -67,12 +75,12 @@ fn main() -> anyhow::Result<()> {
 #[no_mangle]
 extern "C" fn rust_main() {
     // std::thread::spawn(|| {
-        match main() {
-            Err(e) => {
-                panic!("{}", e.to_string())
-            }
-            Ok(_) => {}
+    match main() {
+        Err(e) => {
+            panic!("{}", e.to_string())
         }
+        Ok(_) => {}
+    }
     // });
     // loop {
     //     unsafe { wr_rs_sleep(1) };
