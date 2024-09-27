@@ -27,13 +27,13 @@ fn main() -> anyhow::Result<()> {
 
     let mut wasi_factory = webrogue_wasi_sync::WasiFactory::new();
     wasi_factory.sleep = Some(webrogue_wasi_sync::Sleep {
-        f: Arc::new(|duration| unsafe { wr_rs_sleep(duration.as_millis() as u32) }),
+        f: Arc::new(|duration| unsafe { wr_rs_sleep((duration.as_millis() / 100) as u32) }),
     });
     let mut wasi = wasi_factory.make();
 
     wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
 
-    let reader = webrogue_runtime::wrapp::Reader::from_file_path("raylib.wrapp".into())?;
+    let reader = webrogue_runtime::wrapp::Wrapp::from_file_path("raylib.wrapp".into())?;
 
     webrogue_std_stream_os::bind_streams(&mut wasi);
 
@@ -66,10 +66,15 @@ fn main() -> anyhow::Result<()> {
 
 #[no_mangle]
 extern "C" fn rust_main() {
-    match main() {
-        Err(e) => {
-            panic!("{}", e.to_string())
+    // std::thread::spawn(|| {
+        match main() {
+            Err(e) => {
+                panic!("{}", e.to_string())
+            }
+            Ok(_) => {}
         }
-        Ok(_) => {}
-    }
+    // });
+    // loop {
+    //     unsafe { wr_rs_sleep(1) };
+    // }
 }

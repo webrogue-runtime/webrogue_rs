@@ -7,6 +7,11 @@ exec_program(git "${CMAKE_CURRENT_LIST_DIR}/external/SDL" ARGS apply ../sdl3.pat
 
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
+
+add_compile_options(
+    # -pthread
+    -sSUPPORT_LONGJMP=0
+)
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/external/SDL" SDL3)
 
 include(ExternalProject)
@@ -14,28 +19,34 @@ ExternalProject_Add(
     webrogue_web
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND cargo +nightly build -Z build-std --target=wasm32-unknown-emscripten --release
+    BUILD_COMMAND cargo +nightly build -Zbuild-std=std,panic_abort --target=wasm32-unknown-emscripten --release
     BINARY_DIR "${CMAKE_SOURCE_DIR}"
     INSTALL_COMMAND ""  
     BUILD_ALWAYS ON
 )
 
-add_compile_options(
-    -pthread
-)
 
 add_link_options(
-    -sASYNCIFY
-    -sASYNCIFY_STACK_SIZE=65535
+    # -sASYNCIFYJSPI
+    # -sASYNCIFY_STACK_SIZE=65535
+    -sJSPI=1
     -sFORCE_FILESYSTEM 
     -fno-rtti
     -sWASMFS
     -lopfs.js
     -sOFFSCREEN_FRAMEBUFFER
-    -pthread
-    # -sOFFSCREENCANVAS_SUPPORT
+    # -sOFFSCREENCANVAS_SUPPORT=1
+    # -pthread
     -sMIN_WEBGL_VERSION=2
     --embed-file ${CMAKE_SOURCE_DIR}/../examples/raylib/raylib.wrapp@raylib.wrapp
+    # -sPTHREAD_POOL_SIZE=1
+    -sEXPORTED_FUNCTIONS=_main,_wr_rs_exported_fn
+    -sWASM_BIGINT
+    # "-sASYNCIFY_IMPORTS=[wr_em_js_initWasmModule]"
+    "-sJSPI_IMPORTS=[wr_em_js_initWasmModule, wr_em_js_execFunc]"
+    "-sJSPI_EXPORTS=[wr_rs_exported_fn]"
+    # -sPROXY_TO_PTHREAD
+    -sSUPPORT_LONGJMP=0
 )
 
 add_executable(
@@ -55,12 +66,4 @@ target_link_libraries(
     webrogue 
     "${CMAKE_SOURCE_DIR}/target/wasm32-unknown-emscripten/release/libwebrogue_web.a"
     SDL3-static
-)
-
-target_link_options(
-    webrogue PRIVATE
-    -sWASM_BIGINT
-    # -sFETCH 
-    # --js-library ${CMAKE_CURRENT_LIST_DIR}/game/vmlib.js 
-    "-sASYNCIFY_IMPORTS=[wr_em_js_initWasmModule, wr_em_js_execFunc, wr_em_js_continueFuncExecution, wr_em_js_readModMem, wr_em_js_writeModMem]"
 )
