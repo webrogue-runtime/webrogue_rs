@@ -26,19 +26,21 @@ EM_ASYNC_JS(void, wr_em_js_initWasmModule, (void* context, const char *jsonPtr, 
         for (const [funcName, funcDetails] of Object.entries(importedFuncs)) {
             const retType = funcDetails.ret_type;
             const funcId = funcDetails.func_id;
+            var func = undefined;
             if(funcName == "present" || funcName == "poll_oneoff" ) {
-                importModule[funcName] = new WebAssembly.Suspending(async function (...args) {
+                func = new WebAssembly.Suspending(async function (...args) {
                     Module.wasmArgs = args;
                     await Module._wr_rs_exported_async_fn(funcId, context);
                     return Module.wasmResult;
                 });
             } else {
-                importModule[funcName] = function (...args) {
+                func = function (...args) {
                     Module.wasmArgs = args;
                     Module._wr_rs_exported_fn(funcId, context);
                     return Module.wasmResult;
                 };
             }
+            importModule[funcName] = func;
         }
         importObject[importModuleName] = importModule;
     }

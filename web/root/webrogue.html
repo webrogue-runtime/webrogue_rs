@@ -158,6 +158,8 @@
 
     updateConsoleVisibility();
 
+    var output_text = ""
+
     var Module = {
       preRun: [
         function () {
@@ -171,18 +173,13 @@
       ],
       postRun: [],
       print: (function () {
-        var element = document.getElementById('output');
         return (...args) => {
           var text = args.join(' ');
-            // These replacements are necessary if you render to raw HTML
-            // text = text.replace(/&/g, "&amp;");
-            // text = text.replace(/</g, "&lt;");
-            // text = text.replace(/>/g, "&gt;");
-            // text = text.replace('\n', '<br>', 'g');
             console.log(text);
-            if (element) {
-              element.innerText += text + "\n";
-              element.scrollTop = element.scrollHeight; // focus on bottom
+            if (output) {
+              output_text += text + "\n";
+              output.innerText = output_text;
+              // output.scrollTop = output.scrollHeight; // focus on bottom
             }
         };
       })(),
