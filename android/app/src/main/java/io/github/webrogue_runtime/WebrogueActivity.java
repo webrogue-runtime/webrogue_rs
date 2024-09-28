@@ -2,6 +2,8 @@ package io.github.webrogue_runtime;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Process;
+import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,7 +32,7 @@ public class WebrogueActivity extends SDLActivity {
         );
 
         textView = new TextView(this);
-        textView.setTextColor(Color.parseColor("#ffd9ff04"));
+        textView.setTextColor(Color.parseColor("#ff000000"));
         layoutParams.addRule(RelativeLayout.ALIGN_TOP);
         mLayout.addView(textView, layoutParams);
     }
@@ -46,5 +48,21 @@ public class WebrogueActivity extends SDLActivity {
     @Override
     protected String[] getLibraries() {
         return new String[]{ "webrogue" };
+    }
+    @Override
+    protected void onDestroy() {
+        Process.killProcess(Process.myPid());
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if(event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+//            Process.killProcess(Process.myPid());
+            this.finishAndRemoveTask();
+            return true;
+        } else {
+            return super.dispatchKeyEvent(event);
+        }
     }
 }

@@ -3,7 +3,7 @@
 #include "SDL.h"
 #include "jni.h"
 
-extern "C" void webrogue_android_main();
+extern "C" void webrogue_main();
 
 JNIEnv *jniEnv;
 jclass webrogue_activity_class;
@@ -14,7 +14,7 @@ extern "C" int SDL_main(int argc, char *argv[]) {
     webrogue_activity_class = jniEnv->FindClass("io/github/webrogue_runtime/WebrogueActivity");
     print_bytes_method_id = jniEnv->GetStaticMethodID(
             webrogue_activity_class, "printBytes", "([B)V");
-    webrogue_android_main();
+    webrogue_main();
     return 0;
 }
 

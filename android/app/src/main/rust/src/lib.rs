@@ -82,18 +82,10 @@ impl WasiFile for Stdout {
 }
 
 #[cfg(feature = "backend_wasmtime")]
-fn make_backend() -> webrogue_backend_wasmtime::Backend {
-    webrogue_backend_wasmtime::Backend::new()
-}
-#[cfg(feature = "backend_wasmtime")]
-use webrogue_backend_wasmtime::make_funcs;
+use webrogue_backend_wasmtime::{Backend, make_funcs};
 
 #[cfg(feature = "backend_v8")]
-fn make_backend() -> webrogue_backend_v8::Backend {
-    webrogue_backend_v8::Backend::new()
-}
-#[cfg(feature = "backend_v8")]
-use webrogue_backend_v8::make_funcs;
+use webrogue_backend_v8::{Backend, make_funcs};
 
 make_funcs!({
     "wasi_snapshot_preview1": {
@@ -125,15 +117,15 @@ fn main() -> anyhow::Result<()> {
     }));
 
     // webrogue_std_stream_os::bind_streams(&mut wasi);
-    let backend = make_backend();
+    let backend = Backend::new();
 
-    let reader = webrogue_runtime::wrapp::Reader::from_static_slice(include_bytes!(
-        "../../../../../../examples/gears/gears.wrapp"
+    let reader = webrogue_runtime::wrapp::Wrapp::from_static_slice(include_bytes!(
+        "../../../../../../examples/raylib/raylib.wrapp"
     ))?;
-    let mut webrogue_gfx_context = webrogue_gfx::Context::new();
-    let mut webrogue_gl_context = webrogue_gl::api::Context {
-        gfx_context: &mut webrogue_gfx_context,
-    };
+
+    let mut webrogue_gfx_context =
+        webrogue_gfx::Context::new(Box::new(webrogue_gfx_ffi::make_system));
+    let mut webrogue_gl_context = webrogue_gl::api::Context::new(&mut webrogue_gfx_context);
     lifecycle.run(
         backend,
         make_imports(),

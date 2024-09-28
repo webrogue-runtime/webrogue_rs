@@ -7,7 +7,7 @@ extern "C" {
     fn webrogue_gfx_ffi_destroy_window(window_ptr: *const ());
     fn webrogue_gfx_ffi_gl_get_proc_address(
         system_ptr: *const (),
-        procname: *const i8,
+        procname: *const std::ffi::c_char,
     ) -> *const ();
     fn webrogue_gfx_ffi_get_window_size(
         window_ptr: *const (),

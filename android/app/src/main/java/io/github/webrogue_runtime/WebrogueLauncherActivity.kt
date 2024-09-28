@@ -53,6 +53,8 @@ class WebrogueLauncherActivity : ComponentActivity() {
                                     this@WebrogueLauncherActivity,
                                     WebrogueActivity::class.java
                                 )
+                                myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                myIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                                 this@WebrogueLauncherActivity.startActivity(myIntent)
                             }
                         ) {

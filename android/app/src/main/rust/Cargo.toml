@@ -22,6 +22,7 @@ webrogue_wasi_sync = { path = "../../../../../crates/wasi_sync" }
 webrogue_gl = { path = "../../../../../crates/gl" }
 webrogue_gfx = { path = "../../../../../crates/gfx" }
 webrogue_std_stream_os = { path = "../../../../../crates/std_stream_os", default-features = false }
+webrogue_gfx_ffi = { path = "../../../../../crates/gfx_ffi", default-features = false }
 
 [target.'cfg(unix)'.dependencies]
 rustix = { version = "0.38.31", features = ["fs", "event"] }
