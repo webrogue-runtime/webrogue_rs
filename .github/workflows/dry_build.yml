@@ -71,6 +71,7 @@ jobs:
 
     - name: Build
       run: |
+        . ./emsdk/emsdk_env.sh
         sh web/build.sh
         du -h web/root/webrogue.wasm web/root/webrogue.js
 
@@ -88,6 +89,12 @@ jobs:
       run: |
         rustup target add aarch64-linux-android
         rustup target add x86_64-linux-android
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
     - name: Build
       run: |
