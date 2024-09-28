@@ -56,3 +56,42 @@ jobs:
         xcodebuild $XCODEBUILD_FLAGS "$XCODEBUILD_DESTINATION_FLAGS" -parallelizeTargets -allowProvisioningUpdates
         XC_BUILD_DIR=$(echo $XC_BUILD_DIR | sed "s/iphoneos/iphonesimulator/")
         du -h -d 0 $XC_BUILD_DIR/webrogue.app
+
+  web:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        ./emsdk/emsdk install latest
+        ./emsdk/emsdk activate latest
+
+    - name: Build
+      run: |
+        sh web/build.sh
+        du -h web/root/webrogue.wasm web/root/webrogue.js
+
+  android:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Submodules
+      run: |
+        git submodule update --init --single-branch external/wasmtime
+    
+    - name: Setup
+      run: |
+        rustup target add aarch64-linux-android
+        rustup target add x86_64-linux-android
+
+    - name: Build
+      run: |
+        cd android
+        ./gradlew --no-daemon assembleRelease
+        cd ..
+        du -h android/app/build/outputs/apk/release/app-release-unsigned.apk
