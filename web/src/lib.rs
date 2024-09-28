@@ -35,7 +35,7 @@ fn main() -> anyhow::Result<()> {
     });
     unsafe { wr_reset_timer() };
     wasi_factory.clock = Some(webrogue_wasi_sync::Clock {
-        f: Arc::new(|| unsafe { std::time::Duration::from_millis(unsafe { wr_get_timer() }) }),
+        f: Arc::new(|| std::time::Duration::from_millis(unsafe { wr_get_timer() })),
     });
     let mut wasi = wasi_factory.make();
 

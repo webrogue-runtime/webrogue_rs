@@ -3,13 +3,13 @@ use clap::Parser;
 use webrogue_runtime::WasiFactory;
 
 #[cfg(feature = "backend_wasmtime")]
-use webrogue_backend_wasmtime::{Backend, make_funcs};
+use webrogue_backend_wasmtime::{make_funcs, Backend};
 
 #[cfg(feature = "_backend_wasmer")]
-use webrogue_backend_wasmer::{Backend, make_funcs};
+use webrogue_backend_wasmer::{make_funcs, Backend};
 
 #[cfg(feature = "backend_v8")]
-use webrogue_backend_v8::{Backend, make_funcs};
+use webrogue_backend_v8::{make_funcs, Backend};
 
 #[cfg(feature = "wasi_sync")]
 fn make_wasi_factory() -> impl webrogue_runtime::WasiFactory {
@@ -41,7 +41,7 @@ fn main() -> Result<()> {
     let wasi_factory = make_wasi_factory();
     let mut wasi = wasi_factory.make();
 
-    wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
+     wasi_factory.add_actual_dir(&mut wasi, std::env::current_dir()?, "/");
 
     let args = Cli::parse();
     let reader = webrogue_runtime::wrapp::Wrapp::from_file_path(args.path)?;
