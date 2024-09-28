@@ -21,5 +21,8 @@ webrogue_gl = { path = "../crates/gl", optional = true }
 webrogue_gfx = { path = "../crates/gfx", optional = true }
 webrogue_gfx_ffi = { path = "../crates/gfx_ffi", optional = true }
 
+# just to silence compile_error using "fallback" feature
+iana-time-zone = { version = ">=0.1.61", features = ["fallback"] }
+
 [patch.crates-io]
 zstd-seekable = { path = 'external/zstd-seekable' }
