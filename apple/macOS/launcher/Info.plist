@@ -5,6 +5,8 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string></string>
 			<key>CFBundleTypeIconSystemGenerated</key>
 			<integer>1</integer>
 			<key>CFBundleTypeName</key>
@@ -18,7 +20,7 @@
 				<string>io.github.webrogue-runtime.wrapp</string>
 			</array>
 			<key>NSDocumentClass</key>
-			<string></string>
+			<string>NSDocument</string>
 		</dict>
 	</array>
 	<key>UTExportedTypeDeclarations</key>
@@ -31,7 +33,12 @@
 			<key>UTTypeDescription</key>
 			<string>webrogue app file</string>
 			<key>UTTypeIcons</key>
-			<dict/>
+			<dict>
+				<key>UTTypeIconBadgeName</key>
+				<string>DocumentIcon</string>
+				<key>UTTypeIconText</key>
+				<string>wrapp</string>
+			</dict>
 			<key>UTTypeIdentifier</key>
 			<string>io.github.webrogue-runtime.wrapp</string>
 			<key>UTTypeTagSpecification</key>

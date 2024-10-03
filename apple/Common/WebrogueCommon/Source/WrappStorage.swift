@@ -35,22 +35,27 @@ public final class WrappStorage: ObservableObject {
         for fileName in fileNames {
             let filePath = wrappDirectoryPath + "/" + fileName
             guard
-                let content = fileManager.contents(atPath: filePath),
-                let metadata = WrappMetadata(data: content)
+                filePath.hasSuffix(".wrapp"),
+                let fileHandle = FileHandle(forReadingAtPath: filePath),
+                let metadata = WrappMetadata(fileHandle: fileHandle)
             else { continue }
             refs.append(WrappRef(path: filePath, metadata: metadata))
         }
     }
 
     public func store(_ url: URL) -> WrappRef? {
-        guard
-            let content = fileManager.contents(atPath: url.relativePath),
-            let metadata = WrappMetadata(data: content)
-        else { return nil }
-        let newPath = wrappDirectoryPath + "/" + metadata.sha256
-        guard
-            fileManager.createFile(atPath: newPath, contents: content)
-        else { return nil }
+        guard 
+            let fileHandle = FileHandle(forReadingAtPath: url.relativePath),
+            let metadata = WrappMetadata(fileHandle: fileHandle)
+        else {
+            return nil
+        }
+        let newPath = wrappDirectoryPath + "/" + metadata.sha256 + ".wrapp"
+        do {
+            try fileManager.copyItem(atPath: url.relativePath, toPath: newPath)
+        } catch {
+            return nil
+        }
 
         updateRefs()
         return refs.first { $0.metadata.sha256 == metadata.sha256 }

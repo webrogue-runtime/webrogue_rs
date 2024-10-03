@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  launcher
-//
-//  Created by Artem on 20.09.24.
-//
-
 import SwiftUI
 import WebrogueCommon
 

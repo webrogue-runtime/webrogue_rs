@@ -7,12 +7,19 @@ struct LauncherApp: App {
 
     var documentGroup: some Scene {
         let result = DocumentGroup(viewing: WrappDocument.self) { file in
-            WrappRefView(
-                for: WrappRef(
-                    path: file.fileURL!.relativePath,
-                    metadata: file.document.metadata
+            if
+                let url = file.fileURL,
+                let metadata = WrappMetadata(url: url)
+            {
+                WrappRefView(
+                    for: WrappRef(
+                        path: url.relativePath,
+                        metadata: metadata
+                    )
                 )
-            )
+            } else {
+                Text("This file cant be opened")
+            }
         }
 
         if #available(macOS 13, *) {
