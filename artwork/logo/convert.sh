@@ -5,11 +5,6 @@ set -e
 # sudo snap install svgo
 # sudo apt install librsvg2-bin
 
-# Reader
-original() {
-    cat logo.svg
-}
-
 alias rpngconvert="convert -define png:exclude-chunks=date,time,gama +set date:create +set date:modify +set date:timestamp "
 # Writers
 to_png_transparent() {
@@ -33,16 +28,11 @@ to_ico() {
 }
 
 # Sizes
-margin() {
-    SIZE=$(expr 64 + $1 + $1)
-    OFFSET=$(expr 0 - $1)
-    sed "s/viewBox=\"0 0 64 64\"/viewBox=\"$OFFSET $OFFSET $SIZE $SIZE\"/g"
-}
-targetsize() {
+ofsize() {
     V=$(expr $(expr $(expr 64 - $1) \* 64) / $1 / 2)
     SIZE=$(expr 64 + $V + $V)
     OFFSET=$(expr 0 - $V)
-    sed "s/viewBox=\"0 0 64 64\"/viewBox=\"$OFFSET $OFFSET $SIZE $SIZE\"/g"
+    cat logo.svg | sed "s/viewBox=\"0 0 64 64\"/viewBox=\"$OFFSET $OFFSET $SIZE $SIZE\"/g"
 }
 
 # Colors
@@ -76,32 +66,32 @@ stroke_width() {
 
 # For Android
 android_old() {
-    original | targetsize 40 | stroke_width 2 | to_png_white $1 ../../android/app/src/main/res/mipmap-$2/ic_launcher.png
+    ofsize 40 | stroke_width 2 | to_png_white $1 ../../android/app/src/main/res/mipmap-$2/ic_launcher.png
 }
 android_old 48 mdpi
 android_old 72 hdpi
 android_old 96 xhdpi
 android_old 144 xxhdpi
 android_old 192 xxxhdpi
-original | to_png_transparent 512 ../../android/app/src/main/res/drawable/ic_launcher_foreground.png
-original | parse_colors | outer_fill_color 00000000 | default_colors | to_png_transparent 512 ../../android/app/src/main/res/drawable/ic_launcher_monochrome.png
+ofsize 62 | to_png_transparent 512 ../../android/app/src/main/res/drawable/ic_launcher_foreground.png
+ofsize 62 | parse_colors | outer_fill_color 00000000 | default_colors | to_png_transparent 512 ../../android/app/src/main/res/drawable/ic_launcher_monochrome.png
 rpngconvert -size 512x512 xc:white ../../android/app/src/main/res/drawable/ic_launcher_background.png
 # # For Linux
-# original | to_png_transparent 256 ../../platforms/Linux/TemplateAppDir/.DirIcon
-# original | to_svg ../../platforms/Linux/TemplateAppDir/webrogue.svg
+# ofsize 64 | to_png_transparent 256 ../../platforms/Linux/TemplateAppDir/.DirIcon
+# ofsize 64 | to_svg ../../platforms/Linux/TemplateAppDir/webrogue.svg
 
 # # For Web
-original | stroke_width 2.5 | margin 3 | to_ico ../../web/root/logo.ico "16,24,32,64"
+ofsize 61 | stroke_width 2.5 | to_ico ../../web/root/logo.ico "16,24,32,64"
 
 # # For Windows
-# original | margin -6 | to_ico ../../platforms/Windows/logo.ico "16,32,48,256"
-# original | margin -5 | to_png_transparent 48 ../../platforms/Windows/Images/LockScreenLogo.png
-# original | margin  1 | to_png_transparent_wide 1240 600 ../../platforms/Windows/Images/SplashScreen.png
-# original | to_png_transparent 300 ../../platforms/Windows/Images/Square150x150Logo.png
-# original | to_png_transparent 88 ../../platforms/Windows/Images/Square44x44Logo.png
-# original | to_png_transparent 24 ../../platforms/Windows/Images/Square44x44Logo.targetsize-24_altform-unplated.png
-# original | margin -5 | to_png_transparent 50 ../../platforms/Windows/Images/StoreLogo.png
-# original | margin  1 | to_png_transparent_wide 620 300 ../../platforms/Windows/Images/Wide310x150Logo.png #620x300
+# ofsize 64 | margin -6 | to_ico ../../platforms/Windows/logo.ico "16,32,48,256"
+# ofsize 64 | margin -5 | to_png_transparent 48 ../../platforms/Windows/Images/LockScreenLogo.png
+# ofsize 64 | margin  1 | to_png_transparent_wide 1240 600 ../../platforms/Windows/Images/SplashScreen.png
+# ofsize 64 | to_png_transparent 300 ../../platforms/Windows/Images/Square150x150Logo.png
+# ofsize 64 | to_png_transparent 88 ../../platforms/Windows/Images/Square44x44Logo.png
+# ofsize 64 | to_png_transparent 24 ../../platforms/Windows/Images/Square44x44Logo.targetsize-24_altform-unplated.png
+# ofsize 64 | margin -5 | to_png_transparent 50 ../../platforms/Windows/Images/StoreLogo.png
+# ofsize 64 | margin  1 | to_png_transparent_wide 620 300 ../../platforms/Windows/Images/Wide310x150Logo.png #620x300
 
 # For MacOS
 macos_ico() {
@@ -110,7 +100,7 @@ macos_ico() {
     FILENAME=$3
 
     MACOS_ICO_DIR=../../apple/macOS/launcher/Assets/Assets.xcassets/AppIcon.appiconset
-    original | stroke_width $STROKE_WIDTH | targetsize 32 | to_png_transparent $SIZE $MACOS_ICO_DIR/$FILENAME.foreground.png
+    ofsize 32 | stroke_width $STROKE_WIDTH | to_png_transparent $SIZE $MACOS_ICO_DIR/$FILENAME.foreground.png
     MIN_POS=$(expr 100 '*' $SIZE / 1024)
     MAX_POS=$(expr 924 '*' $SIZE / 1024)
     CORNER_RADIUS=$(expr 184 '*' $SIZE / 1024)
@@ -126,7 +116,7 @@ macos_document_ico() {
     FILENAME=$3
 
     MACOS_ICO_DIR=../../apple/macOS/Launcher/Assets/Assets.xcassets/DocumentIcon.iconset
-    original | targetsize 51 | stroke_width $STROKE_WIDTH | to_png_transparent $SIZE $MACOS_ICO_DIR/$FILENAME.png
+    ofsize 51 | stroke_width $STROKE_WIDTH | to_png_transparent $SIZE $MACOS_ICO_DIR/$FILENAME.png
 }
 for flawor in macos_ico macos_document_ico; do
     $flawor 16      3   icon_16x16
@@ -141,5 +131,5 @@ for flawor in macos_ico macos_document_ico; do
     $flawor 1024    1.5 icon_512x512@2x
 done
 # For iOS
-original | targetsize 40 | to_png_white 1024 ../../apple/iOS/Assets/Assets.xcassets/AppIcon.appiconset/ios1024.png
-original | targetsize 48 | to_png_transparent 1024 ../../apple/iOS/Assets/Document.png
+ofsize 40 | to_png_white 1024 ../../apple/iOS/Assets/Assets.xcassets/AppIcon.appiconset/ios1024.png
+ofsize 48 | to_png_transparent 1024 ../../apple/iOS/Assets/Document.png
