@@ -18,12 +18,13 @@ public class WebrogueActivity extends SDLActivity {
     private TextView textView;
     private String consoleText = "";
     private static WebrogueActivity sharedWebrogueActivity;
+    private String wrappPath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedWebrogueActivity = this;
+        wrappPath = getIntent().getStringExtra("wrapp_path");
         super.onCreate(savedInstanceState);
-
         setWindowStyle(true);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -36,7 +37,10 @@ public class WebrogueActivity extends SDLActivity {
         layoutParams.addRule(RelativeLayout.ALIGN_TOP);
         mLayout.addView(textView, layoutParams);
     }
-
+    @Keep
+    public static String getWrappPath() {
+        return sharedWebrogueActivity.wrappPath;
+    }
 
     @Keep
     public static void printBytes(byte[] bytes) {

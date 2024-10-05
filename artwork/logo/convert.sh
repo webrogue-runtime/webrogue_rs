@@ -115,7 +115,7 @@ macos_document_ico() {
     STROKE_WIDTH=$2
     FILENAME=$3
 
-    MACOS_ICO_DIR=../../apple/macOS/Launcher/Assets/Assets.xcassets/DocumentIcon.iconset
+    MACOS_ICO_DIR=../../apple/macOS/launcher/Assets/Assets.xcassets/DocumentIcon.iconset
     ofsize 51 | stroke_width $STROKE_WIDTH | to_png_transparent $SIZE $MACOS_ICO_DIR/$FILENAME.png
 }
 for flawor in macos_ico macos_document_ico; do

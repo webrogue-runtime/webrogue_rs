@@ -13,6 +13,7 @@ pub struct Stdout {
 
 extern "C" {
     fn webrogue_android_print(str: *const std::ffi::c_char, len: usize);
+    fn webrogue_android_path() -> *const std::ffi::c_char;
 }
 #[wiggle::async_trait]
 impl WasiFile for Stdout {
@@ -119,9 +120,10 @@ fn main() -> anyhow::Result<()> {
     // webrogue_std_stream_os::bind_streams(&mut wasi);
     let backend = Backend::new();
 
-    let reader = webrogue_runtime::wrapp::Wrapp::from_static_slice(include_bytes!(
-        "../../../../../../examples/raylib/raylib.wrapp"
-    ))?;
+    
+    let wrapp_path = unsafe { std::ffi::CStr::from_ptr(webrogue_android_path()).to_str().unwrap().to_owned() };
+    
+    let reader = webrogue_runtime::wrapp::Wrapp::from_file_path(std::path::PathBuf::from(wrapp_path))?;
 
     let mut webrogue_gfx_context =
         webrogue_gfx::Context::new(Box::new(webrogue_gfx_ffi::make_system));
