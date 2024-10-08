@@ -1,5 +1,6 @@
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct Config {
+    name: String,
     filesystem: Option<FilesystemConfig>,
 }
 
