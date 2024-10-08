@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 roxmltree = "0.20.0"
-webrogue_gl_gen_common = { path = "../common" }
+webrogue_gl_gen_common = { path = "common" }
 

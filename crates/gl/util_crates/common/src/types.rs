@@ -1,7 +1,33 @@
 pub struct FeatureRequirements {
     pub commands: Vec<String>,
     pub enums: Vec<String>,
+    pub extensions: Vec<String>,
 }
+
+impl FeatureRequirements {
+    pub fn new() -> FeatureRequirements {
+        FeatureRequirements {
+            commands: Vec::new(),
+            enums: Vec::new(),
+            extensions: Vec::new(),
+        }
+    }
+
+    pub fn append(&mut self, mut other: FeatureRequirements) {
+        for command in other.commands {
+            if !self.commands.contains(&command) {
+                self.commands.push(command);
+            }
+        }
+        for enum_case in other.enums {
+            if !self.enums.contains(&enum_case) {
+                self.enums.push(enum_case);
+            }
+        }
+        self.extensions.append(&mut other.extensions);
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub enum GLType {
     Void,
@@ -110,4 +136,5 @@ pub struct EnumCase {
 pub struct ParseResults {
     pub commands: Vec<Command>,
     pub enums: Vec<EnumCase>,
+    pub extensions: Vec<String>,
 }

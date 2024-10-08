@@ -1,10 +1,7 @@
-use crate::types::*;
+use crate::{common, types::*};
 
 fn parse_requirements(feature_node: roxmltree::Node) -> FeatureRequirements {
-    let mut result = FeatureRequirements {
-        commands: vec![],
-        enums: vec![],
-    };
+    let mut result = FeatureRequirements::new();
     for require_node in feature_node.children() {
         if require_node.tag_name().name() != "require" {
             continue;
@@ -19,6 +16,47 @@ fn parse_requirements(feature_node: roxmltree::Node) -> FeatureRequirements {
                     .push(node.attribute("name").unwrap().to_owned()),
                 _ => {}
             }
+        }
+    }
+    return result;
+}
+
+fn parse_extensions(extensions_node: roxmltree::Node) -> FeatureRequirements {
+    let mut result = FeatureRequirements::new();
+    for extension_node in extensions_node.children() {
+        let name = match extension_node.attribute("name") {
+            None => continue,
+            Some(s) => s,
+        };
+        let supported_attribute = match extension_node.attribute("supported") {
+            None => continue,
+            Some(s) => s,
+        };
+        if !supported_attribute.split("|").any(|api| api == "gles2") {
+            continue;
+        }
+        let mut current_requirements = FeatureRequirements::new();
+        current_requirements.extensions.push(name.to_owned());
+        for require_node in extension_node.children() {
+            if require_node.tag_name().name() != "require" {
+                continue;
+            }
+            for node in require_node.children() {
+                match node.tag_name().name() {
+                    "command" => current_requirements
+                        .commands
+                        .push(node.attribute("name").unwrap().to_owned()),
+                    "enum" => current_requirements
+                        .enums
+                        .push(node.attribute("name").unwrap().to_owned()),
+                    _ => {}
+                }
+            }
+        }
+        if current_requirements.commands.is_empty()
+            || crate::common::EXTRA_EXTENSIONS.contains(&name)
+        {
+            result.append(current_requirements);
         }
     }
     return result;
@@ -164,6 +202,7 @@ fn parse_enums(
 pub fn parse() -> ParseResults {
     let xml_str = include_str!("../gl.xml");
     let doc = roxmltree::Document::parse(&xml_str).unwrap();
+    let mut requirements = FeatureRequirements::new();
     let feature_node = doc
         .descendants()
         .find(|node| {
@@ -172,7 +211,12 @@ pub fn parse() -> ParseResults {
                 && node.attribute("number").unwrap() == "2.0"
         })
         .unwrap();
-    let requirements = parse_requirements(feature_node);
+    requirements.append(parse_requirements(feature_node));
+    let extensions_node = doc
+        .descendants()
+        .find(|node| node.tag_name().name() == "extensions")
+        .unwrap();
+    requirements.append(parse_extensions(extensions_node));
 
     let command_node = doc
         .descendants()
@@ -187,5 +231,9 @@ pub fn parse() -> ParseResults {
             _ => {}
         }
     }
-    ParseResults { commands, enums }
+    ParseResults {
+        commands,
+        enums,
+        extensions: requirements.extensions,
+    }
 }

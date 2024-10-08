@@ -1,4 +1,4 @@
-use crate::context::Context;
+use crate::{context::Context, ffi};
 
 #[allow(non_snake_case)]
 pub fn glShaderSource(
@@ -284,14 +284,28 @@ pub fn glTexImage2D(
 }
 
 fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
-    if name == crate::ffi::GL_EXTENSIONS {
-        return Some(Vec::new());
-    }
     let gl_str = unsafe { (_context.proc_addresses.glGetString)(name) };
     if gl_str.is_null() {
         return None;
     }
     let owned_str = unsafe { std::ffi::CStr::from_ptr(gl_str as *const std::ffi::c_char) };
+    if name == crate::ffi::GL_EXTENSIONS {
+        let filtered_extensions = owned_str
+            .to_str()
+            .unwrap()
+            .split(" ")
+            .filter(|extension| ffi::EXTENSIONS.contains(extension))
+            .collect::<Vec<_>>();
+        let unsupported_extensions = owned_str
+            .to_str()
+            .unwrap()
+            .split(" ")
+            .filter(|extension| !ffi::EXTENSIONS.contains(extension))
+            .collect::<Vec<_>>();
+        let mut result = (filtered_extensions.join(" ") + " ").into_bytes();
+        result.push(0);
+        return Some(result);
+    }
     Some(owned_str.to_bytes_with_nul().to_vec())
 }
 
@@ -352,7 +366,45 @@ pub fn glBufferSubData(
     drop(data_cow);
     result
 }
-
+#[allow(non_snake_case)]
+pub fn glDrawElements(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    mode: u32,
+    count: i32,
+    _type: u32,
+    indices: u32,
+) -> () {
+    let memory = _memory_factory.make_memory();
+    let mut element_array_buffer = 0;
+    unsafe {
+        (_context.proc_addresses.glGetIntegerv)(
+            ffi::GL_ELEMENT_ARRAY_BUFFER_BINDING,
+            &mut element_array_buffer,
+        );
+    }
+    if element_array_buffer == 0 {
+        let len_indices = (crate::compsize::glDrawElements_indices_compsize(count, _type)) as usize;
+        let indices_cow = memory
+            .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
+                indices as u32,
+                len_indices as u32,
+            )))
+            .unwrap();
+        unsafe {
+            (_context.proc_addresses.glDrawElements)(
+                mode,
+                count,
+                _type,
+                indices_cow.as_ptr() as *const (),
+            )
+        };
+    } else {
+        unsafe {
+            (_context.proc_addresses.glDrawElements)(mode, count, _type, indices as *const ())
+        };
+    }
+}
 pub fn init_ptrs(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,

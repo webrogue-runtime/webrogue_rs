@@ -41,5 +41,14 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
         );
         seen_enums.insert(enum_case.name);
     }
+
+    result += &format!(
+        "pub const EXTENSIONS: [&str; {}] = [\n",
+        parse_results.extensions.len()
+    );
+    for extension in parse_results.extensions.clone() {
+        result += &format!("    \"{}\",\n", extension);
+    }
+    result += "];\n";
     result
 }
