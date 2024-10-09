@@ -18,7 +18,6 @@ settings:
       CODE_SIGN_IDENTITY: "-"
       CARGO_CONFIG: Debug
       CODE_SIGN_STYLE: Manual
-      # DEVELOPMENT_TEAM: ""
     Release:
       CODE_SIGN_IDENTITY: "Apple Development"
       CARGO_CONFIG: Release
@@ -28,7 +27,6 @@ settings:
       CODE_SIGN_IDENTITY: "-"
       CARGO_CONFIG: Release
       CODE_SIGN_STYLE: Manual
-      # DEVELOPMENT_TEAM: ""
 options:
   createIntermediateGroups: true
 targets:
@@ -107,7 +105,6 @@ targets:
     - path: iOS
       excludes:
       - "**/rust"
-    - ../crates/gfx_ffi/src/webrogue_gfx_ffi_sdl2.c
     settings:
       base:
         INFOPLIST_FILE: iOS/Info.plist
@@ -117,20 +114,31 @@ targets:
         SWIFT_OBJC_BRIDGING_HEADER: "$(SRCROOT)/iOS/Source/webrogue-Bridging-Header.h"
         OTHER_LDFLAGS: "-lwebrogue_ios"
         LIBRARY_SEARCH_PATHS: "$(BUILD_DIR)/rust_artifacts/$(CONFIGURATION)/$(PLATFORM_NAME)"
-        HEADER_SEARCH_PATHS: "$(SRCROOT)/external/SDL2/include"
+        HEADER_SEARCH_PATHS: 
+        - "$(SRCROOT)/external/SDL2/include"
+        SYSTEM_HEADER_SEARCH_PATHS: 
+        - "$(BUILT_PRODUCTS_DIR)/angle_ios/ios_headers"
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
         INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"
         ENABLE_PREVIEWS: true
         INFOPLIST_KEY_UILaunchScreen_Generation: true
         INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen.storyboard
+    preBuildScripts:
+      - script: "cd \"${BUILT_PRODUCTS_DIR}\"; sh ${SRCROOT}/iOS/rust/scripts/download_angle_ios_headers.sh"
+        name: Download ANGLE
+        inputFiles:
+          - ${SRCROOT}/iOS/rust/scripts/download_angle_ios_headers.sh
+        outputFiles:
+          - ${BUILT_PRODUCTS_DIR}/angle_ios/ios_headers.zip
+          - ${BUILT_PRODUCTS_DIR}/angle_ios/ios_headers
     dependencies:
+    - target: Angle_iOS
     - target: Cargo_iOS
     - target: SDL/Static Library-iOS
     - target: WebrogueCommon
     - sdk: UIKit.framework
     - sdk: QuartzCore.framework
-    - sdk: OpenGLES.framework
     - sdk: Metal.framework
     - sdk: IOKit.framework
     - sdk: GameController.framework
@@ -143,6 +151,8 @@ targets:
     - sdk: CoreAudio.framework
     - sdk: AVFoundation.framework
     - sdk: AudioToolbox.framework
+    - framework: external/libEGL.xcframework
+    - framework: external/libGLESv2.xcframework
   WebrogueCommon:
     type: framework.static
     supportedDestinations: [macOS, iOS]
@@ -153,6 +163,13 @@ targets:
         INFOPLIST_FILE: Common/WebrogueCommon/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueCommon
         PRODUCT_NAME: WebrogueCommon
+  Angle_iOS:
+    platform: iOS
+    legacy:
+      toolPath: /bin/sh
+      arguments: iOS/rust/scripts/download_angle_ios_xcframeworks.sh
+      workingDirectory: $(SRCROOT)/
+      passSettings: true
   Cargo_iOS:
     platform: iOS
     legacy:

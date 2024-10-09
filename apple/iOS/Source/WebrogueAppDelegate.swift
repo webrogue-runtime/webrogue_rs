@@ -1,6 +1,9 @@
+import WebrogueCommon
+
 @main
 public class WebrogueAppDelegate: SDLUIKitDelegate {
     static var shared: WebrogueAppDelegate!
+    static var wrappStorage = WrappStorage()
     var webrogueWindow: UIWindow!
     var isWebrogueWindowVisible = true
 
@@ -36,5 +39,14 @@ public class WebrogueAppDelegate: SDLUIKitDelegate {
             self.isWebrogueWindowVisible = true
             completion?(ret_code)
         }
+    }
+
+    public override func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+    ) -> Bool {
+        WebrogueAppDelegate.wrappStorage.store(url)
+        return true
     }
 }

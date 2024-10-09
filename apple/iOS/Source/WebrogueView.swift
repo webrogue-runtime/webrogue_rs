@@ -3,7 +3,7 @@ import WebrogueCommon
 import UniformTypeIdentifiers
 
 struct WebrogueView: View {
-    @StateObject var stoarge = WrappStorage()
+    @ObservedObject var stoarge = WebrogueAppDelegate.wrappStorage
     @State var isFileImporterPresented = false
 
     var body: some View {
