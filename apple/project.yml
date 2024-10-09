@@ -133,7 +133,6 @@ targets:
           - ${BUILT_PRODUCTS_DIR}/angle_ios/ios_headers.zip
           - ${BUILT_PRODUCTS_DIR}/angle_ios/ios_headers
     dependencies:
-    - target: Angle_iOS
     - target: Cargo_iOS
     - target: SDL/Static Library-iOS
     - target: WebrogueCommon
@@ -163,13 +162,6 @@ targets:
         INFOPLIST_FILE: Common/WebrogueCommon/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: io.github.webrogue-runtime.WebrogueCommon
         PRODUCT_NAME: WebrogueCommon
-  Angle_iOS:
-    platform: iOS
-    legacy:
-      toolPath: /bin/sh
-      arguments: iOS/rust/scripts/download_angle_ios_xcframeworks.sh
-      workingDirectory: $(SRCROOT)/
-      passSettings: true
   Cargo_iOS:
     platform: iOS
     legacy:
