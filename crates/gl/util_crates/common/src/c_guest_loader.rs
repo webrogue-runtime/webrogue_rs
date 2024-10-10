@@ -4,6 +4,9 @@ use std::io::Write;
 pub fn write_to_file(file: &mut std::fs::File, parse_results: &ParseResults) {
     file.write(
         r#"#include <GLES2/gl2.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
 #include <stddef.h>
 #include <string.h>
 

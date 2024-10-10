@@ -1,14 +1,18 @@
-pub const EXCLUDED: [&str; 1] = ["glGetString"];
+// TODO glMapBufferRange
 
-pub const MANUAL_IMPL: [&str; 8] = [
+pub const EXCLUDED: [&str; 2] = ["glGetString", "glGetStringi"];
+
+pub const MANUAL_IMPL: [&str; 10] = [
     "glShaderSource",
-    "glGetAttribLocation",
     "glVertexAttribPointer",
-    "glBindAttribLocation",
-    "glGetUniformLocation",
+    "glVertexAttribIPointer",
     "glTexImage2D",
     "glBufferSubData",
     "glDrawElements",
+    "glDrawElementsInstanced",
+    "glDrawRangeElements",
+    "glGetUniformIndices",
+    "glMapBufferRange", // not implemented
 ];
 
 pub const C_MANUAL_IMPL: [&str; 0] = [];

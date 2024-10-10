@@ -53,9 +53,7 @@ fn parse_extensions(extensions_node: roxmltree::Node) -> FeatureRequirements {
                 }
             }
         }
-        if current_requirements.commands.is_empty()
-            || crate::common::EXTRA_EXTENSIONS.contains(&name)
-        {
+        if current_requirements.commands.is_empty() || common::EXTRA_EXTENSIONS.contains(&name) {
             result.append(current_requirements);
         }
     }
@@ -89,6 +87,9 @@ fn parse_type(proto_param_node: roxmltree::Node) -> Param {
                     "GLintptr" => GLType::ISizeT,
                     "GLbitfield" => GLType::UInt,
                     "GLsizei" => GLType::Int,
+                    "GLsync" => GLType::OpaqueSync,
+                    "GLuint64" => GLType::U64,
+                    "GLint64" => GLType::I64,
                     _ => panic!("{}", ty),
                 });
             }
@@ -164,6 +165,7 @@ fn parse_commands(
     return commands;
 }
 
+// TODO parse enum groups
 fn parse_enums(
     enums_node: roxmltree::Node,
     _requirements: &FeatureRequirements,
@@ -203,15 +205,28 @@ pub fn parse() -> ParseResults {
     let xml_str = include_str!("../gl.xml");
     let doc = roxmltree::Document::parse(&xml_str).unwrap();
     let mut requirements = FeatureRequirements::new();
-    let feature_node = doc
-        .descendants()
-        .find(|node| {
-            node.tag_name().name() == "feature"
-                && node.attribute("api").unwrap() == "gles2"
-                && node.attribute("number").unwrap() == "2.0"
-        })
-        .unwrap();
-    requirements.append(parse_requirements(feature_node));
+    {
+        let feature_node = doc
+            .descendants()
+            .find(|node| {
+                node.tag_name().name() == "feature"
+                    && node.attribute("api").unwrap() == "gles2"
+                    && node.attribute("number").unwrap() == "2.0"
+            })
+            .unwrap();
+        requirements.append(parse_requirements(feature_node));
+    }
+    {
+        let feature_node = doc
+            .descendants()
+            .find(|node| {
+                node.tag_name().name() == "feature"
+                    && node.attribute("api").unwrap() == "gles2"
+                    && node.attribute("number").unwrap() == "3.0"
+            })
+            .unwrap();
+        requirements.append(parse_requirements(feature_node));
+    }
     let extensions_node = doc
         .descendants()
         .find(|node| node.tag_name().name() == "extensions")

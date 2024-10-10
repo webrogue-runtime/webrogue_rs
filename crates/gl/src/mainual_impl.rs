@@ -84,40 +84,6 @@ pub fn glShaderSource(
 }
 
 #[allow(non_snake_case)]
-pub fn glGetAttribLocation(
-    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut Context,
-    program: u32,
-    name: u32,
-) -> i32 {
-    let memory = _memory_factory.make_memory();
-    let converted_program = program;
-    let mut vec_name: Vec<i8> = {
-        let mut source: Vec<i8> = vec![];
-        let mut byte_offset = 0;
-        loop {
-            let byte = memory
-                .read::<i8>(webrogue_runtime::wiggle::GuestPtr::<i8>::new(
-                    name + byte_offset,
-                ))
-                .unwrap();
-            source.push(byte);
-            if byte == 0 {
-                break;
-            } else {
-                byte_offset += 1;
-            }
-        }
-        source
-    };
-    let converted_name = vec_name.as_mut_ptr() as *mut i8;
-
-    let result =
-        unsafe { (_context.proc_addresses.glGetAttribLocation)(converted_program, converted_name) };
-    result.into()
-}
-
-#[allow(non_snake_case)]
 pub fn glVertexAttribPointer(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
@@ -128,98 +94,37 @@ pub fn glVertexAttribPointer(
     stride: i32,
     pointer: u32,
 ) -> () {
-    let converted_index = index;
-    let converted_size = size;
-    let converted__type = _type;
-    let converted_normalized = normalized as u8;
-    let converted_stride = stride;
-
-    //glVertexAttribPointer()
-
-    let result = unsafe {
+    unsafe {
         (_context.proc_addresses.glVertexAttribPointer)(
-            converted_index,
-            converted_size,
-            converted__type,
-            converted_normalized,
-            converted_stride,
+            index,
+            size,
+            _type,
+            normalized as u8,
+            stride,
             pointer as *mut (),
         )
     };
-    result
 }
 
 #[allow(non_snake_case)]
-pub fn glBindAttribLocation(
+pub fn glVertexAttribIPointer(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
-    program: u32,
     index: u32,
-    name: u32,
+    size: i32,
+    _type: u32,
+    stride: i32,
+    pointer: u32,
 ) -> () {
-    let memory = _memory_factory.make_memory();
-    let converted_program = program;
-    let converted_index = index;
-    let mut vec_name: Vec<i8> = {
-        let mut source: Vec<i8> = vec![];
-        let mut byte_offset = 0;
-        loop {
-            let byte = memory
-                .read::<i8>(webrogue_runtime::wiggle::GuestPtr::<i8>::new(
-                    name + byte_offset,
-                ))
-                .unwrap();
-            source.push(byte);
-            if byte == 0 {
-                break;
-            } else {
-                byte_offset += 1;
-            }
-        }
-        source
-    };
-    let converted_name = vec_name.as_mut_ptr() as *mut i8;
-    let result = unsafe {
-        (_context.proc_addresses.glBindAttribLocation)(
-            converted_program,
-            converted_index,
-            converted_name,
+    unsafe {
+        (_context.proc_addresses.glVertexAttribIPointer)(
+            index,
+            size,
+            _type,
+            stride,
+            pointer as *mut (),
         )
     };
-    result
-}
-#[allow(non_snake_case)]
-pub fn glGetUniformLocation(
-    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
-    _context: &mut Context,
-    program: u32,
-    name: u32,
-) -> i32 {
-    let memory = _memory_factory.make_memory();
-    let converted_program = program;
-    let mut vec_name: Vec<i8> = {
-        let mut source: Vec<i8> = vec![];
-        let mut byte_offset = 0;
-        loop {
-            let byte = memory
-                .read::<i8>(webrogue_runtime::wiggle::GuestPtr::<i8>::new(
-                    name + byte_offset,
-                ))
-                .unwrap();
-            source.push(byte);
-            if byte == 0 {
-                break;
-            } else {
-                byte_offset += 1;
-            }
-        }
-        source
-    };
-    let converted_name = vec_name.as_mut_ptr() as *mut i8;
-    let result = unsafe {
-        (_context.proc_addresses.glGetUniformLocation)(converted_program, converted_name)
-    };
-    result.into()
 }
 
 #[allow(non_snake_case)]
@@ -246,7 +151,8 @@ pub fn glTexImage2D(
     let converted_format = format;
     let converted__type = _type;
     let len_pixels =
-        (crate::compsize::glTexImage2D_pixels_compsize(format, _type, width, height)) as usize;
+        (crate::compsize::glTexImage2D_pixels_compsize(_context, format, _type, width, height))
+            as usize;
 
     let slice = if pixels != 0 {
         Some(
@@ -296,7 +202,7 @@ fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
             .split(" ")
             .filter(|extension| ffi::EXTENSIONS.contains(extension))
             .collect::<Vec<_>>();
-        let unsupported_extensions = owned_str
+        let _unsupported_extensions = owned_str
             .to_str()
             .unwrap()
             .split(" ")
@@ -309,14 +215,45 @@ fn get_string(_context: &mut Context, name: u32) -> Option<Vec<u8>> {
     Some(owned_str.to_bytes_with_nul().to_vec())
 }
 
+fn get_string_i(_context: &mut Context, i: i32, name: u32) -> Option<Vec<u8>> {
+    if i == -1 {
+        get_string(_context, name)
+    } else {
+        // TODO check
+        match get_string(_context, name) {
+            None => None,
+            Some(str) => {
+                let mut result = vec![];
+                let mut found = false;
+                let mut current_i = 0;
+                for c in str {
+                    if current_i == i {
+                        found = true;
+                        result.push(c);
+                    }
+                    if c == b' ' {
+                        if found {
+                            return Some(result);
+                        } else {
+                            current_i += 1;
+                        }
+                    }
+                }
+                return None;
+            }
+        }
+    }
+}
+
 #[allow(non_snake_case)]
 pub fn glGetStringData(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
+    i: i32,
     name: u32,
     data_ptr: u32,
 ) {
-    if let Some(s) = get_string(_context, name) {
+    if let Some(s) = get_string_i(_context, i, name) {
         let mut memory = _memory_factory.make_memory();
         let ptr = webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((data_ptr, s.len() as u32));
         let _ = memory.copy_from_slice(s.as_slice(), ptr);
@@ -326,9 +263,10 @@ pub fn glGetStringData(
 pub fn glGetStringLen(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,
+    i: i32,
     name: u32,
 ) -> i32 {
-    match get_string(_context, name) {
+    match get_string_i(_context, i, name) {
         None => -1,
         Some(s) => s.len() as i32,
     }
@@ -384,7 +322,8 @@ pub fn glDrawElements(
         );
     }
     if element_array_buffer == 0 {
-        let len_indices = (crate::compsize::glDrawElements_indices_compsize(count, _type)) as usize;
+        let len_indices =
+            (crate::compsize::glDrawElements_indices_compsize(_context, count, _type)) as usize;
         let indices_cow = memory
             .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
                 indices as u32,
@@ -405,6 +344,181 @@ pub fn glDrawElements(
         };
     }
 }
+#[allow(non_snake_case)]
+pub fn glDrawElementsInstanced(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    mode: u32,
+    count: i32,
+    _type: u32,
+    indices: u32,
+    instancecount: i32,
+) -> () {
+    let memory = _memory_factory.make_memory();
+    let mut element_array_buffer = 0;
+    unsafe {
+        (_context.proc_addresses.glGetIntegerv)(
+            ffi::GL_ELEMENT_ARRAY_BUFFER_BINDING,
+            &mut element_array_buffer,
+        );
+    }
+    if element_array_buffer == 0 {
+        let len_indices =
+            (crate::compsize::glDrawElements_indices_compsize(_context, count, _type)) as usize;
+        let indices_cow = memory
+            .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
+                indices as u32,
+                len_indices as u32,
+            )))
+            .unwrap();
+        unsafe {
+            (_context.proc_addresses.glDrawElementsInstanced)(
+                mode,
+                count,
+                _type,
+                indices_cow.as_ptr() as *const (),
+                instancecount,
+            )
+        };
+    } else {
+        unsafe {
+            (_context.proc_addresses.glDrawElementsInstanced)(
+                mode,
+                count,
+                _type,
+                indices as *const (),
+                instancecount,
+            )
+        };
+    }
+}
+#[allow(non_snake_case)]
+pub fn glDrawRangeElements(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    mode: u32,
+    start: u32,
+    end: u32,
+    count: i32,
+    _type: u32,
+    indices: u32,
+) -> () {
+    let memory = _memory_factory.make_memory();
+    let mut element_array_buffer = 0;
+    unsafe {
+        (_context.proc_addresses.glGetIntegerv)(
+            ffi::GL_ELEMENT_ARRAY_BUFFER_BINDING,
+            &mut element_array_buffer,
+        );
+    }
+    if element_array_buffer == 0 {
+        let len_indices =
+            (crate::compsize::glDrawElements_indices_compsize(_context, count, _type)) as usize;
+        let indices_cow = memory
+            .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
+                indices as u32,
+                len_indices as u32,
+            )))
+            .unwrap();
+        unsafe {
+            (_context.proc_addresses.glDrawRangeElements)(
+                mode,
+                start,
+                end,
+                count,
+                _type,
+                indices_cow.as_ptr() as *const (),
+            )
+        };
+    } else {
+        unsafe {
+            (_context.proc_addresses.glDrawRangeElements)(
+                mode,
+                start,
+                end,
+                count,
+                _type,
+                indices as *const (),
+            )
+        };
+    }
+}
+
+// TODO check
+#[allow(non_snake_case)]
+pub fn glGetUniformIndices(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    program: u32,
+    uniformCount: i32,
+    uniformNames: u32,
+    uniformIndices: u32,
+) -> () {
+    let mut memory = _memory_factory.make_memory();
+    let uniform_names_ptrs = memory
+        .to_vec(webrogue_runtime::wiggle::GuestPtr::<[u32]>::new((
+            uniformNames as u32,
+            uniformCount as u32,
+        )))
+        .unwrap();
+    let uniform_names = uniform_names_ptrs
+        .iter()
+        .map(|ptr| {
+            memory
+                .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
+                    *ptr,
+                    (crate::utils::guest_strlen(&memory, *ptr) + 1) as u32,
+                )))
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let converted_uniform_names = uniform_names
+        .iter()
+        .map(|name| name.as_ptr() as *const i8)
+        .collect::<Vec<_>>();
+
+    let mut vec_uniformIndices: Vec<std::os::raw::c_uint> = vec![];
+    vec_uniformIndices.reserve(uniformCount as usize);
+    for i in 0..(uniformCount as u32) {
+        vec_uniformIndices.push(
+            memory
+                .read::<u32>(webrogue_runtime::wiggle::GuestPtr::<u32>::new(
+                    uniformIndices + i * 4,
+                ))
+                .unwrap() as std::os::raw::c_uint,
+        );
+    }
+    let converted_uniformIndices = vec_uniformIndices.as_mut_ptr() as *mut std::os::raw::c_uint;
+    let result = unsafe {
+        (_context.proc_addresses.glGetUniformIndices)(
+            program,
+            uniformCount,
+            converted_uniform_names.as_ptr(),
+            converted_uniformIndices,
+        )
+    };
+    for (i, value) in vec_uniformIndices.iter().enumerate() {
+        memory
+            .write::<u32>(
+                webrogue_runtime::wiggle::GuestPtr::<u32>::new(uniformIndices + (i as u32) * 4),
+                *value as u32,
+            )
+            .unwrap()
+    }
+    result
+}
+#[allow(non_snake_case)]
+pub fn glMapBufferRange(
+    _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
+    _context: &mut Context,
+    target: u32,
+    offset: i32,
+    length: i32,
+    access: u32,
+) -> u32 {
+    todo!()
+}
+
 pub fn init_ptrs(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,

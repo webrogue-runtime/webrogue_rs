@@ -1,3 +1,4 @@
+use crate::context::Context;
 use crate::ffi::{self};
 
 fn shader_param_count(pname: u32) -> usize {
@@ -552,42 +553,60 @@ fn global_param_count(pname: u32) -> usize {
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetShaderiv_params_compsize(pname: u32) -> usize {
+pub(crate) fn glGetShaderiv_params_compsize(_context: &mut Context, pname: u32) -> usize {
     shader_param_count(pname)
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetProgramiv_params_compsize(_pname: u32) -> usize {
+pub(crate) fn glGetProgramiv_params_compsize(_context: &mut Context, _pname: u32) -> usize {
     1
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetBooleanv_data_compsize(pname: u32) -> usize {
+pub(crate) fn glGetBooleanv_data_compsize(_context: &mut Context, pname: u32) -> usize {
     global_param_count(pname)
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetBufferParameteriv_params_compsize(_pname: u32) -> usize {
+pub(crate) fn glGetBufferParameteriv_params_compsize(_context: &mut Context, _pname: u32) -> usize {
     1
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetFloatv_data_compsize(pname: u32) -> usize {
+pub(crate) fn glGetFloatv_data_compsize(_context: &mut Context, pname: u32) -> usize {
     global_param_count(pname)
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetFramebufferAttachmentParameteriv_params_compsize(_pname: u32) -> usize {
+pub(crate) fn glGetFramebufferAttachmentParameteriv_params_compsize(
+    _context: &mut Context,
+    _pname: u32,
+) -> usize {
     1
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetIntegerv_data_compsize(pname: u32) -> usize {
+pub(crate) fn glGetIntegerv_data_compsize(_context: &mut Context, pname: u32) -> usize {
     global_param_count(pname)
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetInteger64i_v_data_compsize(_context: &mut Context, _pname: u32) -> usize {
+    1
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetInteger64v_data_compsize(_context: &mut Context, pname: u32) -> usize {
+    global_param_count(pname)
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetIntegeri_v_data_compsize(_context: &mut Context, _pname: u32) -> usize {
+    1
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetRenderbufferParameteriv_params_compsize(_pname: u32) -> usize {
+pub(crate) fn glGetRenderbufferParameteriv_params_compsize(
+    _context: &mut Context,
+    _pname: u32,
+) -> usize {
     1
 }
 
@@ -600,28 +619,46 @@ fn tex_param_count(pname: u32) -> usize {
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetTexParameterfv_params_compsize(pname: u32) -> usize {
+pub(crate) fn glGetTexParameterfv_params_compsize(_context: &mut Context, pname: u32) -> usize {
     tex_param_count(pname)
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetTexParameteriv_params_compsize(pname: u32) -> usize {
+pub(crate) fn glGetTexParameteriv_params_compsize(_context: &mut Context, pname: u32) -> usize {
     tex_param_count(pname)
 }
 #[allow(non_snake_case)]
-pub(crate) fn glGetUniformfv_params_compsize(_program: u32, _location: i32) -> usize {
+pub(crate) fn glGetUniformfv_params_compsize(
+    _context: &mut Context,
+    _program: u32,
+    _location: i32,
+) -> usize {
     // TODO somehow check, cz it is unsafe
     4
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glGetUniformiv_params_compsize(_program: u32, _location: i32) -> usize {
+pub(crate) fn glGetUniformiv_params_compsize(
+    _context: &mut Context,
+    _program: u32,
+    _location: i32,
+) -> usize {
+    // TODO somehow check, cz it is unsafe
+    4
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetUniformuiv_params_compsize(
+    _context: &mut Context,
+    _program: u32,
+    _location: i32,
+) -> usize {
     // TODO somehow check, cz it is unsafe
     4
 }
 
 #[allow(non_snake_case)]
 pub(crate) fn glReadPixels_pixels_compsize(
+    _context: &mut Context,
     _format: u32,
     _type: u32,
     width: i32,
@@ -632,12 +669,24 @@ pub(crate) fn glReadPixels_pixels_compsize(
 
 #[allow(non_snake_case)]
 pub(crate) fn glTexImage2D_pixels_compsize(
+    _context: &mut Context,
     _format: u32,
     _type: u32,
     width: i32,
     height: i32,
 ) -> usize {
     return (width * height) as usize * pixel_type_width(_type, _format);
+}
+#[allow(non_snake_case)]
+pub(crate) fn glTexImage3D_pixels_compsize(
+    _context: &mut Context,
+    _format: u32,
+    _type: u32,
+    width: i32,
+    height: i32,
+    depth: i32,
+) -> usize {
+    return (width * height * depth) as usize * pixel_type_width(_type, _format);
 }
 
 fn pixel_type_width(_type: u32, _format: u32) -> usize {
@@ -713,16 +762,17 @@ fn gl_format_component_num(_format: u32) -> usize {
 }
 
 #[allow(non_snake_case)]
-pub(crate) fn glTexParameterfv_params_compsize(pname: u32) -> usize {
+pub(crate) fn glTexParameterfv_params_compsize(_context: &mut Context, pname: u32) -> usize {
     tex_param_count(pname)
 }
 #[allow(non_snake_case)]
-pub(crate) fn glTexParameteriv_params_compsize(pname: u32) -> usize {
+pub(crate) fn glTexParameteriv_params_compsize(_context: &mut Context, pname: u32) -> usize {
     tex_param_count(pname)
 }
 
 #[allow(non_snake_case)]
 pub(crate) fn glTexSubImage2D_pixels_compsize(
+    _context: &mut Context,
     _format: u32,
     _type: u32,
     width: i32,
@@ -730,8 +780,119 @@ pub(crate) fn glTexSubImage2D_pixels_compsize(
 ) -> usize {
     return (width * height) as usize * pixel_type_width(_type, _format);
 }
+#[allow(non_snake_case)]
+pub(crate) fn glTexSubImage3D_pixels_compsize(
+    _context: &mut Context,
+    _format: u32,
+    _type: u32,
+    width: i32,
+    height: i32,
+    depth: i32,
+) -> usize {
+    return (width * height * depth) as usize * pixel_type_width(_type, _format);
+}
 
 #[allow(non_snake_case)]
-pub(crate) fn glDrawElements_indices_compsize(count: i32, _type: u32) -> usize {
+pub(crate) fn glDrawElements_indices_compsize(
+    _context: &mut Context,
+    count: i32,
+    _type: u32,
+) -> usize {
     return count as usize * gl_type_width(_type);
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glClearBufferfv_value_compsize(_context: &mut Context, buffer: u32) -> usize {
+    if buffer == ffi::GL_COLOR {
+        4
+    } else {
+        1
+    }
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glClearBufferiv_value_compsize(_context: &mut Context, buffer: u32) -> usize {
+    if buffer == ffi::GL_COLOR {
+        4
+    } else {
+        1
+    }
+}
+#[allow(non_snake_case)]
+pub(crate) fn glClearBufferuiv_value_compsize(_context: &mut Context, buffer: u32) -> usize {
+    if buffer == ffi::GL_COLOR {
+        4
+    } else {
+        1
+    }
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetActiveUniformBlockiv_params_compsize(
+    _context: &mut Context,
+    program: u32,
+    uniformBlockIndex: u32,
+    pname: u32,
+) -> usize {
+    if pname == ffi::GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES {
+        let mut indices: i32 = 0;
+        unsafe {
+            (_context.proc_addresses.glGetActiveUniformBlockiv)(
+                program,
+                uniformBlockIndex,
+                ffi::GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS,
+                &mut indices,
+            );
+        }
+        indices as usize
+    } else {
+        1
+    }
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetActiveUniformsiv_params_compsize(
+    _context: &mut Context,
+    uniformCount: i32,
+    _pname: u32,
+) -> usize {
+    uniformCount as usize
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glGetBufferParameteri64v_params_compsize(
+    _context: &mut Context,
+    _pname: u32,
+) -> usize {
+    1
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetQueryObjectuiv_params_compsize(_context: &mut Context, _pname: u32) -> usize {
+    1
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetQueryiv_params_compsize(_context: &mut Context, _pname: u32) -> usize {
+    1
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetSamplerParameterfv_params_compsize(
+    _context: &mut Context,
+    _pname: u32,
+) -> usize {
+    1
+}
+#[allow(non_snake_case)]
+pub(crate) fn glGetSamplerParameteriv_params_compsize(
+    _context: &mut Context,
+    _pname: u32,
+) -> usize {
+    1
+}
+
+#[allow(non_snake_case)]
+pub(crate) fn glSamplerParameterfv_param_compsize(_context: &mut Context, _pname: u32) -> usize {
+    1
+}
+#[allow(non_snake_case)]
+pub(crate) fn glSamplerParameteriv_param_compsize(_context: &mut Context, _pname: u32) -> usize {
+    1
 }

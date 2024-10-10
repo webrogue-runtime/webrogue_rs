@@ -35,8 +35,11 @@ pub enum GLType {
     U8,
     UInt,
     Int,
+    U64,
+    I64,
     Float,
     ISizeT,
+    OpaqueSync,
     Ptr(Box<GLType>, bool),
 }
 
@@ -49,7 +52,10 @@ impl GLType {
             GLType::Int => "int".to_owned(),
             GLType::U8 => "unsigned char".to_owned(),
             GLType::UInt => "unsigned int".to_owned(),
+            GLType::U64 => "uint64_t".to_owned(),
+            GLType::I64 => "int64_t".to_owned(),
             GLType::Void => "void".to_owned(),
+            GLType::OpaqueSync => "void*".to_owned(),
             GLType::Ptr(inner, false) => (*inner).to_c_type() + " *",
             GLType::Ptr(inner, true) => (*inner).to_c_type() + " const*",
         }
@@ -63,7 +69,10 @@ impl GLType {
             GLType::Int => "std::os::raw::c_int".to_owned(),
             GLType::U8 => "u8".to_owned(),
             GLType::UInt => "std::os::raw::c_uint".to_owned(),
+            GLType::U64 => "u64".to_owned(),
+            GLType::I64 => "i64".to_owned(),
             GLType::Void => "()".to_owned(),
+            GLType::OpaqueSync => "*mut ()".to_owned(),
             GLType::Ptr(inner, false) => format!("*mut {}", (*inner).to_rust_type()),
             GLType::Ptr(inner, true) => format!("*const {}", (*inner).to_rust_type()),
         }
@@ -77,7 +86,10 @@ impl GLType {
             GLType::Int => "i32",
             GLType::U8 => "u32",
             GLType::UInt => "u32",
+            GLType::U64 => "u64",
+            GLType::I64 => "i64",
             GLType::Void => "",
+            GLType::OpaqueSync => "u32",
             GLType::Ptr(_, _) => "u32",
         }
         .to_owned()
@@ -91,7 +103,10 @@ impl GLType {
             GLType::Int => "i32",
             GLType::U8 => "u8",
             GLType::UInt => "u32",
+            GLType::U64 => "u64",
+            GLType::I64 => "i64",
             GLType::Void => "u8",
+            GLType::OpaqueSync => "u32",
             GLType::Ptr(_, _) => "u32",
         }
         .to_owned()
@@ -105,7 +120,10 @@ impl GLType {
             GLType::Int => 4,
             GLType::U8 => 1,
             GLType::UInt => 4,
+            GLType::U64 => 8,
+            GLType::I64 => 8,
             GLType::Void => 1,
+            GLType::OpaqueSync => 4,
             GLType::Ptr(_, _) => 4,
         }
     }

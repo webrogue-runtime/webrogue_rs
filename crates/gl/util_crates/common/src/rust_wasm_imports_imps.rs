@@ -6,7 +6,10 @@ fn simple_type_rust_to_wasm(ty: GLType, name: String) -> Option<String> {
         GLType::UInt => Some(format!("{}.into()", name)),
         GLType::Int => Some(format!("{}.into()", name)),
         GLType::U8 => Some(format!("{}.into()", name)),
+        GLType::I64 => Some(format!("{}", name)),
+        GLType::U64 => Some(format!("{}", name)),
         GLType::Void => Some(name),
+        GLType::OpaqueSync => Some(format!("_context.register_opaque_sync_object({})", name)),
         _ => None,
     }
 }
@@ -55,6 +58,8 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
                 GLType::UInt => format!("    let converted_{} = {};", mapped_name, mapped_name),
                 GLType::Int => format!("    let converted_{} = {};", mapped_name, mapped_name),
                 GLType::U8 => format!("    let converted_{} = {} as u8;", mapped_name, mapped_name),
+                GLType::U64 => format!("    let converted_{} = {};", mapped_name, mapped_name),
+                GLType::I64 => format!("    let converted_{} = {};", mapped_name, mapped_name),
                 GLType::ISizeT => {
                     format!(
                         "    let converted_{} = {} as isize;",
@@ -62,6 +67,10 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
                     )
                 }
                 GLType::Void => panic!(),
+                GLType::OpaqueSync => format!(
+                    "    let converted_{} = _context.resolve_opaque_sync_object({});",
+                    mapped_name, mapped_name
+                ),
                 GLType::Ptr(inner, is_const) => {
                     let inner_ty = (*inner).clone();
                     if is_const {
@@ -80,17 +89,27 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
                         .or(Some("UNKNOWN".to_owned()))
                         .clone()
                         .unwrap();
-                    if len_param.starts_with("COMPSIZE") {
-                        len_param = format!(
-                            "crate::compsize::{}_{}_compsize({})",
-                            command.name,
-                            mapped_name,
-                            len_param[9..len_param.len() - 1]
-                                .split(",")
-                                .map(|s| { map_param_name(s.to_owned()) })
-                                .collect::<Vec<_>>()
-                                .join(",")
-                        )
+                    if (len_param == format!("COMPSIZE({})", param.name)
+                        || len_param == "UNKNOWN"
+                        || len_param == "COMPSIZE()")
+                        && inner_ty == GLType::I8
+                        && is_const
+                    {
+                        len_param =
+                            format!("crate::utils::guest_strlen(&memory, {}) + 1", mapped_name);
+                    } else {
+                        if len_param.starts_with("COMPSIZE") {
+                            len_param = format!(
+                                "crate::compsize::{}_{}_compsize(_context, {})",
+                                command.name,
+                                mapped_name,
+                                len_param[9..len_param.len() - 1]
+                                    .split(",")
+                                    .map(|s| { map_param_name(s.to_owned()) })
+                                    .collect::<Vec<_>>()
+                                    .join(",")
+                            )
+                        }
                     }
                     if !is_const {
                         writes.push(format!(
@@ -180,7 +199,10 @@ pub fn {}(
             match simple_type_rust_to_wasm(command.ret.clone(), "    result\n".to_owned()) {
                 None => {
                     dbg!(command.ret.clone());
-                    format!("compile_error!(\"eee1: {}\")", command.name)
+                    format!(
+                        "compile_error!(\"unsupported return type in {}\")",
+                        command.name
+                    )
                 }
                 Some(v) => v,
             }

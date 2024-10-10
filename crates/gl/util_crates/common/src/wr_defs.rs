@@ -3,8 +3,8 @@ use std::io::Write;
 
 pub fn write_to_file(file: &mut std::fs::File, parse_results: &ParseResults) {
     file.write(
-        b"glGetStringData(u32, u32) -> ()
-glGetStringLen(u32) -> (i32)
+        b"glGetStringData(i32, u32, u32) -> ()
+glGetStringLen(i32, u32) -> (i32)
 init_ptrs() -> ()
 ",
     )
