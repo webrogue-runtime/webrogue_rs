@@ -134,6 +134,7 @@ pub struct Param {
     pub name: String,
     pub ty: GLType,
     pub len_name: Option<String>,
+    pub group: Option<String>,
 }
 
 #[derive(Clone)]
@@ -154,5 +155,6 @@ pub struct EnumCase {
 pub struct ParseResults {
     pub commands: Vec<Command>,
     pub enums: Vec<EnumCase>,
+    pub enum_groups: std::collections::BTreeMap<String, Vec<EnumCase>>,
     pub extensions: Vec<String>,
 }

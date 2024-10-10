@@ -9,14 +9,16 @@ fn map_param_name(original: String) -> String {
 }
 
 pub fn get_as_str(parse_results: &ParseResults) -> String {
-    let mut result = "pub struct ProcAddresses {\n".to_owned();
+    let mut result = "#[rustfmt::skip]\npub struct ProcAddresses {\n".to_owned();
     let mut init_func_ptrs = r#"
+#[rustfmt::skip]
 impl ProcAddresses {
     pub fn new() -> Self {
         unsafe { std::mem::MaybeUninit::<ProcAddresses>::zeroed().assume_init() }
     }
 
     pub fn fill(&mut self, _context: &mut webrogue_gfx::Context) {
+        unsafe {
 "#
     .to_owned();
     for command in parse_results.commands.clone() {
@@ -25,28 +27,26 @@ impl ProcAddresses {
         for param in command.params.clone() {
             let mapped_name = map_param_name(param.name.clone());
 
-            ffi_arg_types.push(format!(
-                "    {}: {},\n",
-                mapped_name,
-                param.ty.to_rust_type()
-            ));
+            ffi_arg_types.push(format!("{}: {}", mapped_name, param.ty.to_rust_type()));
         }
         result += &format!(
-            "#[allow(non_snake_case)]\npub {}: unsafe extern \"stdcall\" fn({}) -> {},\n",
+            "    pub {}: unsafe extern \"stdcall\" fn({}) -> {},\n",
             command.name,
-            ffi_arg_types.join(""),
+            ffi_arg_types.join(","),
             match command.ret {
                 GLType::Void => "()".to_owned(),
                 _ => command.ret.to_rust_type(),
             },
         );
         init_func_ptrs += &format!(
-            "(self.{}) = unsafe {{ std::mem::transmute(get_proc_address(_context, \"{}\")) }};",
+            "            self.{} = std::mem::transmute(crate::utils::get_proc_address(_context, \"{}\"));\n",
             command.name, command.name
         );
     }
     result += "}\n";
     result += &init_func_ptrs;
-    result += "    }\n}\n";
+    result += "        }\n";
+    result += "    }\n";
+    result += "}\n";
     result
 }

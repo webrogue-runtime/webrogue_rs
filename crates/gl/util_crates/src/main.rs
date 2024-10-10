@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use webrogue_gl_gen_common::*;
 
 fn run_flavor(
@@ -7,6 +9,17 @@ fn run_flavor(
 ) {
     let mut file: std::fs::File = std::fs::File::create(path).unwrap();
     f(&mut file, commands);
+}
+
+fn run_macro(
+    preamble: &str,
+    f: impl Fn(&types::ParseResults) -> String,
+    path: &str,
+    commands: &types::ParseResults,
+) {
+    let mut file: std::fs::File = std::fs::File::create(path).unwrap();
+    file.write(preamble.as_bytes()).unwrap();
+    file.write(f(commands).as_bytes()).unwrap();
 }
 
 fn main() {
@@ -27,6 +40,41 @@ fn main() {
     run_flavor(
         c_guest_loader::write_to_file,
         "../../../examples/libs/webrogue_gfx/webrogue_gl_loader.c",
+        &parse_results,
+    );
+
+    run_macro(
+        "#![allow(dead_code)]
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+
+// DO NOT EDIT! This file is generated automatically
+
+",
+        rust_ffi::get_as_str,
+        "../../../crates/gl/src/ffi.rs",
+        &parse_results,
+    );
+
+    run_macro(
+        "#![allow(non_snake_case)]
+
+pub use crate::context::Context;
+pub use crate::mainual_impl::*;
+
+// DO NOT EDIT! This file is generated automatically
+
+",
+        rust_wasm_imports_imps::get_as_str,
+        "../../../crates/gl/src/api.rs",
+        &parse_results,
+    );
+
+    run_macro(
+        "#![allow(non_snake_case)]
+",
+        proc_addresses::get_as_str,
+        "../../../crates/gl/src/proc_addresses.rs",
         &parse_results,
     );
 }

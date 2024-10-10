@@ -5,9 +5,4 @@ edition = "2021"
 
 [dependencies]
 webrogue_runtime = { path = "../runtime" }
-webrogue_gl_gen_macro = { path = "util_crates/macro" }
 webrogue_gfx = { path = "../gfx" }
-
-[build-dependencies]
-reqwest = { version = "0.12", features = ["blocking"] }
-zip-extract = { version = "0.2.1" }

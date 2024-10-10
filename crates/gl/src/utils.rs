@@ -14,3 +14,11 @@ pub fn guest_strlen(memory: &webrogue_runtime::GuestMemory, ptr: u32) -> usize {
     }
     return (new_ptr - ptr) as usize;
 }
+
+pub fn get_proc_address(gfx_context: &mut webrogue_gfx::Context, name: &str) -> *const () {
+    gfx_context
+        .system
+        .as_mut()
+        .unwrap()
+        .gl_get_proc_address(name)
+}

@@ -42,6 +42,36 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
         seen_enums.insert(enum_case.name);
     }
 
+    for (group_name, enum_cases) in parse_results.enum_groups.clone() {
+        if group_name == "SpecialNumbers" {
+            continue;
+        }
+        let group_name = "GLEnumGroup".to_owned() + &group_name;
+        result += "#[derive(Clone, Copy)]\n";
+        result += &format!("pub enum {} {{\n", group_name);
+        for enum_case in enum_cases.clone() {
+            result += &format!("    {},\n", enum_case.name);
+        }
+        result += "}\n";
+        result += &format!("impl {} {{\n", group_name);
+        result += "    #[rustfmt::skip]\n";
+        result += &format!(
+            "    pub fn from_raw(raw: u32) -> Option<{}> {{\n",
+            group_name
+        );
+        result += "        match raw {\n";
+        for enum_case in enum_cases.clone() {
+            result += &format!(
+                "            {} => Some({}::{}),\n",
+                enum_case.value, group_name, enum_case.name
+            );
+        }
+        result += "            _ => None,\n";
+        result += "        }\n";
+        result += "    }\n";
+        result += "}\n";
+    }
+
     result += &format!(
         "pub const EXTENSIONS: [&str; {}] = [\n",
         parse_results.extensions.len()

@@ -105,7 +105,27 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
                                 mapped_name,
                                 len_param[9..len_param.len() - 1]
                                     .split(",")
-                                    .map(|s| { map_param_name(s.to_owned()) })
+                                    .map(|s| {
+                                        let mapped_name = map_param_name(s.to_owned());
+                                        if let Some(param) = command
+                                            .params
+                                            .iter()
+                                            .filter(|param_candidate| param_candidate.name == s)
+                                            .next()
+                                        {
+                                            if let Some(group) = param.group.clone() {
+                                                format!(
+                                                    "crate::ffi::GLEnumGroup{}::from_raw({})",
+                                                    group, mapped_name
+                                                )
+                                                .to_owned()
+                                            } else {
+                                                mapped_name
+                                            }
+                                        } else {
+                                            mapped_name
+                                        }
+                                    })
                                     .collect::<Vec<_>>()
                                     .join(",")
                             )
@@ -175,6 +195,8 @@ pub fn get_as_str(parse_results: &ParseResults) -> String {
         };
         result += &format!(
             "
+
+#[rustfmt::skip]
 pub fn {}(
     _memory_factory: &mut Box<dyn webrogue_runtime::MemoryFactory>,
     _context: &mut Context,

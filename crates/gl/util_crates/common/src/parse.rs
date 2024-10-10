@@ -114,10 +114,14 @@ fn parse_type(proto_param_node: roxmltree::Node) -> Param {
     let len_name = proto_param_node
         .attribute("len")
         .and_then(|s| Some(s.to_owned()));
+    let group = proto_param_node
+        .attribute("group")
+        .and_then(|s| Some(s.to_owned()));
     Param {
         name: name.unwrap(),
         ty: ret_type.unwrap(),
         len_name: len_name,
+        group: group,
     }
 }
 
@@ -168,17 +172,18 @@ fn parse_commands(
 // TODO parse enum groups
 fn parse_enums(
     enums_node: roxmltree::Node,
-    _requirements: &FeatureRequirements,
+    requirements: &FeatureRequirements,
     enums: &mut Vec<EnumCase>,
+    enum_groups: &mut std::collections::BTreeMap<String, Vec<EnumCase>>,
 ) {
     for enum_node in enums_node.children() {
         if enum_node.tag_name().name() != "enum" {
             continue;
         }
         let name = enum_node.attribute("name").unwrap().to_owned();
-        // if !requirements.enums.contains(&name) {
-        //     continue;
-        // }
+        if !requirements.enums.contains(&name) {
+            continue;
+        }
         let value = enum_node.attribute("value").unwrap();
         // let parsed_value = u32::from_str_radix(&value[2..], 16).unwrap();
         let mut ty = match enum_node.attribute("type") {
@@ -193,11 +198,23 @@ fn parse_enums(
         if value.starts_with("-") && enum_node.attribute("type").is_none() {
             ty = "i32";
         }
-        enums.push(EnumCase {
+        let enum_case = EnumCase {
             name: name,
             value: value.to_owned(),
             ty: ty.to_owned(),
-        })
+        };
+        if let Some(groups) = enum_node.attribute("group") {
+            for group in groups.split(',') {
+                let group = group.to_owned();
+                match enum_groups.get_mut(&group) {
+                    None => {
+                        enum_groups.insert(group, vec![enum_case.clone()]);
+                    }
+                    Some(cases) => cases.push(enum_case.clone()),
+                };
+            }
+        }
+        enums.push(enum_case);
     }
 }
 
@@ -239,16 +256,18 @@ pub fn parse() -> ParseResults {
         .unwrap();
     let commands = parse_commands(command_node, &requirements);
     let mut enums = vec![];
+    let mut enum_groups = std::collections::BTreeMap::new();
     let registry_node = doc.root_element();
     for node in registry_node.children() {
         match node.tag_name().name() {
-            "enums" => parse_enums(node, &requirements, &mut enums),
+            "enums" => parse_enums(node, &requirements, &mut enums, &mut enum_groups),
             _ => {}
         }
     }
     ParseResults {
         commands,
         enums,
+        enum_groups,
         extensions: requirements.extensions,
     }
 }

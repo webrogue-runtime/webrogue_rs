@@ -10,3 +10,7 @@ sdl_bundled = ["sdl2/bundled"]
 [dependencies]
 webrogue_gfx = { path = "../gfx" }
 sdl2 = { path = "../../external/rust-sdl2" }
+
+[build-dependencies]
+reqwest = { version = "0.12", features = ["blocking"] }
+zip-extract = { version = "0.2.1" }

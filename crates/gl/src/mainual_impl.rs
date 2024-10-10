@@ -150,9 +150,13 @@ pub fn glTexImage2D(
     let converted_border = border;
     let converted_format = format;
     let converted__type = _type;
-    let len_pixels =
-        (crate::compsize::glTexImage2D_pixels_compsize(_context, format, _type, width, height))
-            as usize;
+    let len_pixels = (crate::compsize::glTexImage2D_pixels_compsize(
+        _context,
+        crate::ffi::GLEnumGroupPixelFormat::from_raw(format),
+        crate::ffi::GLEnumGroupPixelType::from_raw(_type),
+        width,
+        height,
+    )) as usize;
 
     let slice = if pixels != 0 {
         Some(
@@ -322,8 +326,11 @@ pub fn glDrawElements(
         );
     }
     if element_array_buffer == 0 {
-        let len_indices =
-            (crate::compsize::glDrawElements_indices_compsize(_context, count, _type)) as usize;
+        let len_indices = (crate::compsize::glDrawElements_indices_compsize(
+            _context,
+            count,
+            crate::ffi::GLEnumGroupDrawElementsType::from_raw(_type),
+        )) as usize;
         let indices_cow = memory
             .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
                 indices as u32,
@@ -363,8 +370,11 @@ pub fn glDrawElementsInstanced(
         );
     }
     if element_array_buffer == 0 {
-        let len_indices =
-            (crate::compsize::glDrawElements_indices_compsize(_context, count, _type)) as usize;
+        let len_indices = (crate::compsize::glDrawElements_indices_compsize(
+            _context,
+            count,
+            crate::ffi::GLEnumGroupDrawElementsType::from_raw(_type),
+        )) as usize;
         let indices_cow = memory
             .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
                 indices as u32,
@@ -412,8 +422,11 @@ pub fn glDrawRangeElements(
         );
     }
     if element_array_buffer == 0 {
-        let len_indices =
-            (crate::compsize::glDrawElements_indices_compsize(_context, count, _type)) as usize;
+        let len_indices = (crate::compsize::glDrawElements_indices_compsize(
+            _context,
+            count,
+            crate::ffi::GLEnumGroupDrawElementsType::from_raw(_type),
+        )) as usize;
         let indices_cow = memory
             .as_cow(webrogue_runtime::wiggle::GuestPtr::<[u8]>::new((
                 indices as u32,
