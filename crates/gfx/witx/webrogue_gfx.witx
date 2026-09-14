@@ -100,7 +100,7 @@
     (param $name (@witx pointer u8))
     (param $name_len $size)
   )
-  
+
   ;; CPU rendering
 
   (@interface func (export "present_pixels")

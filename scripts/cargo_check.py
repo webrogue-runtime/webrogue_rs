@@ -76,7 +76,7 @@ if is_component_selected("aot-lib"):
     for target in native_targets:
         check(package="webrogue-aot-lib", target=target)
         for gfxstream_type in ["impl", "stub"]:
-            check(package="webrogue-gfxstream-lib", target=target, features=[gfxstream_type])
+            check(package="webrogue-virgl-lib", target=target, features=[gfxstream_type])
 
 if is_component_selected("android"):
     os.environ["CARGO_NDK_PLATFORM"] = open(os.path.join(repo_dir, "android", "android_api_version.txt")).read().strip()
