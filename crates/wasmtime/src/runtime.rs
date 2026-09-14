@@ -39,6 +39,7 @@ impl Runtime {
         wasmtime_config.shared_memory(true);
         wasmtime_config.wasm_exceptions(true);
         wasmtime_config.memory_may_move(false);
+        wasmtime_config.macos_use_mach_ports(false);
 
         Runtime {
             persistent_dir: persistent_dir.to_path_buf(),

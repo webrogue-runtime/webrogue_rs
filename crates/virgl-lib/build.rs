@@ -121,7 +121,7 @@ fn main() {
         ("HAVE_PTHREAD", def_if(!is_windows)),
         (
             "HAVE_PTHREAD_SETAFFINITY",
-            def_if(!is_windows && !is_android),
+            def_if(is_linux && !is_android),
         ),
         ("HAVE_PTHREAD_NP_H", def_if(is_freebsd)),
         ("HAVE_EPOXY_EGL_H", None),
