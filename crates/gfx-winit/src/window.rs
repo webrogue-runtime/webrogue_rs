@@ -81,7 +81,6 @@ impl webrogue_gfx::IWindow for WinitWindow {
 
                 let instance = unsafe { ash::Instance::load(entry.static_fn(), instance) };
 
-                panic!();
                 let surface = unsafe {
                     ash_window::create_surface(
                         &entry,
