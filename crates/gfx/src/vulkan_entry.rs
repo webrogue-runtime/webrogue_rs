@@ -14,7 +14,7 @@ pub fn load_vulkan_entry(required: bool) -> Option<Entry> {
     load_cached(required)
 }
 
-pub fn load_cached(required: bool) -> Option<Entry> {
+fn load_cached(required: bool) -> Option<Entry> {
     lazy_static::lazy_static! {
         static ref CACHED_ENTRY: Mutex<Option<Entry>> = Mutex::new(None);
     }
@@ -123,6 +123,7 @@ fn load_impl(loader_state: &mut LoaderState) -> Result<(), ()> {
     #[cfg(target_os = "macos")]
     {
         loader_state.try_load("libMoltenVK.dylib", load_dynamic_moltenvk())?;
+        loader_state.try_load("libvk_swiftshader.dylib", load_dynamic_swiftshader())?;
 
         fn load_dynamic_moltenvk() -> anyhow::Result<Entry> {
             use std::env::current_exe;
@@ -147,7 +148,22 @@ fn load_impl(loader_state: &mut LoaderState) -> Result<(), ()> {
             }
             load_dynamic(&path)
         }
+
+        fn load_dynamic_swiftshader() -> anyhow::Result<Entry> {
+            use std::env::current_exe;
+
+            let path = current_exe()
+                .unwrap()
+                .parent()
+                .unwrap()
+                .join("libvk_swiftshader.dylib");
+            if !path.exists() {
+                anyhow::bail!("libvk_swiftshader.dylib not found")
+            }
+            load_dynamic(&path)
+        }
     }
+
 
     loader_state.try_load(
         "System's driver",
@@ -225,7 +241,7 @@ fn load_dynamic(path: &std::path::PathBuf) -> anyhow::Result<Entry> {
     check_entry(unsafe { Entry::load_from(path) }?)
 }
 
-#[cfg(windows)]
+#[cfg(any(windows, target_os = "macos"))]
 fn load_dynamic_icd(path: &std::path::PathBuf) -> anyhow::Result<Entry> {
     use std::sync::Arc;
     let lib = Arc::new(unsafe { libloading::Library::new(path) }?);
